@@ -12,6 +12,7 @@ import { TenantResponseRepository } from "./scoped/response-repository";
 import { ScopedExecutor } from "./scoped/scoped-executor";
 import { TenantSecureRepository } from "./scoped/secure-repository";
 import { TenantSettingsRepository } from "./scoped/settings-repository";
+import { TenantWorkingPaperReviewRepository } from "./scoped/working-paper-review-repository";
 
 /**
  * The tenant-scoped repositories available to feature code. This is the ONLY
@@ -32,6 +33,8 @@ export interface TenantRepositories {
   readonly humanReview: TenantHumanReviewRepository;
   /** Evidence file metadata (the storage layer's evidence store). */
   readonly evidence: TenantEvidenceRepository;
+  /** Working-paper review entities (engagement → file → paper → checklist). */
+  readonly workingPaperReview: TenantWorkingPaperReviewRepository;
   /** Read-only access to the tenant's immutable, hash-chained audit log. */
   readonly audit: TenantAuditReader;
   /**
@@ -75,6 +78,7 @@ export function createTenantRepositories(
     draftFindings: TenantDraftFindingRepository;
     humanReview: TenantHumanReviewRepository;
     evidence: TenantEvidenceRepository;
+    workingPaperReview: TenantWorkingPaperReviewRepository;
     audit: TenantAuditReader;
     secure?: TenantSecureRepository;
   } = {
@@ -85,6 +89,7 @@ export function createTenantRepositories(
     draftFindings: new TenantDraftFindingRepository(exec, session),
     humanReview: new TenantHumanReviewRepository(exec, session),
     evidence: new TenantEvidenceRepository(exec, session),
+    workingPaperReview: new TenantWorkingPaperReviewRepository(exec, session),
     audit: new TenantAuditReader(exec, session),
   };
   if (options?.cipher) {

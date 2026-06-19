@@ -42,3 +42,23 @@ export { loadContentPack, loadContentPacksFromDir } from "./loader";
 export { validateContentPack, type ValidatedPack } from "./validate";
 export { ContentCatalog, type ContentPin } from "./catalog";
 export { bundledSeedsDir, loadBundledCatalog } from "./seeds";
+export {
+  checklistItemsForStandard,
+  findStandardInPack,
+  resolveChecklistItems,
+  type AuditEngagement,
+  type AuditFile,
+  type ChecklistConformance,
+  type ChecklistResult,
+  type CreateAuditEngagementInput,
+  type CreateAuditFileInput,
+  type CreateReviewChecklistInput,
+  type CreateSampleSelectionInput,
+  type CreateWorkingPaperInput,
+  type EngagementStatus,
+  type RecordChecklistResultInput,
+  type ReviewChecklist,
+  type ReviewChecklistPin,
+  type SampleSelection,
+  type WorkingPaper,
+} from "./working-paper-review";

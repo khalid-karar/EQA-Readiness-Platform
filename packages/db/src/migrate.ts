@@ -246,6 +246,68 @@ export const TENANT_MIGRATIONS: readonly TenantMigration[] = [
          ADD COLUMN IF NOT EXISTS reviewed_at text`,
     ],
   },
+  {
+    id: "0010_working_paper_review",
+    statements: (schema) => [
+      // Working-paper review data model (entities only — workflow logic is Step 12).
+      // Hierarchy: engagement → audit file → working paper → review checklist →
+      // checklist result. Sample selections link engagements to the review sample.
+      `CREATE TABLE IF NOT EXISTS "${schema}".audit_engagements (
+        engagement_id text PRIMARY KEY,
+        title text NOT NULL,
+        period_start text NOT NULL,
+        period_end text NOT NULL,
+        status text NOT NULL DEFAULT 'completed',
+        created_by text NOT NULL,
+        created_at text NOT NULL
+      )`,
+      `CREATE TABLE IF NOT EXISTS "${schema}".audit_files (
+        file_id text PRIMARY KEY,
+        engagement_id text NOT NULL,
+        name text NOT NULL,
+        description text,
+        created_by text NOT NULL,
+        created_at text NOT NULL
+      )`,
+      `CREATE TABLE IF NOT EXISTS "${schema}".working_papers (
+        working_paper_id text PRIMARY KEY,
+        file_id text NOT NULL,
+        reference text NOT NULL,
+        title text NOT NULL,
+        prepared_by text NOT NULL,
+        prepared_at text NOT NULL
+      )`,
+      // References the Step 5 Working-Paper Review Checklist via content pin —
+      // checklist item text is NOT stored here.
+      `CREATE TABLE IF NOT EXISTS "${schema}".review_checklists (
+        checklist_id text PRIMARY KEY,
+        working_paper_id text NOT NULL,
+        standard_number text NOT NULL,
+        content_pack_id text NOT NULL,
+        content_version text NOT NULL,
+        content_hash text NOT NULL,
+        created_by text NOT NULL,
+        created_at text NOT NULL
+      )`,
+      `CREATE TABLE IF NOT EXISTS "${schema}".checklist_results (
+        result_id text PRIMARY KEY,
+        checklist_id text NOT NULL,
+        checklist_item_id text NOT NULL,
+        conformance text NOT NULL,
+        note text,
+        recorded_by text NOT NULL,
+        recorded_at text NOT NULL,
+        UNIQUE (checklist_id, checklist_item_id)
+      )`,
+      `CREATE TABLE IF NOT EXISTS "${schema}".sample_selections (
+        selection_id text PRIMARY KEY,
+        engagement_id text NOT NULL,
+        rationale text NOT NULL,
+        selected_by text NOT NULL,
+        selected_at text NOT NULL
+      )`,
+    ],
+  },
 ];
 
 async function ensureLedger(db: Database): Promise<void> {

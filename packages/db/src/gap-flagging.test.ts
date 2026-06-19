@@ -162,13 +162,16 @@ describe("AI gap-flagging engine composed end-to-end (Step 10)", () => {
     );
     expect(created).toBeDefined();
 
-    const statusChange = entries.find(
-      (e) =>
-        e.entity === "assessment_item_status" &&
-        e.entityId === KEY &&
-        (JSON.parse(e.newValue ?? "null") as { status?: string }).status ===
-          "ai_flagged",
-    );
+    const statusChange = entries.find((e) => {
+      if (e.entity !== "assessment_item_status" || e.entityId !== KEY) {
+        return false;
+      }
+      const parsed = JSON.parse(e.newValue ?? "null") as
+        | string
+        | { status?: string };
+      const status = typeof parsed === "string" ? parsed : parsed.status;
+      return status === "ai_flagged";
+    });
     expect(statusChange).toBeDefined();
     expect(statusChange?.action).toBe("status_change");
 

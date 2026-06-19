@@ -43,3 +43,18 @@ export class NotFinalConclusionError extends WorkflowError {}
  * finding is never produced against content the assessment is not pinned to.
  */
 export class StandardNotInContentError extends WorkflowError {}
+
+/** Thrown when a human review references a draft finding that does not exist. */
+export class DraftFindingNotFoundError extends WorkflowError {}
+
+/** Thrown when a draft finding has already been human-reviewed. */
+export class DraftAlreadyReviewedError extends WorkflowError {}
+
+/**
+ * Thrown when human review is attempted while the item is not in a reviewable
+ * state (must be `ai_flagged` when review begins).
+ */
+export class IllegalReviewStateError extends WorkflowError {}
+
+/** Thrown when a human review input is invalid (e.g. edit_accept without text). */
+export class InvalidReviewInputError extends WorkflowError {}

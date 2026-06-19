@@ -5,6 +5,7 @@ import type { Database } from "./database";
 import { TenantAuditReader } from "./scoped/audit-reader";
 import { TenantDraftFindingRepository } from "./scoped/draft-finding-repository";
 import { TenantEvidenceRepository } from "./scoped/evidence-repository";
+import { TenantHumanReviewRepository } from "./scoped/human-review-repository";
 import { TenantItemStatusRepository } from "./scoped/item-status-repository";
 import { TenantKvRepository } from "./scoped/kv-repository";
 import { TenantResponseRepository } from "./scoped/response-repository";
@@ -27,6 +28,8 @@ export interface TenantRepositories {
   readonly itemStatus: TenantItemStatusRepository;
   /** Read-only access to AI-drafted gap findings (always draft work product). */
   readonly draftFindings: TenantDraftFindingRepository;
+  /** Human reviewer workflow — the only path to a final conclusion. */
+  readonly humanReview: TenantHumanReviewRepository;
   /** Evidence file metadata (the storage layer's evidence store). */
   readonly evidence: TenantEvidenceRepository;
   /** Read-only access to the tenant's immutable, hash-chained audit log. */
@@ -70,6 +73,7 @@ export function createTenantRepositories(
     responses: TenantResponseRepository;
     itemStatus: TenantItemStatusRepository;
     draftFindings: TenantDraftFindingRepository;
+    humanReview: TenantHumanReviewRepository;
     evidence: TenantEvidenceRepository;
     audit: TenantAuditReader;
     secure?: TenantSecureRepository;
@@ -79,6 +83,7 @@ export function createTenantRepositories(
     responses: new TenantResponseRepository(exec, session),
     itemStatus: new TenantItemStatusRepository(exec, session),
     draftFindings: new TenantDraftFindingRepository(exec, session),
+    humanReview: new TenantHumanReviewRepository(exec, session),
     evidence: new TenantEvidenceRepository(exec, session),
     audit: new TenantAuditReader(exec, session),
   };

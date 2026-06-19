@@ -20,12 +20,14 @@ interface DraftFindingRow extends Row {
   content_version: string;
   content_hash: string;
   created_at: string;
+  reviewed_at: string | null;
 }
 
 function toDraftFinding(row: DraftFindingRow): DraftFinding {
   return {
     kind: "draft_finding",
     status: "draft",
+    findingId: row.finding_id,
     assessmentId: row.assessment_id,
     questionId: row.question_id,
     standardNumber: row.standard_number,
@@ -71,12 +73,27 @@ export class TenantDraftFindingRepository
       `SELECT finding_id, assessment_id, question_id, standard_number,
               draft_summary, prompt_version, rubric_version, model_adapter,
               adapter_location, input_summary, content_pack_id, content_version,
-              content_hash, created_at
+              content_hash, created_at, reviewed_at
          FROM ${this.exec.table("draft_findings")}
         WHERE assessment_id = $1
         ORDER BY created_at, finding_id`,
       [assessmentId],
     );
     return rows.map(toDraftFinding);
+  }
+
+  async getById(findingId: string): Promise<DraftFinding | null> {
+    authorize(this.session, PERMISSIONS.READ);
+    const rows = await this.exec.query<DraftFindingRow>(
+      `SELECT finding_id, assessment_id, question_id, standard_number,
+              draft_summary, prompt_version, rubric_version, model_adapter,
+              adapter_location, input_summary, content_pack_id, content_version,
+              content_hash, created_at, reviewed_at
+         FROM ${this.exec.table("draft_findings")}
+        WHERE finding_id = $1`,
+      [findingId],
+    );
+    const row = rows[0];
+    return row ? toDraftFinding(row) : null;
   }
 }

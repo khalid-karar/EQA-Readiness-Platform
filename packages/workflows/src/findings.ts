@@ -31,6 +31,8 @@ export type FindingKind = "draft_finding" | "final_conclusion";
 export interface DraftFinding {
   readonly kind: "draft_finding";
   readonly status: "draft";
+  /** Present when loaded from persistence; assigned by the gap-flagging sink. */
+  readonly findingId?: string;
   readonly assessmentId: string;
   readonly questionId: string;
   /** The standard (by structural number) this finding was drafted against. */

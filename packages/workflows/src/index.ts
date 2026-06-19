@@ -15,6 +15,10 @@ export { renderQuestionnaire } from "./render";
 export { QuestionnaireEngine } from "./engine";
 export {
   IllegalStatusTransitionError,
+  DraftAlreadyReviewedError,
+  DraftFindingNotFoundError,
+  IllegalReviewStateError,
+  InvalidReviewInputError,
   NotFinalConclusionError,
   PinContentMismatchError,
   StandardNotInContentError,
@@ -45,6 +49,7 @@ export {
   type GapFlaggingPayload,
   type GapFlagJobDeps,
 } from "./gap-flag-job";
+export { HumanReviewEngine, resolveHumanReview } from "./human-review";
 export {
   allowedTransitions,
   assertItemStatus,
@@ -64,7 +69,12 @@ export type {
   DomainView,
   DraftFindingReader,
   EvidencePromptView,
+  FinalConclusionReader,
   GapFlagSink,
+  HumanReviewInput,
+  HumanReviewOutcome,
+  HumanReviewResult,
+  HumanReviewStore,
   ItemStatusRecord,
   ItemStatusStore,
   ItemStatusTransitionInput,
@@ -73,6 +83,8 @@ export type {
   QuestionView,
   ResponsePin,
   ResponseStore,
+  REVIEW_ACTIONS,
+  ReviewAction,
   RubricLevelView,
   StandardView,
 } from "./types";

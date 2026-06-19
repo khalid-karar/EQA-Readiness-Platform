@@ -141,8 +141,8 @@ export function createGapFlagSink(db: Database): GapFlagSink {
         action: "status_change",
         entity: "assessment_item_status",
         entityId: key,
-        oldValue: { status: from },
-        newValue: { status: AI_FLAGGED },
+        oldValue: from,
+        newValue: AI_FLAGGED,
       });
     },
   };

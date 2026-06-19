@@ -1,6 +1,7 @@
-import type { Locale } from "@eqa/content";
+import type { CallProvenance } from "@eqa/ai";
+import type { ContentPin, Locale } from "@eqa/content";
 import type { TenantContext } from "@eqa/tenant";
-import type { DraftFinding } from "./findings";
+import type { DraftFinding, FinalConclusion } from "./findings";
 import type { ItemStatus } from "./state-machine";
 
 /**
@@ -170,4 +171,70 @@ export interface GapFlagSink {
  */
 export interface DraftFindingReader {
   getForAssessment(assessmentId: string): Promise<DraftFinding[]>;
+  /** Loads one persisted draft by id; returns null if not found. */
+  getById(findingId: string): Promise<DraftFinding | null>;
+}
+
+/** The actions an authorized reviewer may take on an AI draft finding. */
+export const REVIEW_ACTIONS = ["accept", "reject", "edit_accept"] as const;
+export type ReviewAction = (typeof REVIEW_ACTIONS)[number];
+
+/**
+ * The resolved outcome of a human review before persistence. Carries the
+ * decision trail fields (original draft, any edits, provenance, content pin) and
+ * the status path the item must follow through the Step 8 state machine.
+ */
+export interface HumanReviewOutcome {
+  readonly action: ReviewAction;
+  readonly assessmentId: string;
+  readonly questionId: string;
+  readonly standardNumber: string;
+  readonly originalDraftSummary: string;
+  /** Non-null only for `edit_accept`. */
+  readonly editedText: string | null;
+  /** Null when the reviewer dismisses the draft (`reject`). */
+  readonly finalConclusion: FinalConclusion | null;
+  /** Rule-12 provenance from the AI draft under review. */
+  readonly provenance: CallProvenance;
+  /** Content pin tying the decision to the exact rubric version. */
+  readonly contentPin: ContentPin;
+  /**
+   * Statuses applied after the initial `ai_flagged → under_human_review` move:
+   * always `[under_human_review, gap_confirmed]` or
+   * `[under_human_review, reviewed_no_gap]`.
+   */
+  readonly statusPath: readonly [ItemStatus, ItemStatus];
+}
+
+/** A reviewer's action on one AI draft finding. */
+export interface HumanReviewInput {
+  readonly findingId: string;
+  readonly action: ReviewAction;
+  /** Required when action is `edit_accept`. */
+  readonly editedConclusion?: string;
+}
+
+/** The result of a completed human review. */
+export interface HumanReviewResult {
+  readonly outcome: HumanReviewOutcome;
+  readonly finalItemStatus: ItemStatus;
+}
+
+/**
+ * Persistence port for the human reviewer workflow. Implemented by the
+ * tenant-scoped, role-checked, auto-audited repository in @eqa/db. This is the
+ * ONLY path that persists a {@link FinalConclusion} — no other store method
+ * constructs or writes one.
+ */
+export interface HumanReviewStore {
+  applyReview(input: HumanReviewInput): Promise<HumanReviewResult>;
+}
+
+/**
+ * Read port for human-owned final conclusions. Implemented by the tenant-scoped
+ * repository in @eqa/db. Only conclusions produced through
+ * {@link HumanReviewStore} are returned.
+ */
+export interface FinalConclusionReader {
+  getForAssessment(assessmentId: string): Promise<FinalConclusion[]>;
 }

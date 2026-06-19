@@ -201,6 +201,51 @@ export const TENANT_MIGRATIONS: readonly TenantMigration[] = [
       )`,
     ],
   },
+  {
+    id: "0009_human_review",
+    statements: (schema) => [
+      // Human review decisions — the full decision trail for every reviewer
+      // action (accept, reject, edit_accept). Records the original AI draft, any
+      // edits, provenance (prompt/rubric version + adapter), and content pin so
+      // AI draft → human decision → final state is reconstructable from the log.
+      // reviewed_at on draft_findings is set when a decision is recorded.
+      `CREATE TABLE IF NOT EXISTS "${schema}".human_review_decisions (
+        decision_id text PRIMARY KEY,
+        finding_id text NOT NULL UNIQUE,
+        assessment_id text NOT NULL,
+        question_id text NOT NULL,
+        standard_number text NOT NULL,
+        review_action text NOT NULL,
+        original_draft_summary text NOT NULL,
+        edited_text text,
+        prompt_version text NOT NULL,
+        rubric_version text NOT NULL,
+        model_adapter text NOT NULL,
+        adapter_location text NOT NULL,
+        content_pack_id text NOT NULL,
+        content_version text NOT NULL,
+        content_hash text NOT NULL,
+        reviewed_by text NOT NULL,
+        reviewed_at text NOT NULL
+      )`,
+      // Final conclusions — only accept / edit_accept outcomes. This is the ONLY
+      // table that stores human-owned final conclusions; rows are written
+      // exclusively by the human-review workflow (Step 11).
+      `CREATE TABLE IF NOT EXISTS "${schema}".final_conclusions (
+        conclusion_id text PRIMARY KEY,
+        decision_id text NOT NULL UNIQUE,
+        finding_id text NOT NULL,
+        assessment_id text NOT NULL,
+        question_id text NOT NULL,
+        standard_number text NOT NULL,
+        conclusion text NOT NULL,
+        reviewed_by text NOT NULL,
+        reviewed_at text NOT NULL
+      )`,
+      `ALTER TABLE "${schema}".draft_findings
+         ADD COLUMN IF NOT EXISTS reviewed_at text`,
+    ],
+  },
 ];
 
 async function ensureLedger(db: Database): Promise<void> {

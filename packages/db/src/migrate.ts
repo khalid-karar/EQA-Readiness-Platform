@@ -105,6 +105,28 @@ export const TENANT_MIGRATIONS: readonly TenantMigration[] = [
       )`,
     ],
   },
+  {
+    id: "0005_assessment_responses",
+    statements: (schema) => [
+      // Questionnaire responses, one current row per (assessment, question).
+      // Each response records the content pin (pack id + version + content hash)
+      // it was answered against, so an answer is permanently tied to the exact
+      // content version that produced it. A surrogate key keeps the upsert simple
+      // and portable.
+      `CREATE TABLE IF NOT EXISTS "${schema}".assessment_responses (
+        response_key text PRIMARY KEY,
+        assessment_id text NOT NULL,
+        question_id text NOT NULL,
+        answer text NOT NULL,
+        note text,
+        content_pack_id text NOT NULL,
+        content_version text NOT NULL,
+        content_hash text NOT NULL,
+        responded_by text NOT NULL,
+        responded_at text NOT NULL
+      )`,
+    ],
+  },
 ];
 
 async function ensureLedger(db: Database): Promise<void> {

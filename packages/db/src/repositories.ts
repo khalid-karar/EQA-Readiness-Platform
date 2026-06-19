@@ -4,6 +4,7 @@ import { MissingTenantContextError } from "@eqa/tenant";
 import type { Database } from "./database";
 import { TenantAuditReader } from "./scoped/audit-reader";
 import { TenantKvRepository } from "./scoped/kv-repository";
+import { TenantResponseRepository } from "./scoped/response-repository";
 import { ScopedExecutor } from "./scoped/scoped-executor";
 import { TenantSecureRepository } from "./scoped/secure-repository";
 import { TenantSettingsRepository } from "./scoped/settings-repository";
@@ -17,6 +18,8 @@ import { TenantSettingsRepository } from "./scoped/settings-repository";
 export interface TenantRepositories {
   readonly kv: TenantKvRepository;
   readonly settings: TenantSettingsRepository;
+  /** Questionnaire responses (the workflow engine's response store). */
+  readonly responses: TenantResponseRepository;
   /** Read-only access to the tenant's immutable, hash-chained audit log. */
   readonly audit: TenantAuditReader;
   /**
@@ -55,11 +58,13 @@ export function createTenantRepositories(
   const repositories: {
     kv: TenantKvRepository;
     settings: TenantSettingsRepository;
+    responses: TenantResponseRepository;
     audit: TenantAuditReader;
     secure?: TenantSecureRepository;
   } = {
     kv: new TenantKvRepository(exec, session),
     settings: new TenantSettingsRepository(exec, session),
+    responses: new TenantResponseRepository(exec, session),
     audit: new TenantAuditReader(exec, session),
   };
   if (options?.cipher) {

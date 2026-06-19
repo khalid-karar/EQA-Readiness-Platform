@@ -1,10 +1,34 @@
 /**
  * @eqa/workflows
  *
- * Assessment lifecycle and state transitions that tie content, responses, and
- * findings together while preserving historical integrity.
+ * The questionnaire engine. Renders the assessment dynamically from the content
+ * model (Domain → Principle → Standard) in English or Arabic, and captures the
+ * tenant's responses per item.
  *
- * Skeleton only — no implementation yet (Step 1).
+ * The engine never touches the database directly: it persists responses through
+ * an injected {@link ResponseStore} (the tenant-scoped, role-checked,
+ * auto-audited repository from @eqa/db). Every response carries the assessment's
+ * content pin, tying each answer to the exact content version that produced it.
  */
 
-export const PACKAGE_NAME = "@eqa/workflows";
+export { renderQuestionnaire } from "./render";
+export { QuestionnaireEngine } from "./engine";
+export {
+  PinContentMismatchError,
+  UnknownQuestionError,
+  WorkflowError,
+} from "./errors";
+export type {
+  AssessmentResponse,
+  AssessmentResponseInput,
+  ChecklistItemView,
+  DomainView,
+  EvidencePromptView,
+  PrincipleView,
+  QuestionnaireView,
+  QuestionView,
+  ResponsePin,
+  ResponseStore,
+  RubricLevelView,
+  StandardView,
+} from "./types";

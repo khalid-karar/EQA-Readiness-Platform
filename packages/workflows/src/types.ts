@@ -1,4 +1,6 @@
 import type { Locale } from "@eqa/content";
+import type { TenantContext } from "@eqa/tenant";
+import type { DraftFinding } from "./findings";
 import type { ItemStatus } from "./state-machine";
 
 /**
@@ -137,4 +139,35 @@ export interface ItemStatusStore {
   transition(input: ItemStatusTransitionInput): Promise<ItemStatusRecord>;
   /** All item status records for an assessment, ordered by question. */
   getForAssessment(assessmentId: string): Promise<ItemStatusRecord[]>;
+}
+
+/**
+ * The data-layer sink for a produced AI draft finding. Implemented in @eqa/db as
+ * a tenant-scoped, system-audited writer: it persists the draft finding AND moves
+ * the item to `ai_flagged` via the state machine ({@link assertTransition}),
+ * both recorded in the tenant's immutable audit log. It is system-side (the AI
+ * job is not a user) but still tenant-isolated and audited, mirroring the
+ * malware-scan status writer. Keeping it a port lets the gap-flagging job stay
+ * free of any database dependency.
+ */
+export interface GapFlagSink {
+  /**
+   * Persists the draft finding and transitions the item to `ai_flagged`. The
+   * transition is validated against the state machine, so it fails closed if the
+   * item is not in a status from which `ai_flagged` is reachable.
+   */
+  recordDraftFinding(
+    tenant: TenantContext,
+    finding: DraftFinding,
+  ): Promise<void>;
+}
+
+/**
+ * Read port for persisted draft findings. Implemented by the tenant-scoped,
+ * role-checked repository in @eqa/db. Findings come back typed as
+ * {@link DraftFinding} (always draft), so a reader cannot mistake one for a final
+ * conclusion.
+ */
+export interface DraftFindingReader {
+  getForAssessment(assessmentId: string): Promise<DraftFinding[]>;
 }

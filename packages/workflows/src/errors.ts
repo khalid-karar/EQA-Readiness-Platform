@@ -26,3 +26,20 @@ export class IllegalStatusTransitionError extends WorkflowError {}
 
 /** Thrown when a value is not one of the known item statuses. */
 export class UnknownItemStatusError extends WorkflowError {}
+
+/**
+ * Thrown when a draft finding (or any non-final value) is asked to be treated as
+ * a final conclusion. AI output is draft work product only (rule 12): a draft can
+ * become a final conclusion ONLY through the human-review workflow (Step 11),
+ * never by reading or coercing the draft. This guard makes the "no draft → final
+ * without human review" rule enforceable at runtime, on top of the type-level
+ * distinction between {@link DraftFinding} and {@link FinalConclusion}.
+ */
+export class NotFinalConclusionError extends WorkflowError {}
+
+/**
+ * Thrown when the standard referenced by a gap-flagging job is not present in the
+ * pinned content pack (a payload/content mismatch). Fails closed so a draft
+ * finding is never produced against content the assessment is not pinned to.
+ */
+export class StandardNotInContentError extends WorkflowError {}

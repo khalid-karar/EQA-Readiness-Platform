@@ -171,6 +171,36 @@ export const TENANT_MIGRATIONS: readonly TenantMigration[] = [
       )`,
     ],
   },
+  {
+    id: "0008_draft_findings",
+    statements: (schema) => [
+      // AI-drafted gap findings, one row per produced draft. A draft is work
+      // product only (rule 12): the row stores the model output, the prompt and
+      // rubric versions, the model adapter + location, the redacted input
+      // summary, and the content pin (pack id + version + hash) so the finding is
+      // permanently tied to the exact rubric version that produced it. status is
+      // always 'draft' here — a draft becomes a final conclusion only through the
+      // Step 11 human-review workflow, never by mutating this row.
+      `CREATE TABLE IF NOT EXISTS "${schema}".draft_findings (
+        finding_id text PRIMARY KEY,
+        assessment_id text NOT NULL,
+        question_id text NOT NULL,
+        standard_number text NOT NULL,
+        draft_summary text NOT NULL,
+        status text NOT NULL DEFAULT 'draft',
+        prompt_version text NOT NULL,
+        rubric_version text NOT NULL,
+        model_adapter text NOT NULL,
+        adapter_location text NOT NULL,
+        input_summary text NOT NULL,
+        content_pack_id text NOT NULL,
+        content_version text NOT NULL,
+        content_hash text NOT NULL,
+        created_by text NOT NULL,
+        created_at text NOT NULL
+      )`,
+    ],
+  },
 ];
 
 async function ensureLedger(db: Database): Promise<void> {

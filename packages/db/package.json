@@ -16,6 +16,7 @@
     "@eqa/ai": "workspace:*",
     "@eqa/audit-log": "workspace:*",
     "@eqa/auth": "workspace:*",
+    "@eqa/content": "workspace:*",
     "@eqa/crypto": "workspace:*",
     "@eqa/jobs": "workspace:*",
     "@eqa/storage": "workspace:*",

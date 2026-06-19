@@ -15,11 +15,36 @@ export { renderQuestionnaire } from "./render";
 export { QuestionnaireEngine } from "./engine";
 export {
   IllegalStatusTransitionError,
+  NotFinalConclusionError,
   PinContentMismatchError,
+  StandardNotInContentError,
   UnknownItemStatusError,
   UnknownQuestionError,
   WorkflowError,
 } from "./errors";
+export {
+  assertFinalConclusion,
+  isDraftFinding,
+  isFinalConclusion,
+  type DraftFinding,
+  type FinalConclusion,
+  type Finding,
+  type FindingKind,
+} from "./findings";
+export {
+  buildGapReviewInput,
+  GAP_FLAG_PROMPT_VERSION,
+  GapFlaggingEngine,
+  type GapFlaggingEngineOptions,
+  type GapFlagEvidence,
+  type GapFlagRequest,
+} from "./gap-flagging";
+export {
+  AI_GAP_FLAG_JOB,
+  createGapFlaggingHandler,
+  type GapFlaggingPayload,
+  type GapFlagJobDeps,
+} from "./gap-flag-job";
 export {
   allowedTransitions,
   assertItemStatus,
@@ -37,7 +62,9 @@ export type {
   AssessmentResponseInput,
   ChecklistItemView,
   DomainView,
+  DraftFindingReader,
   EvidencePromptView,
+  GapFlagSink,
   ItemStatusRecord,
   ItemStatusStore,
   ItemStatusTransitionInput,

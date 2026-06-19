@@ -37,6 +37,8 @@ export {
   createTenantJobAuditPort,
 } from "./evidence-system";
 
+export { createGapFlagSink } from "./gap-flag-system";
+
 // Re-exported for ergonomics: the audit reader returns these types.
 export type { AuditEntry, VerifyResult } from "@eqa/audit-log";
 

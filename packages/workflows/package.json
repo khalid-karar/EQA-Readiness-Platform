@@ -12,6 +12,9 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@eqa/content": "workspace:*"
+    "@eqa/ai": "workspace:*",
+    "@eqa/content": "workspace:*",
+    "@eqa/jobs": "workspace:*",
+    "@eqa/tenant": "workspace:*"
   }
 }

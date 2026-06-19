@@ -113,6 +113,9 @@ importers:
       '@eqa/auth':
         specifier: workspace:*
         version: link:../auth
+      '@eqa/content':
+        specifier: workspace:*
+        version: link:../content
       '@eqa/crypto':
         specifier: workspace:*
         version: link:../crypto
@@ -173,9 +176,18 @@ importers:
 
   packages/workflows:
     dependencies:
+      '@eqa/ai':
+        specifier: workspace:*
+        version: link:../ai
       '@eqa/content':
         specifier: workspace:*
         version: link:../content
+      '@eqa/jobs':
+        specifier: workspace:*
+        version: link:../jobs
+      '@eqa/tenant':
+        specifier: workspace:*
+        version: link:../tenant
 
 packages:
 

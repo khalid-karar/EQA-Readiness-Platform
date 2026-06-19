@@ -58,3 +58,18 @@ export class IllegalReviewStateError extends WorkflowError {}
 
 /** Thrown when a human review input is invalid (e.g. edit_accept without text). */
 export class InvalidReviewInputError extends WorkflowError {}
+
+/** Thrown when a working-paper review references an engagement that does not exist. */
+export class EngagementNotFoundError extends WorkflowError {}
+
+/** Thrown when sampling is attempted on a non-completed engagement. */
+export class EngagementNotCompletedError extends WorkflowError {}
+
+/** Thrown when a working-paper review references a checklist that does not exist. */
+export class ChecklistNotFoundError extends WorkflowError {}
+
+/**
+ * Thrown when a conformance result references a checklist item id that is not in
+ * the pinned Step 5 checklist for that standard.
+ */
+export class ChecklistItemNotFoundError extends WorkflowError {}

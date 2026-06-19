@@ -14,6 +14,10 @@
 export { renderQuestionnaire } from "./render";
 export { QuestionnaireEngine } from "./engine";
 export {
+  ChecklistItemNotFoundError,
+  ChecklistNotFoundError,
+  EngagementNotCompletedError,
+  EngagementNotFoundError,
   IllegalStatusTransitionError,
   DraftAlreadyReviewedError,
   DraftFindingNotFoundError,
@@ -50,6 +54,22 @@ export {
   type GapFlagJobDeps,
 } from "./gap-flag-job";
 export { HumanReviewEngine, resolveHumanReview } from "./human-review";
+export {
+  aggregateEngagementConformance,
+  buildChecklistReviewView,
+  countConformance,
+  WorkingPaperReviewEngine,
+  type AuditFileWithPapers,
+  type ChecklistItemReviewView,
+  type ConformanceCounts,
+  type EngagementConformanceSummary,
+  type EngagementHierarchy,
+  type RecordConformanceInput,
+  type StandardConformanceSummary,
+  type WorkingPaperReviewStore,
+  type WorkingPaperReviewView,
+  type WorkingPaperWithChecklists,
+} from "./working-paper-review";
 export {
   allowedTransitions,
   assertItemStatus,

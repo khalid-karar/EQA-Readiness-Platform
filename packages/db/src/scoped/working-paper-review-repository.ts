@@ -15,6 +15,10 @@ import type {
   SampleSelection,
   WorkingPaper,
 } from "@eqa/content";
+import type {
+  EngagementHierarchy,
+  WorkingPaperReviewStore,
+} from "@eqa/workflows";
 import type { Row } from "../sql-client";
 import { AuditedRepository } from "./audited-repository";
 import type { ScopedExecutor } from "./scoped-executor";
@@ -165,7 +169,10 @@ function toSelection(row: SelectionRow): SampleSelection {
  * Review checklists reference the Step 5 Working-Paper Review Checklist by
  * content pin only — checklist item text is never duplicated in the DB.
  */
-export class TenantWorkingPaperReviewRepository extends AuditedRepository {
+export class TenantWorkingPaperReviewRepository
+  extends AuditedRepository
+  implements WorkingPaperReviewStore
+{
   constructor(exec: ScopedExecutor, session: AuthSession) {
     super(exec, session);
   }
@@ -582,5 +589,62 @@ export class TenantWorkingPaperReviewRepository extends AuditedRepository {
       [engagementId],
     );
     return rows.map(toSelection);
+  }
+
+  // --- WorkingPaperReviewStore port (Step 12 workflow) ---
+
+  /** Alias for {@link createSampleSelection}. */
+  selectSample(input: CreateSampleSelectionInput): Promise<SampleSelection> {
+    return this.createSampleSelection(input);
+  }
+
+  /** Alias for {@link recordChecklistResult}. */
+  recordResult(input: RecordChecklistResultInput): Promise<ChecklistResult> {
+    return this.recordChecklistResult(input);
+  }
+
+  async listSamples(): Promise<SampleSelection[]> {
+    return this.listSampleSelections();
+  }
+
+  async listCompletedEngagements(): Promise<AuditEngagement[]> {
+    const all = await this.listEngagements();
+    return all.filter((e) => e.status === "completed");
+  }
+
+  async listSampleSelections(): Promise<SampleSelection[]> {
+    authorize(this.session, PERMISSIONS.READ);
+    const rows = await this.exec.query<SelectionRow>(
+      `SELECT selection_id, engagement_id, rationale, selected_by, selected_at
+         FROM ${this.exec.table("sample_selections")}
+        ORDER BY selected_at, selection_id`,
+    );
+    return rows.map(toSelection);
+  }
+
+  async getEngagementHierarchy(
+    engagementId: string,
+  ): Promise<EngagementHierarchy | null> {
+    authorize(this.session, PERMISSIONS.READ);
+    const engagement = await this.getEngagement(engagementId);
+    if (!engagement) return null;
+
+    const files = await this.getFilesForEngagement(engagementId);
+    const fileNodes = await Promise.all(
+      files.map(async (file) => {
+        const papers = await this.getWorkingPapersForFile(file.fileId);
+        const paperNodes = await Promise.all(
+          papers.map(async (paper) => ({
+            paper,
+            checklists: await this.getChecklistsForWorkingPaper(
+              paper.workingPaperId,
+            ),
+          })),
+        );
+        return { file, papers: paperNodes };
+      }),
+    );
+
+    return { engagement, files: fileNodes };
   }
 }

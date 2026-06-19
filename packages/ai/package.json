@@ -10,5 +10,9 @@
   },
   "scripts": {
     "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@eqa/jobs": "workspace:*",
+    "@eqa/tenant": "workspace:*"
   }
 }

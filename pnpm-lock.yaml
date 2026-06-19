@@ -67,7 +67,14 @@ importers:
         specifier: ^19.0.2
         version: 19.2.3(@types/react@19.2.17)
 
-  packages/ai: {}
+  packages/ai:
+    dependencies:
+      '@eqa/jobs':
+        specifier: workspace:*
+        version: link:../jobs
+      '@eqa/tenant':
+        specifier: workspace:*
+        version: link:../tenant
 
   packages/audit-log:
     dependencies:
@@ -97,6 +104,9 @@ importers:
 
   packages/db:
     dependencies:
+      '@eqa/ai':
+        specifier: workspace:*
+        version: link:../ai
       '@eqa/audit-log':
         specifier: workspace:*
         version: link:../audit-log

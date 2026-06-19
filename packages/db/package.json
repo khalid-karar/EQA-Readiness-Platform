@@ -13,6 +13,7 @@
     "seed": "tsx src/scripts/seed.ts"
   },
   "dependencies": {
+    "@eqa/ai": "workspace:*",
     "@eqa/audit-log": "workspace:*",
     "@eqa/auth": "workspace:*",
     "@eqa/crypto": "workspace:*",

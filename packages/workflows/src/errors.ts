@@ -85,3 +85,11 @@ export class InvalidRemediationInputError extends WorkflowError {}
 
 /** Thrown when a remediation already exists for the assessment item. */
 export class RemediationAlreadyExistsError extends WorkflowError {}
+
+/**
+ * Thrown when a readiness simulation is asked to be treated as a formal external-
+ * assessor conclusion, or when a formal result is expected but a simulation (or
+ * other value) is supplied. Mock-EQA output cannot be promoted to an official
+ * assessment result.
+ */
+export class NotFormalAssessmentResultError extends WorkflowError {}

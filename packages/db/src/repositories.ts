@@ -1,5 +1,6 @@
 import type { AuthSession } from "@eqa/auth";
 import type { TenantCipher } from "@eqa/crypto";
+import type { JobQueue } from "@eqa/jobs";
 import { MissingTenantContextError } from "@eqa/tenant";
 import type { Database } from "./database";
 import { TenantAuditReader } from "./scoped/audit-reader";
@@ -8,6 +9,7 @@ import { TenantEvidenceRepository } from "./scoped/evidence-repository";
 import { TenantHumanReviewRepository } from "./scoped/human-review-repository";
 import { TenantItemStatusRepository } from "./scoped/item-status-repository";
 import { TenantKvRepository } from "./scoped/kv-repository";
+import { TenantMockEqaRepository } from "./scoped/mock-eqa-repository";
 import { TenantRemediationRepository } from "./scoped/remediation-repository";
 import { TenantResponseRepository } from "./scoped/response-repository";
 import { ScopedExecutor } from "./scoped/scoped-executor";
@@ -38,6 +40,8 @@ export interface TenantRepositories {
   readonly workingPaperReview: TenantWorkingPaperReviewRepository;
   /** Remediation tracker for confirmed gaps. */
   readonly remediation: TenantRemediationRepository;
+  /** Mock-EQA readiness simulations (readiness_simulation only). */
+  readonly mockEqa: TenantMockEqaRepository;
   /** Read-only access to the tenant's immutable, hash-chained audit log. */
   readonly audit: TenantAuditReader;
   /**
@@ -53,6 +57,8 @@ export interface RepositoryOptions {
    * repository for application-level field encryption.
    */
   readonly cipher?: TenantCipher;
+  /** Job queue for background simulations (mock-EQA Step 6.5 job). */
+  readonly jobQueue?: JobQueue;
 }
 
 /**
@@ -83,6 +89,7 @@ export function createTenantRepositories(
     evidence: TenantEvidenceRepository;
     workingPaperReview: TenantWorkingPaperReviewRepository;
     remediation: TenantRemediationRepository;
+    mockEqa: TenantMockEqaRepository;
     audit: TenantAuditReader;
     secure?: TenantSecureRepository;
   } = {
@@ -95,6 +102,7 @@ export function createTenantRepositories(
     evidence: new TenantEvidenceRepository(exec, session),
     workingPaperReview: new TenantWorkingPaperReviewRepository(exec, session),
     remediation: new TenantRemediationRepository(exec, session),
+    mockEqa: new TenantMockEqaRepository(exec, session, options?.jobQueue),
     audit: new TenantAuditReader(exec, session),
   };
   if (options?.cipher) {

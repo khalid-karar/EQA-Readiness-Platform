@@ -21,7 +21,7 @@ const ROLE_OPTIONS: {
 interface ViewControlsProps {
   locale: Locale;
   role: DashboardRole;
-  basePath: "/dashboard" | "/remediation";
+  basePath: "/dashboard" | "/remediation" | "/mock-eqa";
 }
 
 export function ViewControls({
@@ -65,6 +65,15 @@ export function ViewControls({
         >
           <Link href={`/remediation${suffix}`}>
             {locale === "ar" ? "متتبع المعالجة" : "Remediation"}
+          </Link>
+        </Button>
+        <Button
+          size="sm"
+          variant={basePath === "/mock-eqa" ? "default" : "outline"}
+          asChild
+        >
+          <Link href={`/mock-eqa${suffix}`}>
+            {locale === "ar" ? "محاكاة EQA" : "Mock-EQA"}
           </Link>
         </Button>
       </div>

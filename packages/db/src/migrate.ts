@@ -329,6 +329,22 @@ export const TENANT_MIGRATIONS: readonly TenantMigration[] = [
       )`,
     ],
   },
+  {
+    id: "0012_mock_eqa_simulation",
+    statements: (schema) => [
+      `CREATE TABLE IF NOT EXISTS "${schema}".mock_eqa_simulations (
+        simulation_id text PRIMARY KEY,
+        assessment_id text NOT NULL,
+        kind text NOT NULL DEFAULT 'readiness_simulation',
+        overall_score integer NOT NULL,
+        overall_level text NOT NULL,
+        payload_json text NOT NULL,
+        run_by text NOT NULL,
+        run_at text NOT NULL,
+        CHECK (kind = 'readiness_simulation')
+      )`,
+    ],
+  },
 ];
 
 async function ensureLedger(db: Database): Promise<void> {

@@ -25,6 +25,7 @@ export {
   IllegalReviewStateError,
   InvalidRemediationInputError,
   InvalidReviewInputError,
+  NotFormalAssessmentResultError,
   NotFinalConclusionError,
   PinContentMismatchError,
   RemediationAlreadyExistsError,
@@ -78,6 +79,40 @@ export {
   type UpdateRemediationInput,
 } from "./remediation";
 export { createSyntheticRemediationView } from "./synthetic-remediation";
+export {
+  assertFormalAssessmentResult,
+  assertReadinessSimulation,
+} from "./mock-eqa-assessment-result";
+export {
+  MOCK_EQA_SIMULATION_JOB,
+  createMockEqaScoringHandler,
+  type MockEqaScoringJobDeps,
+  type MockEqaScoringLoader,
+  type MockEqaSimulationPayload,
+  type MockEqaSimulationSink,
+} from "./mock-eqa-job";
+export {
+  buildMockEqaSimulationView,
+  computeMockEqaSimulation,
+  isFormalAssessmentResult,
+  isReadinessSimulation,
+  MOCK_EQA_DISCLAIMER,
+  readinessRatingLabel,
+  READINESS_SIMULATION_KIND,
+  FORMAL_ASSESSMENT_RESULT_KIND,
+  type AssessmentResult,
+  type AssessmentResultKind,
+  type DrivingGap,
+  type DrivingGapSource,
+  type FormalAssessmentResult,
+  type MockEqaDomainRating,
+  type MockEqaRating,
+  type MockEqaScoringInput,
+  type MockEqaSimulationResult,
+  type MockEqaSimulationView,
+  type MockEqaStandardRating,
+} from "./mock-eqa-scoring";
+export { createSyntheticMockEqaInput } from "./synthetic-mock-eqa";
 export {
   aggregateEngagementConformance,
   buildChecklistReviewView,

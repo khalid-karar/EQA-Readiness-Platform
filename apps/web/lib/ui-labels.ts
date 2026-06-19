@@ -80,6 +80,54 @@ export const UI_LABELS: LabelSet = {
     en: "Oversight summary. Owner names and target dates are available to operational roles only.",
     ar: "ملخص إشرافي. أسماء المسؤولين والتواريخ المستهدفة متاحة للأدوار التشغيلية فقط.",
   },
+  mockEqaLocation: {
+    en: "Simulated readiness — all domains",
+    ar: "جاهزية محاكية — جميع النطاقات",
+  },
+  mockEqaOverallTitle: {
+    en: "Simulated overall readiness",
+    ar: "الجاهزية الإجمالية المحاكية",
+  },
+  mockEqaOverallHint: {
+    en: "External-assessor-style simulation from item statuses, human-reviewed findings, and working-paper conformance (including unreviewed). Not an official result.",
+    ar: "محاكاة بأسلوب المقيّم الخارجي من حالات العناصر والنتائج المراجَعة ومطابقة أوراق العمل (بما فيها غير المراجَع). ليست نتيجة رسمية.",
+  },
+  mockEqaBreakdownTitle: {
+    en: "Simulated ratings by domain & standard",
+    ar: "درجات محاكية حسب النطاق والمعيار",
+  },
+  mockEqaBreakdownSubtitle: {
+    en: "Click a standard to see the driving gaps behind its simulated rating.",
+    ar: "انقر على معيار لعرض الفجوات المؤثرة في درجته المحاكية.",
+  },
+  mockEqaDrivingGaps: {
+    en: "driving gap(s)",
+    ar: "فجوة/فجوات مؤثرة",
+  },
+  mockEqaNoGaps: {
+    en: "No driving gaps surfaced for this standard",
+    ar: "لا توجد فجوات مؤثرة لهذا المعيار",
+  },
+  mockEqaGapDetailTitle: {
+    en: "Driving gaps",
+    ar: "الفجوات المؤثرة",
+  },
+  mockEqaSelectStandard: {
+    en: "Select a standard to see what drives its simulated rating.",
+    ar: "اختر معياراً لمعرفة ما يؤثر في درجته المحاكية.",
+  },
+  mockEqaRunHint: {
+    en: "CAE and Audit Staff can enqueue a tenant-scoped background simulation (Step 6.5). This demo shows the latest synthetic result.",
+    ar: "يمكن للرئيس التنفيذي للتدقيق وفريق التدقيق تشغيل محاكاة خلفية ضمن المستأجر (الخطوة 6.5). هذا العرض يعرض أحدث نتيجة تجريبية.",
+  },
+  mockEqaRunButton: {
+    en: "Run readiness simulation",
+    ar: "تشغيل محاكاة الجاهزية",
+  },
+  mockEqaBoardHint: {
+    en: "Read-only oversight of the simulated score. Board cannot run simulations.",
+    ar: "إشراف للقراءة فقط على الدرجة المحاكية. لا يمكن للمجلس تشغيل المحاكاة.",
+  },
 };
 
 export function uiLabel(key: keyof typeof UI_LABELS, locale: Locale): string {

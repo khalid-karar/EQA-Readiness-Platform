@@ -30,6 +30,7 @@ describe("public-route allowlist", () => {
     "/auth/sign-in",
     "/dashboard",
     "/remediation",
+    "/mock-eqa",
   ])("treats %s as public", (path) => {
     expect(isPublicRoute(path)).toBe(true);
   });

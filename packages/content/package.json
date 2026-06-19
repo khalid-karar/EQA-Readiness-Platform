@@ -10,5 +10,8 @@
   },
   "scripts": {
     "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@eqa/crypto": "workspace:*"
   }
 }

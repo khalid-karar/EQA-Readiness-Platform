@@ -1,12 +1,44 @@
 /**
  * @eqa/content
  *
- * Config-driven assessment content: questionnaire taxonomy, rubrics, prompts,
- * and checklists loaded from seed files (never hardcoded in logic). Content is
- * versioned and immutable once used in a client assessment, so historical
- * responses and findings are never corrupted by later changes.
+ * Config-driven assessment content: a Domain → Principle → Standard taxonomy
+ * (standards referenced structurally by number + short original title), with
+ * original Questions, Evidence Prompts, a Scoring Rubric, and a Working-Paper
+ * Review Checklist per standard. All fields are bilingual (English + Arabic).
  *
- * Skeleton only — no implementation yet (Step 1).
+ * Content is never hardcoded in logic — it is loaded from versioned seed files
+ * and validated at load time. Each `(contentPackId, version)` is an immutable
+ * snapshot; assessments pin a version so changing content later cannot alter
+ * historical responses or findings (see {@link ContentCatalog}).
  */
 
-export const PACKAGE_NAME = "@eqa/content";
+export {
+  ContentError,
+  ContentNotFoundError,
+  ContentPinMismatchError,
+  ContentValidationError,
+  ContentVersionImmutableError,
+} from "./errors";
+
+export type {
+  ApprovalStatus,
+  ChangelogEntry,
+  ChecklistItem,
+  ContentPack,
+  Domain,
+  EvidencePrompt,
+  GovernanceMetadata,
+  Locale,
+  LocalizedText,
+  Principle,
+  Question,
+  RubricLevel,
+  ScoringRubric,
+  Standard,
+} from "./types";
+
+export { localize } from "./localize";
+export { loadContentPack, loadContentPacksFromDir } from "./loader";
+export { validateContentPack, type ValidatedPack } from "./validate";
+export { ContentCatalog, type ContentPin } from "./catalog";
+export { bundledSeedsDir, loadBundledCatalog } from "./seeds";

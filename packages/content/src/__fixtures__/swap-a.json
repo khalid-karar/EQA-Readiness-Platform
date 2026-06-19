@@ -1,0 +1,54 @@
+{
+  "taxonomy_version": "IIA-GIAS-2024",
+  "content_pack": "swap-demo",
+  "version": "1.0.0",
+  "author": "synthetic",
+  "reviewer": "synthetic",
+  "approval_status": "draft",
+  "effective_date": "2026-01-01",
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-01-01",
+      "author": "synthetic",
+      "summary": { "en": "seed a", "ar": "البذرة أ" }
+    }
+  ],
+  "domains": [
+    {
+      "id": "D1",
+      "number": "I",
+      "title": { "en": "Alpha Domain", "ar": "نطاق ألفا" },
+      "principles": [
+        {
+          "id": "P1",
+          "number": "1",
+          "title": { "en": "Alpha Principle", "ar": "مبدأ ألفا" },
+          "standards": [
+            {
+              "number": "1.1",
+              "title": { "en": "Alpha Standard", "ar": "معيار ألفا" },
+              "questions": [
+                {
+                  "id": "Q1",
+                  "text": { "en": "Alpha question", "ar": "سؤال ألفا" }
+                }
+              ],
+              "evidence_prompts": [],
+              "scoring_rubric": {
+                "levels": [
+                  {
+                    "level": 0,
+                    "label": { "en": "Not met", "ar": "غير مستوفى" },
+                    "descriptor": { "en": "none", "ar": "لا شيء" }
+                  }
+                ]
+              },
+              "review_checklist": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

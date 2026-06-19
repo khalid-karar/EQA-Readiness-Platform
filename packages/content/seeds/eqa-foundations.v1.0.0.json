@@ -1,0 +1,355 @@
+{
+  "taxonomy_version": "IIA-GIAS-2024",
+  "content_pack": "eqa-foundations",
+  "version": "1.0.0",
+  "author": "EQA Content Team (synthetic)",
+  "reviewer": "EQA Methodology Review (synthetic)",
+  "approval_status": "approved",
+  "effective_date": "2026-01-01",
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-01-01",
+      "author": "EQA Content Team (synthetic)",
+      "summary": {
+        "en": "Initial synthetic placeholder pack for the foundations domain.",
+        "ar": "الإصدار الأولي التجريبي لمحتوى نطاق الأسس."
+      }
+    }
+  ],
+  "domains": [
+    {
+      "id": "D1",
+      "number": "I",
+      "title": {
+        "en": "Purpose-Driven Internal Auditing",
+        "ar": "التدقيق الداخلي الموجَّه بالغرض"
+      },
+      "principles": [
+        {
+          "id": "P1",
+          "number": "1",
+          "title": {
+            "en": "Demonstrate Integrity",
+            "ar": "إظهار النزاهة"
+          },
+          "standards": [
+            {
+              "number": "1.1",
+              "title": {
+                "en": "Ethical Expectations",
+                "ar": "التوقعات الأخلاقية"
+              },
+              "questions": [
+                {
+                  "id": "Q-1-1-1",
+                  "text": {
+                    "en": "Does the internal audit function maintain a documented code of ethics aligned with its mandate?",
+                    "ar": "هل تحتفظ وظيفة التدقيق الداخلي بميثاق أخلاقي موثَّق يتوافق مع تفويضها؟"
+                  }
+                },
+                {
+                  "id": "Q-1-1-2",
+                  "text": {
+                    "en": "How is acknowledgement of ethical expectations evidenced for each team member?",
+                    "ar": "كيف يتم إثبات إقرار كل عضو في الفريق بالتوقعات الأخلاقية؟"
+                  }
+                }
+              ],
+              "evidence_prompts": [
+                {
+                  "id": "E-1-1-1",
+                  "text": {
+                    "en": "Provide the current code of ethics and its most recent approval date.",
+                    "ar": "قدِّم الميثاق الأخلاقي الحالي وتاريخ آخر اعتماد له."
+                  }
+                },
+                {
+                  "id": "E-1-1-2",
+                  "text": {
+                    "en": "Provide signed acknowledgements from the current audit team.",
+                    "ar": "قدِّم الإقرارات الموقَّعة من أعضاء فريق التدقيق الحاليين."
+                  }
+                }
+              ],
+              "scoring_rubric": {
+                "levels": [
+                  {
+                    "level": 0,
+                    "label": { "en": "Not met", "ar": "غير مستوفى" },
+                    "descriptor": {
+                      "en": "No documented ethical expectations exist.",
+                      "ar": "لا توجد توقعات أخلاقية موثَّقة."
+                    }
+                  },
+                  {
+                    "level": 1,
+                    "label": { "en": "Partially met", "ar": "مستوفى جزئياً" },
+                    "descriptor": {
+                      "en": "Expectations exist but are not consistently acknowledged.",
+                      "ar": "توجد توقعات لكنها غير مُقَرّة بشكل متسق."
+                    }
+                  },
+                  {
+                    "level": 2,
+                    "label": {
+                      "en": "Largely met",
+                      "ar": "مستوفى إلى حد كبير"
+                    },
+                    "descriptor": {
+                      "en": "Expectations documented and acknowledged, with minor gaps.",
+                      "ar": "التوقعات موثَّقة ومُقَرّة مع وجود فجوات طفيفة."
+                    }
+                  },
+                  {
+                    "level": 3,
+                    "label": { "en": "Fully met", "ar": "مستوفى بالكامل" },
+                    "descriptor": {
+                      "en": "Expectations documented, acknowledged, and periodically reaffirmed.",
+                      "ar": "التوقعات موثَّقة ومُقَرّة ويُعاد تأكيدها دورياً."
+                    }
+                  }
+                ]
+              },
+              "review_checklist": [
+                {
+                  "id": "C-1-1-1",
+                  "text": {
+                    "en": "Confirm the code of ethics is the version effective during the period reviewed.",
+                    "ar": "تأكَّد من أن الميثاق الأخلاقي هو النسخة السارية خلال الفترة المراجَعة."
+                  }
+                },
+                {
+                  "id": "C-1-1-2",
+                  "text": {
+                    "en": "Confirm acknowledgements cover all individuals active in the period.",
+                    "ar": "تأكَّد من أن الإقرارات تشمل جميع الأفراد العاملين خلال الفترة."
+                  }
+                },
+                {
+                  "id": "C-1-1-3",
+                  "text": {
+                    "en": "Confirm exceptions, if any, were escalated and resolved.",
+                    "ar": "تأكَّد من أن الاستثناءات، إن وُجدت، تم تصعيدها ومعالجتها."
+                  }
+                }
+              ]
+            },
+            {
+              "number": "1.2",
+              "title": {
+                "en": "Individual Objectivity",
+                "ar": "الموضوعية الفردية"
+              },
+              "questions": [
+                {
+                  "id": "Q-1-2-1",
+                  "text": {
+                    "en": "How does the function identify and manage threats to individual objectivity?",
+                    "ar": "كيف تحدِّد الوظيفة التهديدات للموضوعية الفردية وتديرها؟"
+                  }
+                },
+                {
+                  "id": "Q-1-2-2",
+                  "text": {
+                    "en": "Are conflict-of-interest declarations collected and reviewed at defined intervals?",
+                    "ar": "هل يتم جمع إقرارات تضارب المصالح ومراجعتها على فترات محددة؟"
+                  }
+                }
+              ],
+              "evidence_prompts": [
+                {
+                  "id": "E-1-2-1",
+                  "text": {
+                    "en": "Provide the conflict-of-interest declaration process and a recent sample.",
+                    "ar": "قدِّم إجراء إقرار تضارب المصالح مع نموذج حديث."
+                  }
+                },
+                {
+                  "id": "E-1-2-2",
+                  "text": {
+                    "en": "Provide evidence of how an objectivity threat was handled in the period.",
+                    "ar": "قدِّم دليلاً على كيفية معالجة أحد تهديدات الموضوعية خلال الفترة."
+                  }
+                }
+              ],
+              "scoring_rubric": {
+                "levels": [
+                  {
+                    "level": 0,
+                    "label": { "en": "Not met", "ar": "غير مستوفى" },
+                    "descriptor": {
+                      "en": "No process to manage objectivity threats.",
+                      "ar": "لا يوجد إجراء لإدارة تهديدات الموضوعية."
+                    }
+                  },
+                  {
+                    "level": 1,
+                    "label": { "en": "Partially met", "ar": "مستوفى جزئياً" },
+                    "descriptor": {
+                      "en": "Process exists but is applied inconsistently.",
+                      "ar": "يوجد إجراء لكنه يُطبَّق بشكل غير متسق."
+                    }
+                  },
+                  {
+                    "level": 2,
+                    "label": {
+                      "en": "Largely met",
+                      "ar": "مستوفى إلى حد كبير"
+                    },
+                    "descriptor": {
+                      "en": "Process applied with documented declarations and minor gaps.",
+                      "ar": "يُطبَّق الإجراء مع إقرارات موثَّقة ووجود فجوات طفيفة."
+                    }
+                  },
+                  {
+                    "level": 3,
+                    "label": { "en": "Fully met", "ar": "مستوفى بالكامل" },
+                    "descriptor": {
+                      "en": "Threats actively identified, declared, and mitigated with oversight.",
+                      "ar": "تُحدَّد التهديدات وتُعلَن وتُعالَج بفاعلية مع وجود رقابة."
+                    }
+                  }
+                ]
+              },
+              "review_checklist": [
+                {
+                  "id": "C-1-2-1",
+                  "text": {
+                    "en": "Confirm declarations exist for all assignments in scope.",
+                    "ar": "تأكَّد من وجود إقرارات لجميع المهام ضمن النطاق."
+                  }
+                },
+                {
+                  "id": "C-1-2-2",
+                  "text": {
+                    "en": "Confirm identified threats were assessed and mitigated.",
+                    "ar": "تأكَّد من أن التهديدات المحددة تم تقييمها ومعالجتها."
+                  }
+                },
+                {
+                  "id": "C-1-2-3",
+                  "text": {
+                    "en": "Confirm review evidence is retained in the working papers.",
+                    "ar": "تأكَّد من الاحتفاظ بأدلة المراجعة ضمن أوراق العمل."
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P2",
+          "number": "2",
+          "title": {
+            "en": "Maintain Objectivity at the Function Level",
+            "ar": "الحفاظ على الموضوعية على مستوى الوظيفة"
+          },
+          "standards": [
+            {
+              "number": "2.1",
+              "title": {
+                "en": "Organizational Independence",
+                "ar": "الاستقلالية التنظيمية"
+              },
+              "questions": [
+                {
+                  "id": "Q-2-1-1",
+                  "text": {
+                    "en": "Does the chief audit executive have a functional reporting line to the board or audit committee?",
+                    "ar": "هل يتبع الرئيس التنفيذي للتدقيق وظيفياً للمجلس أو لجنة التدقيق؟"
+                  }
+                },
+                {
+                  "id": "Q-2-1-2",
+                  "text": {
+                    "en": "Is the audit budget free from undue management influence?",
+                    "ar": "هل تُعدُّ ميزانية التدقيق متحررة من تأثير الإدارة غير المبرر؟"
+                  }
+                }
+              ],
+              "evidence_prompts": [
+                {
+                  "id": "E-2-1-1",
+                  "text": {
+                    "en": "Provide the internal audit charter showing reporting lines.",
+                    "ar": "قدِّم ميثاق التدقيق الداخلي موضِّحاً خطوط التبعية."
+                  }
+                },
+                {
+                  "id": "E-2-1-2",
+                  "text": {
+                    "en": "Provide minutes evidencing board approval of the audit plan and budget.",
+                    "ar": "قدِّم محاضر تُثبت اعتماد المجلس لخطة التدقيق والميزانية."
+                  }
+                }
+              ],
+              "scoring_rubric": {
+                "levels": [
+                  {
+                    "level": 0,
+                    "label": { "en": "Not met", "ar": "غير مستوفى" },
+                    "descriptor": {
+                      "en": "No functional reporting line to the board.",
+                      "ar": "لا يوجد خط تبعية وظيفي للمجلس."
+                    }
+                  },
+                  {
+                    "level": 1,
+                    "label": { "en": "Partially met", "ar": "مستوفى جزئياً" },
+                    "descriptor": {
+                      "en": "Reporting line exists in charter but is not exercised in practice.",
+                      "ar": "خط التبعية موجود في الميثاق لكنه غير مُفعَّل عملياً."
+                    }
+                  },
+                  {
+                    "level": 2,
+                    "label": {
+                      "en": "Largely met",
+                      "ar": "مستوفى إلى حد كبير"
+                    },
+                    "descriptor": {
+                      "en": "Functional reporting exercised with minor budget constraints.",
+                      "ar": "التبعية الوظيفية مُفعَّلة مع قيود طفيفة في الميزانية."
+                    }
+                  },
+                  {
+                    "level": 3,
+                    "label": { "en": "Fully met", "ar": "مستوفى بالكامل" },
+                    "descriptor": {
+                      "en": "Independent functional reporting with board-approved resourcing.",
+                      "ar": "تبعية وظيفية مستقلة مع موارد معتمدة من المجلس."
+                    }
+                  }
+                ]
+              },
+              "review_checklist": [
+                {
+                  "id": "C-2-1-1",
+                  "text": {
+                    "en": "Confirm the charter version reviewed was board-approved.",
+                    "ar": "تأكَّد من أن نسخة الميثاق المراجَعة معتمدة من المجلس."
+                  }
+                },
+                {
+                  "id": "C-2-1-2",
+                  "text": {
+                    "en": "Confirm reporting lines operate as described in practice.",
+                    "ar": "تأكَّد من أن خطوط التبعية تعمل عملياً كما هو موصوف."
+                  }
+                },
+                {
+                  "id": "C-2-1-3",
+                  "text": {
+                    "en": "Confirm budget decisions are documented and board-approved.",
+                    "ar": "تأكَّد من أن قرارات الميزانية موثَّقة ومعتمدة من المجلس."
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

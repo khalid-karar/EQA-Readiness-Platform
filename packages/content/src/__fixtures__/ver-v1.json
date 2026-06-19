@@ -1,0 +1,54 @@
+{
+  "taxonomy_version": "IIA-GIAS-2024",
+  "content_pack": "ver-demo",
+  "version": "1.0.0",
+  "author": "synthetic",
+  "reviewer": "synthetic",
+  "approval_status": "approved",
+  "effective_date": "2026-01-01",
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-01-01",
+      "author": "synthetic",
+      "summary": { "en": "initial", "ar": "أولي" }
+    }
+  ],
+  "domains": [
+    {
+      "id": "D1",
+      "number": "I",
+      "title": { "en": "Domain", "ar": "نطاق" },
+      "principles": [
+        {
+          "id": "P1",
+          "number": "1",
+          "title": { "en": "Principle", "ar": "مبدأ" },
+          "standards": [
+            {
+              "number": "1.1",
+              "title": { "en": "Standard", "ar": "معيار" },
+              "questions": [
+                {
+                  "id": "Q1",
+                  "text": { "en": "Original question", "ar": "السؤال الأصلي" }
+                }
+              ],
+              "evidence_prompts": [],
+              "scoring_rubric": {
+                "levels": [
+                  {
+                    "level": 0,
+                    "label": { "en": "Not met", "ar": "غير مستوفى" },
+                    "descriptor": { "en": "none", "ar": "لا شيء" }
+                  }
+                ]
+              },
+              "review_checklist": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

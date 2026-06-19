@@ -87,7 +87,11 @@ importers:
         specifier: ^5.9.6
         version: 5.10.0
 
-  packages/content: {}
+  packages/content:
+    dependencies:
+      '@eqa/crypto':
+        specifier: workspace:*
+        version: link:../crypto
 
   packages/crypto: {}
 

@@ -71,6 +71,30 @@ export {
   type WorkingPaperWithChecklists,
 } from "./working-paper-review";
 export {
+  buildDashboardView,
+  buildPendingActions,
+  computeAssessmentProgress,
+  computeOverallReadiness,
+  computeStandardReadiness,
+  isSummaryView,
+  ROLE_LABELS,
+  UX_STATUS_LABELS,
+  uxStatusLabel,
+  uxStatusLevel,
+  type AssessmentProgress,
+  type DashboardInput,
+  type DashboardRole,
+  type DashboardView,
+  type HeatMapCell,
+  type HeatMapDomain,
+  type HeatMapPrinciple,
+  type OverallReadiness,
+  type PendingAction,
+  type ReadinessLevel,
+  type StandardPhase,
+} from "./readiness-dashboard";
+export { createSyntheticDashboardInput } from "./synthetic-dashboard";
+export {
   allowedTransitions,
   assertItemStatus,
   assertTransition,

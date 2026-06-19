@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Hide the Next.js dev-route indicator (floating "N" bottom-left) during local
+  // UI review; errors still surface via the compile/runtime overlay.
+  devIndicators: false,
   // Shared workspace packages ship as TypeScript source and are compiled by the
   // app. List them here as they begin to be consumed by feature code.
   transpilePackages: [

@@ -22,14 +22,18 @@ function directoryWith(...tenants: TenantDescriptor[]): TenantDirectory {
 }
 
 describe("public-route allowlist", () => {
-  it.each(["/", "/health", "/api/health", "/auth", "/auth/sign-in"])(
-    "treats %s as public",
-    (path) => {
-      expect(isPublicRoute(path)).toBe(true);
-    },
-  );
+  it.each([
+    "/",
+    "/health",
+    "/api/health",
+    "/auth",
+    "/auth/sign-in",
+    "/dashboard",
+  ])("treats %s as public", (path) => {
+    expect(isPublicRoute(path)).toBe(true);
+  });
 
-  it.each(["/assessments", "/api/tenants/x", "/dashboard"])(
+  it.each(["/assessments", "/api/tenants/x"])(
     "treats %s as tenant-scoped",
     (path) => {
       expect(isPublicRoute(path)).toBe(false);
@@ -61,7 +65,7 @@ describe("resolveTenantContext", () => {
 
   it("resolves an active tenant on a scoped route", async () => {
     const result = await resolveTenantContext(
-      { pathname: "/dashboard", tenantSlug: "seera-pilot" },
+      { pathname: "/assessments", tenantSlug: "seera-pilot" },
       directoryWith(seera),
     );
     expect(result).toEqual({
@@ -77,14 +81,14 @@ describe("resolveTenantContext", () => {
 
   it("throws when a scoped route carries no tenant identifier", async () => {
     await expect(
-      resolveTenantContext({ pathname: "/dashboard" }, directoryWith(seera)),
+      resolveTenantContext({ pathname: "/assessments" }, directoryWith(seera)),
     ).rejects.toBeInstanceOf(TenantNotResolvedError);
   });
 
   it("throws for an unknown tenant", async () => {
     await expect(
       resolveTenantContext(
-        { pathname: "/dashboard", tenantSlug: "ghost" },
+        { pathname: "/assessments", tenantSlug: "ghost" },
         directoryWith(seera),
       ),
     ).rejects.toBeInstanceOf(TenantNotResolvedError);

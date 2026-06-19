@@ -69,6 +69,11 @@ data, backup, key material, or log may leave KSA.
 - [ ] CI secret scanning (gitleaks) remains green; no secret material is ever
       committed.
 
+## 6. Application routes & auth (before real data)
+
+- [ ] Remove `/dashboard` from the public-route allowlist (`packages/tenant/src/public-routes.ts`) and require authenticated tenant-bound access before any real client data is shown.
+- [ ] Demo locale/role switchers are dev-only or removed in production builds.
+
 ---
 
 ### Sign-off

@@ -16,6 +16,7 @@ export const PUBLIC_ROUTE_PATTERNS: readonly RegExp[] = [
   /^\/$/,
   /^\/health$/,
   /^\/api\/health$/,
+  /^\/dashboard(?:\/.*)?$/,
   /^\/auth(?:\/.*)?$/,
 ];
 

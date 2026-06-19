@@ -32,6 +32,11 @@ export {
   type TenantRepositories,
 } from "./repositories";
 
+export {
+  createEvidenceScanStatusWriter,
+  createTenantJobAuditPort,
+} from "./evidence-system";
+
 // Re-exported for ergonomics: the audit reader returns these types.
 export type { AuditEntry, VerifyResult } from "@eqa/audit-log";
 

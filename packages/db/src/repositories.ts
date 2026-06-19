@@ -3,6 +3,7 @@ import type { TenantCipher } from "@eqa/crypto";
 import { MissingTenantContextError } from "@eqa/tenant";
 import type { Database } from "./database";
 import { TenantAuditReader } from "./scoped/audit-reader";
+import { TenantEvidenceRepository } from "./scoped/evidence-repository";
 import { TenantKvRepository } from "./scoped/kv-repository";
 import { TenantResponseRepository } from "./scoped/response-repository";
 import { ScopedExecutor } from "./scoped/scoped-executor";
@@ -20,6 +21,8 @@ export interface TenantRepositories {
   readonly settings: TenantSettingsRepository;
   /** Questionnaire responses (the workflow engine's response store). */
   readonly responses: TenantResponseRepository;
+  /** Evidence file metadata (the storage layer's evidence store). */
+  readonly evidence: TenantEvidenceRepository;
   /** Read-only access to the tenant's immutable, hash-chained audit log. */
   readonly audit: TenantAuditReader;
   /**
@@ -59,12 +62,14 @@ export function createTenantRepositories(
     kv: TenantKvRepository;
     settings: TenantSettingsRepository;
     responses: TenantResponseRepository;
+    evidence: TenantEvidenceRepository;
     audit: TenantAuditReader;
     secure?: TenantSecureRepository;
   } = {
     kv: new TenantKvRepository(exec, session),
     settings: new TenantSettingsRepository(exec, session),
     responses: new TenantResponseRepository(exec, session),
+    evidence: new TenantEvidenceRepository(exec, session),
     audit: new TenantAuditReader(exec, session),
   };
   if (options?.cipher) {

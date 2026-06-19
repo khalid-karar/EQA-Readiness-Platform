@@ -16,6 +16,8 @@
     "@eqa/audit-log": "workspace:*",
     "@eqa/auth": "workspace:*",
     "@eqa/crypto": "workspace:*",
+    "@eqa/jobs": "workspace:*",
+    "@eqa/storage": "workspace:*",
     "@eqa/tenant": "workspace:*",
     "@eqa/workflows": "workspace:*",
     "pg": "^8.13.1"

@@ -103,6 +103,17 @@ describe("TenantCipher", () => {
     expect(sealed).not.toContain("123-45-6789");
     expect(await cipher.open(sealed)).toBe("123-45-6789");
   });
+
+  it("seals and opens raw file bytes (encryption at rest)", async () => {
+    const kms = new LocalKms(masterKey());
+    const { encrypted } = await kms.generateDataKey();
+    const cipher = new TenantCipher(kms, encrypted);
+
+    const plaintext = Buffer.from("PDF\x00\x01 synthetic evidence bytes");
+    const sealed = await cipher.sealBytes(plaintext);
+    expect(sealed.equals(plaintext)).toBe(false);
+    expect((await cipher.openBytes(sealed)).equals(plaintext)).toBe(true);
+  });
 });
 
 describe("hash helpers", () => {

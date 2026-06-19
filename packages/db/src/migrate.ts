@@ -127,6 +127,32 @@ export const TENANT_MIGRATIONS: readonly TenantMigration[] = [
       )`,
     ],
   },
+  {
+    id: "0006_evidence",
+    statements: (schema) => [
+      // Evidence file metadata, one row per (evidence_id, version). The encrypted
+      // bytes live in the object store (keyed by object_key); this table never
+      // holds plaintext file content. scan_status gates downloadability: a file
+      // is 'quarantined' on upload and only 'clean' after the malware-scan job
+      // succeeds. links is a JSON array of standard/question ids.
+      `CREATE TABLE IF NOT EXISTS "${schema}".evidence (
+        evidence_id text NOT NULL,
+        version integer NOT NULL,
+        version_hash text NOT NULL,
+        content_hash text NOT NULL,
+        file_name text NOT NULL,
+        content_type text NOT NULL,
+        size_bytes integer NOT NULL,
+        links text NOT NULL,
+        scan_status text NOT NULL DEFAULT 'quarantined',
+        scanner text,
+        object_key text NOT NULL,
+        uploaded_by text NOT NULL,
+        uploaded_at text NOT NULL,
+        PRIMARY KEY (evidence_id, version)
+      )`,
+    ],
+  },
 ];
 
 async function ensureLedger(db: Database): Promise<void> {

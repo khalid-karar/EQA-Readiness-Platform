@@ -1,4 +1,5 @@
 import {
+  decryptWithDataKey,
   decryptWithDataKeyToString,
   encryptWithDataKey,
   withDataKey,
@@ -28,6 +29,24 @@ export class TenantCipher {
   open(ciphertext: string): Promise<string> {
     return withDataKey(this.kms, this.encryptedDataKey, (dataKey) =>
       decryptWithDataKeyToString(dataKey, ciphertext),
+    );
+  }
+
+  /**
+   * Encrypts raw bytes (e.g. an uploaded file) at rest with the per-tenant data
+   * key, returning ciphertext bytes to store in the object store. The plaintext
+   * data key is unwrapped, used, and zeroed within the operation.
+   */
+  sealBytes(plaintext: Buffer): Promise<Buffer> {
+    return withDataKey(this.kms, this.encryptedDataKey, (dataKey) =>
+      Buffer.from(encryptWithDataKey(dataKey, plaintext), "base64"),
+    );
+  }
+
+  /** Reverses {@link sealBytes}, returning the original plaintext bytes. */
+  openBytes(ciphertext: Buffer): Promise<Buffer> {
+    return withDataKey(this.kms, this.encryptedDataKey, (dataKey) =>
+      decryptWithDataKey(dataKey, ciphertext.toString("base64")),
     );
   }
 }

@@ -8,6 +8,7 @@ import { TenantEvidenceRepository } from "./scoped/evidence-repository";
 import { TenantHumanReviewRepository } from "./scoped/human-review-repository";
 import { TenantItemStatusRepository } from "./scoped/item-status-repository";
 import { TenantKvRepository } from "./scoped/kv-repository";
+import { TenantRemediationRepository } from "./scoped/remediation-repository";
 import { TenantResponseRepository } from "./scoped/response-repository";
 import { ScopedExecutor } from "./scoped/scoped-executor";
 import { TenantSecureRepository } from "./scoped/secure-repository";
@@ -35,6 +36,8 @@ export interface TenantRepositories {
   readonly evidence: TenantEvidenceRepository;
   /** Working-paper review entities (engagement → file → paper → checklist). */
   readonly workingPaperReview: TenantWorkingPaperReviewRepository;
+  /** Remediation tracker for confirmed gaps. */
+  readonly remediation: TenantRemediationRepository;
   /** Read-only access to the tenant's immutable, hash-chained audit log. */
   readonly audit: TenantAuditReader;
   /**
@@ -79,6 +82,7 @@ export function createTenantRepositories(
     humanReview: TenantHumanReviewRepository;
     evidence: TenantEvidenceRepository;
     workingPaperReview: TenantWorkingPaperReviewRepository;
+    remediation: TenantRemediationRepository;
     audit: TenantAuditReader;
     secure?: TenantSecureRepository;
   } = {
@@ -90,6 +94,7 @@ export function createTenantRepositories(
     humanReview: new TenantHumanReviewRepository(exec, session),
     evidence: new TenantEvidenceRepository(exec, session),
     workingPaperReview: new TenantWorkingPaperReviewRepository(exec, session),
+    remediation: new TenantRemediationRepository(exec, session),
     audit: new TenantAuditReader(exec, session),
   };
   if (options?.cipher) {

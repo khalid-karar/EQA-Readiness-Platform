@@ -73,3 +73,15 @@ export class ChecklistNotFoundError extends WorkflowError {}
  * the pinned Step 5 checklist for that standard.
  */
 export class ChecklistItemNotFoundError extends WorkflowError {}
+
+/** Thrown when a remediation record does not exist. */
+export class RemediationNotFoundError extends WorkflowError {}
+
+/** Thrown when remediation is attempted in an illegal item status. */
+export class IllegalRemediationStateError extends WorkflowError {}
+
+/** Thrown when remediation input is invalid. */
+export class InvalidRemediationInputError extends WorkflowError {}
+
+/** Thrown when a remediation already exists for the assessment item. */
+export class RemediationAlreadyExistsError extends WorkflowError {}

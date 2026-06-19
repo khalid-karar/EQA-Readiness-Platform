@@ -308,6 +308,27 @@ export const TENANT_MIGRATIONS: readonly TenantMigration[] = [
       )`,
     ],
   },
+  {
+    id: "0011_remediation_tracker",
+    statements: (schema) => [
+      `CREATE TABLE IF NOT EXISTS "${schema}".remediation_items (
+        remediation_id text PRIMARY KEY,
+        assessment_id text NOT NULL,
+        question_id text NOT NULL,
+        standard_number text NOT NULL,
+        action text NOT NULL,
+        owner text NOT NULL,
+        target_date text NOT NULL,
+        created_by text NOT NULL,
+        created_at text NOT NULL,
+        updated_by text NOT NULL,
+        updated_at text NOT NULL,
+        closed_at text,
+        retest_note text,
+        UNIQUE (assessment_id, question_id)
+      )`,
+    ],
+  },
 ];
 
 async function ensureLedger(db: Database): Promise<void> {

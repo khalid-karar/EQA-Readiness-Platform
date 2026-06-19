@@ -10,6 +10,10 @@ export const UI_LABELS: LabelSet = {
   summaryView: { en: "Summary view", ar: "عرض ملخص" },
   detailView: { en: "Detail view", ar: "عرض تفصيلي" },
   progressTitle: { en: "Assessment progress", ar: "تقدم التقييم" },
+  progressMetricHint: {
+    en: "How many standards are fully complete — a different measure than overall readiness.",
+    ar: "عدد المعايير المكتملة بالكامل — مقياس مختلف عن الجاهزية الإجمالية.",
+  },
   whatsNext: { en: "What's next", ar: "الخطوة التالية" },
   whatsNextEmpty: {
     en: "No pending actions — you're caught up.",
@@ -21,8 +25,8 @@ export const UI_LABELS: LabelSet = {
   },
   readinessTitle: { en: "Overall readiness", ar: "الجاهزية الإجمالية" },
   readinessHint: {
-    en: "Based on assessment statuses, reviewed findings, and working-paper conformance (including unreviewed items).",
-    ar: "استناداً إلى حالات التقييم، والنتائج المراجَعة، ومطابقة أوراق العمل (بما في ذلك البنود غير المراجَعة).",
+    en: "Weighted conformance across all standards (statuses, findings, and working-paper review including unreviewed items) — not the same as completion % in the sidebar.",
+    ar: "مطابقة مرجّحة عبر جميع المعايير (الحالات، والنتائج، ومراجعة أوراق العمل بما فيها غير المراجَع) — ليست نفس نسبة الإكمال في الشريط الجانبي.",
   },
   heatMapTitle: { en: "Conformance heat map", ar: "خريطة حرارية للمطابقة" },
   heatMapSubtitle: {
@@ -44,6 +48,38 @@ export const UI_LABELS: LabelSet = {
   total: { en: "Total", ar: "الإجمالي" },
   readiness: { en: "Readiness", ar: "الجاهزية" },
   wpReview: { en: "Working-paper review", ar: "مراجعة أوراق العمل" },
+  remediationTitle: { en: "Remediation tracker", ar: "متتبع المعالجة" },
+  remediationLocation: {
+    en: "Confirmed gaps — remediation status",
+    ar: "الفجوات المؤكدة — حالة المعالجة",
+  },
+  openGaps: { en: "Open gaps", ar: "فجوات مفتوحة" },
+  overdue: { en: "Overdue", ar: "متأخر" },
+  onTrack: { en: "On track", ar: "في الموعد" },
+  schedule: { en: "Schedule", ar: "الموعد" },
+  owner: { en: "Owner", ar: "المسؤول" },
+  targetDate: { en: "Target date", ar: "التاريخ المستهدف" },
+  action: { en: "Remediation action", ar: "إجراء المعالجة" },
+  standard: { en: "Standard", ar: "المعيار" },
+  status: { en: "Status", ar: "الحالة" },
+  closed: { en: "Closed", ar: "مغلق" },
+  daysOverdue: { en: "days overdue", ar: "يوم متأخر" },
+  remediationSummaryHint: {
+    en: "Read-only oversight view. Operational roles can update remediation items.",
+    ar: "عرض إشرافي للقراءة فقط. الأدوار التشغيلية يمكنها تحديث بنود المعالجة.",
+  },
+  selectRowHint: {
+    en: "Click a row for detail. Operational roles can advance status in a future build.",
+    ar: "انقر على صف للتفاصيل. الأدوار التشغيلية ستتمكن من تقديم الحالة لاحقاً.",
+  },
+  boardRemediationTableHint: {
+    en: "Oversight view — standards and status only. Switch to an operational role for owner and deadline detail.",
+    ar: "عرض إشرافي — المعايير والحالة فقط. انتقل إلى دور تشغيلي لتفاصيل المسؤول والموعد.",
+  },
+  boardRemediationDetailHint: {
+    en: "Oversight summary. Owner names and target dates are available to operational roles only.",
+    ar: "ملخص إشرافي. أسماء المسؤولين والتواريخ المستهدفة متاحة للأدوار التشغيلية فقط.",
+  },
 };
 
 export function uiLabel(key: keyof typeof UI_LABELS, locale: Locale): string {

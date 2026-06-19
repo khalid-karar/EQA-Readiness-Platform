@@ -1,32 +1,24 @@
-import type { DashboardView, HeatMapCell } from "@eqa/workflows";
+import type { Locale } from "@eqa/content";
 import { MapPin, UserCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { uiLabel } from "@/lib/ui-labels";
 
-interface ContextBarProps {
-  view: DashboardView;
+export interface ContextBarProps {
+  assessmentName: string;
+  locale: Locale;
   roleLabel: string;
-  selectedCell: HeatMapCell | PresentedLocation | null;
-}
-
-interface PresentedLocation {
-  readonly domainNumber: string;
-  readonly principleNumber: string;
-  readonly standardNumber: string;
-  readonly standardTitle: string;
+  location: string;
+  isSummaryView: boolean;
 }
 
 export function ContextBar({
-  view,
+  assessmentName,
+  locale,
   roleLabel,
-  selectedCell,
+  location,
+  isSummaryView,
 }: ContextBarProps): React.ReactNode {
-  const locale = view.locale;
-  const location = selectedCell
-    ? `${selectedCell.domainNumber} › ${selectedCell.principleNumber} › ${selectedCell.standardNumber} ${selectedCell.standardTitle}`
-    : uiLabel("overview", locale);
-
   return (
     <header className="sticky top-0 z-40 border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
       <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
@@ -34,9 +26,7 @@ export function ContextBar({
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
             {uiLabel("assessment", locale)}
           </p>
-          <h1 className="truncate text-lg font-semibold">
-            {view.assessmentName}
-          </h1>
+          <h1 className="truncate text-lg font-semibold">{assessmentName}</h1>
         </div>
 
         <div className="flex flex-wrap items-center gap-3 text-sm">
@@ -57,7 +47,7 @@ export function ContextBar({
               <span className="font-medium">{roleLabel}</span>
             </div>
             <Badge variant="secondary">
-              {view.isSummaryView
+              {isSummaryView
                 ? uiLabel("summaryView", locale)
                 : uiLabel("detailView", locale)}
             </Badge>

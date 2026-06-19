@@ -1,11 +1,21 @@
-import type { DashboardView } from "@eqa/workflows";
+import type { Locale } from "@eqa/content";
 import { ArrowRight, ListTodo } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { uiLabel } from "@/lib/ui-labels";
 
+export interface PendingActionView {
+  readonly id: string;
+  readonly count: number;
+  readonly label: string;
+  readonly priority: "high" | "medium" | "low";
+}
+
 interface WhatsNextPanelProps {
-  view: DashboardView;
+  locale: Locale;
+  isSummaryView: boolean;
+  pendingActions: readonly PendingActionView[];
+  summaryHint?: string;
 }
 
 const PRIORITY_VARIANT = {
@@ -14,9 +24,12 @@ const PRIORITY_VARIANT = {
   low: "secondary",
 } as const;
 
-export function WhatsNextPanel({ view }: WhatsNextPanelProps): React.ReactNode {
-  const locale = view.locale;
-
+export function WhatsNextPanel({
+  locale,
+  isSummaryView,
+  pendingActions,
+  summaryHint,
+}: WhatsNextPanelProps): React.ReactNode {
   return (
     <Card>
       <CardHeader className="pb-2">
@@ -26,19 +39,19 @@ export function WhatsNextPanel({ view }: WhatsNextPanelProps): React.ReactNode {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
-        {view.isSummaryView && (
+        {isSummaryView && (
           <p className="text-xs text-muted-foreground">
-            {uiLabel("summaryHint", locale)}
+            {summaryHint ?? uiLabel("summaryHint", locale)}
           </p>
         )}
 
-        {view.pendingActions.length === 0 ? (
+        {pendingActions.length === 0 ? (
           <p className="text-sm text-muted-foreground">
             {uiLabel("whatsNextEmpty", locale)}
           </p>
         ) : (
           <ul className="space-y-2">
-            {view.pendingActions.map((action) => (
+            {pendingActions.map((action) => (
               <li
                 key={action.id}
                 className="flex items-start justify-between gap-2 rounded-md border bg-background p-3 text-sm"

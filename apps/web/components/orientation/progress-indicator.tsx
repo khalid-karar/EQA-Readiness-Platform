@@ -37,6 +37,9 @@ export function ProgressIndicator({
         <CardTitle className="text-base">
           {uiLabel("progressTitle", locale)}
         </CardTitle>
+        <p className="text-xs text-muted-foreground">
+          {uiLabel("progressMetricHint", locale)}
+        </p>
       </CardHeader>
       <CardContent className="space-y-3">
         <p className="text-sm font-medium">{startedLabel}</p>

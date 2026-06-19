@@ -1,0 +1,26 @@
+title = "EQA Readiness Platform — gitleaks configuration"
+
+# Build on top of the maintained default gitleaks rule set instead of
+# hand-rolling secret-detection regexes.
+[extend]
+useDefault = true
+
+[allowlist]
+description = """
+Paths intentionally excluded from the repository-wide scan.
+The secret-scan fixtures contain deliberately fake secrets used to prove that
+detection works; .env.example holds placeholder values only. The remaining
+entries are build artifacts / dependencies that are never part of our source
+(path separators are matched for both POSIX and Windows).
+"""
+paths = [
+  '''tools[\\/]secret-scan[\\/]fixtures[\\/].*''',
+  '''\.env\.example$''',
+  '''(^|[\\/])node_modules[\\/].*''',
+  '''(^|[\\/])\.tools[\\/].*''',
+  '''(^|[\\/])\.next[\\/].*''',
+  '''(^|[\\/])dist[\\/].*''',
+  '''(^|[\\/])build[\\/].*''',
+  '''(^|[\\/])coverage[\\/].*''',
+  '''(^|[\\/])pnpm-lock\.yaml$''',
+]

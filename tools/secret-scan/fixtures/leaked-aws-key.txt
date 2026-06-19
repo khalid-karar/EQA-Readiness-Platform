@@ -1,0 +1,9 @@
+SYNTHETIC FIXTURE — NOT A REAL SECRET.
+
+This file exists only to prove that secret scanning works. CI runs gitleaks
+against this directory with the default rule set (no allowlist) and the build
+fails unless the fake credential below is detected. The repository-wide scan
+excludes this path via .gitleaks.toml so it does not produce a false positive.
+
+# Fake AWS access key id (matches the gitleaks aws-access-token rule):
+AWS_ACCESS_KEY_ID=AKIAZ7K3RJ4WQP2XN8VL

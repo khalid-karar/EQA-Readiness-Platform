@@ -153,6 +153,24 @@ export const TENANT_MIGRATIONS: readonly TenantMigration[] = [
       )`,
     ],
   },
+  {
+    id: "0007_assessment_item_status",
+    statements: (schema) => [
+      // The current status of each assessment item (one standard/question),
+      // one row per (assessment, question). Status moves are validated against
+      // the @eqa/workflows state machine and audited as status_change entries,
+      // so the audit log holds the full state history; this table holds only the
+      // latest status. A surrogate key keeps the upsert simple and portable.
+      `CREATE TABLE IF NOT EXISTS "${schema}".assessment_item_status (
+        status_key text PRIMARY KEY,
+        assessment_id text NOT NULL,
+        question_id text NOT NULL,
+        status text NOT NULL,
+        updated_by text NOT NULL,
+        updated_at text NOT NULL
+      )`,
+    ],
+  },
 ];
 
 async function ensureLedger(db: Database): Promise<void> {

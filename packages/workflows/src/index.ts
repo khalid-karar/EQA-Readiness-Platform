@@ -14,16 +14,33 @@
 export { renderQuestionnaire } from "./render";
 export { QuestionnaireEngine } from "./engine";
 export {
+  IllegalStatusTransitionError,
   PinContentMismatchError,
+  UnknownItemStatusError,
   UnknownQuestionError,
   WorkflowError,
 } from "./errors";
+export {
+  allowedTransitions,
+  assertItemStatus,
+  assertTransition,
+  canTransition,
+  INITIAL_ITEM_STATUS,
+  isItemStatus,
+  isTerminalStatus,
+  ITEM_STATUSES,
+  STATUS_LABELS,
+  type ItemStatus,
+} from "./state-machine";
 export type {
   AssessmentResponse,
   AssessmentResponseInput,
   ChecklistItemView,
   DomainView,
   EvidencePromptView,
+  ItemStatusRecord,
+  ItemStatusStore,
+  ItemStatusTransitionInput,
   PrincipleView,
   QuestionnaireView,
   QuestionView,

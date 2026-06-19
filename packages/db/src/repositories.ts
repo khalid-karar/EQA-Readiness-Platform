@@ -4,6 +4,7 @@ import { MissingTenantContextError } from "@eqa/tenant";
 import type { Database } from "./database";
 import { TenantAuditReader } from "./scoped/audit-reader";
 import { TenantEvidenceRepository } from "./scoped/evidence-repository";
+import { TenantItemStatusRepository } from "./scoped/item-status-repository";
 import { TenantKvRepository } from "./scoped/kv-repository";
 import { TenantResponseRepository } from "./scoped/response-repository";
 import { ScopedExecutor } from "./scoped/scoped-executor";
@@ -21,6 +22,8 @@ export interface TenantRepositories {
   readonly settings: TenantSettingsRepository;
   /** Questionnaire responses (the workflow engine's response store). */
   readonly responses: TenantResponseRepository;
+  /** Per-item status with state-machine-enforced, audited transitions. */
+  readonly itemStatus: TenantItemStatusRepository;
   /** Evidence file metadata (the storage layer's evidence store). */
   readonly evidence: TenantEvidenceRepository;
   /** Read-only access to the tenant's immutable, hash-chained audit log. */
@@ -62,6 +65,7 @@ export function createTenantRepositories(
     kv: TenantKvRepository;
     settings: TenantSettingsRepository;
     responses: TenantResponseRepository;
+    itemStatus: TenantItemStatusRepository;
     evidence: TenantEvidenceRepository;
     audit: TenantAuditReader;
     secure?: TenantSecureRepository;
@@ -69,6 +73,7 @@ export function createTenantRepositories(
     kv: new TenantKvRepository(exec, session),
     settings: new TenantSettingsRepository(exec, session),
     responses: new TenantResponseRepository(exec, session),
+    itemStatus: new TenantItemStatusRepository(exec, session),
     evidence: new TenantEvidenceRepository(exec, session),
     audit: new TenantAuditReader(exec, session),
   };

@@ -13,6 +13,7 @@ import {
 
 export type AppRoute =
   | "/dashboard"
+  | "/assessment"
   | "/findings"
   | "/remediation"
   | "/mock-eqa"
@@ -40,7 +41,7 @@ export const APP_NAV_ITEMS: readonly NavItem[] = [
     labelEn: "Assessment",
     labelAr: "التقييم",
     icon: ClipboardCheck,
-    disabled: true,
+    href: "/assessment",
   },
   {
     id: "evidence",

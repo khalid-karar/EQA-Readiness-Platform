@@ -11,6 +11,7 @@ describe("present-journey-map", () => {
     expect(journeyMap.finishPercent).toBe(view.overallReadiness.score);
 
     const scope = journeyMap.checkpoints.find((c) => c.id === "scope");
+    expect(scope?.href).toBe("/assessment");
     expect(scope?.percent).toBe(
       Math.round(
         (view.progress.startedCount / view.progress.totalStandards) * 100,

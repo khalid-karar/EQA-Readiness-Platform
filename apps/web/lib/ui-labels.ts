@@ -380,6 +380,61 @@ export const UI_LABELS: LabelSet = {
     en: "Readiness journey steps",
     ar: "خطوات رحلة الجاهزية",
   },
+  assessmentTitle: {
+    en: "Scope & self-assessment",
+    ar: "النطاق والتقييم الذاتي",
+  },
+  assessmentSubtitle: {
+    en: "Rate each standard against the pinned content pack. Responses stay bound to that version.",
+    ar: "قيّم كل معيار مقابل حزمة المحتوى المثبتة. تبقى الاستجابات مرتبطة بتلك النسخة.",
+  },
+  assessmentLocation: {
+    en: "Questionnaire — scope & self-assess",
+    ar: "الاستبيان — النطاق والتقييم الذاتي",
+  },
+  assessmentProgress: { en: "Standards started", ar: "معايير بدأت" },
+  assessmentItems: { en: "Responses", ar: "الاستجابات" },
+  assessmentSearch: { en: "Search standards…", ar: "بحث في المعايير…" },
+  assessmentEmptyTitle: {
+    en: "No standards in scope",
+    ar: "لا معايير في النطاق",
+  },
+  assessmentEmptyDescription: {
+    en: "When an assessment scope is defined, standards appear here for self-rating.",
+    ar: "عند تحديد نطاق التقييم، تظهر المعايير هنا للتقييم الذاتي.",
+  },
+  assessmentErrorDemo: {
+    en: "Could not load assessment (demo error state).",
+    ar: "تعذر تحميل التقييم (حالة خطأ تجريبية).",
+  },
+  assessmentContentPack: {
+    en: "Pinned content pack",
+    ar: "حزمة المحتوى المثبتة",
+  },
+  assessmentPinNote: {
+    en: "Every response is stored against this pack version and content hash — not the live catalog.",
+    ar: "تُخزَّن كل استجابة مقابل نسخة الحزمة وهاش المحتوى — وليس الكتالوج المباشر.",
+  },
+  assessmentPinnedVersion: {
+    en: "Pinned version",
+    ar: "النسخة المثبتة",
+  },
+  assessmentDetailSubtitle: { en: "Assessment item", ar: "عنصر التقييم" },
+  assessmentQuestionTitle: { en: "Question", ar: "السؤال" },
+  assessmentCurrentResponse: { en: "Current response", ar: "الاستجابة الحالية" },
+  assessmentNoResponse: { en: "Not yet answered", ar: "لم تُجب بعد" },
+  assessmentRespondedBy: { en: "Responded by", ar: "أجاب" },
+  assessmentRubricTitle: { en: "Rubric levels", ar: "مستويات المعيار" },
+  assessmentHistoryTitle: { en: "Response history", ar: "سجل الاستجابات" },
+  assessmentAnswer: { en: "Answer", ar: "الإجابة" },
+  assessmentWhatsNextAction: {
+    en: "Complete self-assessment for remaining standards",
+    ar: "أكمل التقييم الذاتي للمعايير المتبقية",
+  },
+  assessmentBoardHint: {
+    en: "Board view — questionnaire responses are read-only.",
+    ar: "عرض المجلس — استجابات الاستبيان للقراءة فقط.",
+  },
   findingsTitle: { en: "Findings & human review", ar: "النتائج والمراجعة البشرية" },
   findingsSubtitle: {
     en: "AI draft findings await your decision before they become final conclusions.",

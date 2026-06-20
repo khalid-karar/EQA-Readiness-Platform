@@ -32,6 +32,7 @@ export interface JourneyCheckpoint {
   readonly labelAr: string;
   readonly href:
     | "/dashboard"
+    | "/assessment"
     | "/findings"
     | "/remediation"
     | "/mock-eqa"
@@ -201,7 +202,7 @@ export function buildJourneyMapPresentation(
       step: 1,
       labelEn: "Scope & self-assess",
       labelAr: "النطاق والتقييم الذاتي",
-      href: "/dashboard",
+      href: "/assessment",
       percent: scopePercent,
       metricEn: `${progress.startedCount}/${progress.totalStandards} standards started`,
       metricAr: `${progress.startedCount}/${progress.totalStandards} معيار بدأ`,

@@ -5,6 +5,7 @@ import {
   createSyntheticMockEqaInput,
   MOCK_EQA_DISCLAIMER,
   ROLE_LABELS,
+  SEERA_DEMO_JOURNEY_MOCK_EQA_STARTED,
   type DashboardRole,
   type MockEqaSimulationView,
 } from "@eqa/workflows";
@@ -59,6 +60,8 @@ export interface MockEqaPresentation {
   readonly overallScore: number;
   readonly overallLevel: "green" | "amber" | "red";
   readonly overallLabel: string;
+  /** True when journey checkpoint 6 (mock-EQA) has not formally started. */
+  readonly isProjectedPreview: boolean;
 }
 
 export function buildMockEqaPresentation(
@@ -127,6 +130,7 @@ export function buildMockEqaPresentation(
     overallScore: simulation.overall.score,
     overallLevel: simulation.overall.level,
     overallLabel: simulation.overall.label,
+    isProjectedPreview: !SEERA_DEMO_JOURNEY_MOCK_EQA_STARTED,
   };
 }
 

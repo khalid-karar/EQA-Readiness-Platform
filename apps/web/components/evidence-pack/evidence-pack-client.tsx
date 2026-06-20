@@ -171,6 +171,9 @@ function EvidencePackClientInner({
               <StatusPill variant="conformant">
                 {uiLabel("packRawBundled", locale)}: {presentation.bundledFileCount}
               </StatusPill>
+              <p className="text-xs text-muted-foreground w-full pt-1">
+                {uiLabel("readinessLensNote", locale)}
+              </p>
             </CardContent>
           </Card>
 

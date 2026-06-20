@@ -21,7 +21,7 @@ import {
   daysOverdue,
   isRemediationOverdue,
 } from "@eqa/workflows/remediation-pure";
-import { remediationTrackLabel } from "@/lib/remediation-display";
+import { remediationScheduleLabel } from "@/lib/remediation-display";
 import { cn } from "@/lib/utils";
 
 /** Matches Seera demo reference date — client-safe constant (no @eqa/workflows main import). */
@@ -120,8 +120,18 @@ function RemediationClientInner({
             statusLabel: statusLabels[status],
             isOverdue,
             daysOverdue: overdueDays,
-            scheduleLabelEn: remediationTrackLabel("en", isOverdue, closed),
-            scheduleLabelAr: remediationTrackLabel("ar", isOverdue, closed),
+            scheduleLabelEn: remediationScheduleLabel(
+              "en",
+              isOverdue,
+              closed,
+              overdueDays,
+            ),
+            scheduleLabelAr: remediationScheduleLabel(
+              "ar",
+              isOverdue,
+              closed,
+              overdueDays,
+            ),
             closedAt: closed ? DEMO_REFERENCE_DATE : null,
           };
         }),
@@ -192,11 +202,6 @@ function RemediationClientInner({
             <p className="truncate text-xs text-muted-foreground">
               {row.standardTitle}
             </p>
-            {row.isOverdue && !isClosedStatus(row.itemStatus) ? (
-              <StatusPill variant="gap" size="sm" className="mt-1">
-                {row.daysOverdue} {uiLabel("daysOverdue", locale)}
-              </StatusPill>
-            ) : null}
           </div>
         ),
         sortValue: (row) => row.standardNumber,

@@ -21,6 +21,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { StatusPill, readinessVariantFromLevel } from "@/components/ui/status-pill";
 import { RemediationLifecycle } from "@/components/remediation/remediation-lifecycle";
+import { overdueDaysLabel } from "@/lib/remediation-display";
 import type { PresentedRemediationRow } from "@/lib/present-remediation";
 import { uiLabel } from "@/lib/ui-labels";
 import { uxStatusLevel } from "@/lib/status-level";
@@ -139,11 +140,6 @@ export function RemediationDetailSheet({
             <StatusPill variant={scheduleVariant} size="sm">
               {scheduleLabel}
             </StatusPill>
-            {row.isOverdue && !closed ? (
-              <span className="text-xs text-readiness-gap">
-                {row.daysOverdue} {uiLabel("daysOverdue", locale)}
-              </span>
-            ) : null}
           </div>
 
           <RemediationLifecycle
@@ -189,8 +185,10 @@ export function RemediationDetailSheet({
                 >
                   <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden />
                   <span>
-                    {uiLabel("remediationOverdueAlert", locale)} {row.daysOverdue}{" "}
-                    {uiLabel("daysOverdue", locale)}
+                    {uiLabel("remediationOverdueAlert", locale)}{" "}
+                    <span className="font-medium tabular-nums">
+                      ({overdueDaysLabel(locale, row.daysOverdue)})
+                    </span>
                   </span>
                 </div>
               ) : null}

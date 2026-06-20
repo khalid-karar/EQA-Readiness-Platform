@@ -247,7 +247,7 @@ export function createSeeraDemoRemediationItems(
           ? "تحديث إجراء إقرار تضارب المصالح"
           : "Update conflict-of-interest declaration process",
       owner: locale === "ar" ? "مدير التدقيق" : "Audit Manager",
-      targetDate: "2026-08-15",
+      targetDate: "2026-05-01",
       createdBy: "synthetic",
       createdAt: "2026-04-10T10:00:00.000Z",
       updatedBy: "synthetic",

@@ -23,7 +23,7 @@ function MockEqaClientInner({
   presentation,
 }: MockEqaClientProps): ReactNode {
   const searchParams = useSearchParams();
-  const { view, roleLabel, overallScore, overallLevel, overallLabel } =
+  const { view, roleLabel, overallScore, overallLevel, overallLabel, isProjectedPreview } =
     presentation;
   const locale = view.locale;
 
@@ -162,21 +162,29 @@ function MockEqaClientInner({
             <StatusPill variant="partial" size="sm">
               {uiLabel("mockEqaSimulationBadge", locale)}
             </StatusPill>
+            {isProjectedPreview ? (
+              <StatusPill variant="unreviewed" size="sm">
+                {uiLabel("mockEqaProjectedPreview", locale)}
+              </StatusPill>
+            ) : null}
           </div>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap items-center gap-6">
             <div
               className={cn(
-                "flex h-24 w-24 shrink-0 flex-col items-center justify-center rounded-full text-white",
-                overallLevel === "green" && "bg-readiness-green",
-                overallLevel === "amber" && "bg-readiness-amber",
-                overallLevel === "red" && "bg-readiness-red",
+                "flex h-24 w-24 shrink-0 flex-col items-center justify-center rounded-full border-2 shadow-sm",
+                overallLevel === "green" &&
+                  "border-readiness-conformant/25 bg-readiness-conformant-bg text-readiness-conformant",
+                overallLevel === "amber" &&
+                  "border-readiness-partial/25 bg-readiness-partial-bg text-readiness-partial",
+                overallLevel === "red" &&
+                  "border-readiness-gap/25 bg-readiness-gap-bg text-readiness-gap",
               )}
               role="img"
               aria-label={`${overallLabel}: ${overallScore}%`}
             >
-              <span className="text-3xl font-bold">{overallScore}%</span>
+              <span className="text-3xl font-bold tabular-nums">{overallScore}%</span>
             </div>
             <div className="space-y-2">
               <p
@@ -192,6 +200,14 @@ function MockEqaClientInner({
               <p className="text-sm text-muted-foreground">
                 {uiLabel("mockEqaOverallHint", locale)}
               </p>
+              <p className="text-xs text-muted-foreground">
+                {uiLabel("readinessLensNote", locale)}
+              </p>
+              {isProjectedPreview ? (
+                <p className="text-xs font-medium text-readiness-unreviewed">
+                  {uiLabel("mockEqaProjectedPreview", locale)}
+                </p>
+              ) : null}
             </div>
           </div>
         </CardContent>

@@ -9,7 +9,7 @@ import {
   type RemediationPendingAction,
 } from "@eqa/workflows";
 import { parseLocale, parseRole } from "./dashboard-params";
-import { remediationTrackLabel } from "./remediation-display";
+import { remediationScheduleLabel } from "./remediation-display";
 
 export interface PresentedRemediationRow {
   readonly id: string;
@@ -91,8 +91,18 @@ export function buildRemediationPresentation(
       statusLabel: row.statusLabel,
       isOverdue: row.isOverdue,
       daysOverdue: row.daysOverdue,
-      scheduleLabelEn: remediationTrackLabel("en", row.isOverdue, closed),
-      scheduleLabelAr: remediationTrackLabel("ar", row.isOverdue, closed),
+      scheduleLabelEn: remediationScheduleLabel(
+        "en",
+        row.isOverdue,
+        closed,
+        row.daysOverdue,
+      ),
+      scheduleLabelAr: remediationScheduleLabel(
+        "ar",
+        row.isOverdue,
+        closed,
+        row.daysOverdue,
+      ),
       retestNote: item?.retestNote ?? null,
       closedAt: item?.closedAt ?? null,
       hadRetestFailure: item?.retestNote != null,

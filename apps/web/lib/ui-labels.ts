@@ -23,10 +23,21 @@ export const UI_LABELS: LabelSet = {
     en: "High-level view for oversight. Switch to an operational role for specific tasks.",
     ar: "عرض عام للإشراف. انتقل إلى دور تشغيلي للمهام المحددة.",
   },
-  readinessTitle: { en: "Overall readiness", ar: "الجاهزية الإجمالية" },
+  readinessTitle: {
+    en: "Readiness — weighted conformance",
+    ar: "الجاهزية — مطابقة مرجّحة",
+  },
   readinessHint: {
-    en: "Weighted conformance across all standards (statuses, findings, and working-paper review including unreviewed items) — not the same as completion % in the sidebar.",
-    ar: "مطابقة مرجّحة عبر جميع المعايير (الحالات، والنتائج، ومراجعة أوراق العمل بما فيها غير المراجَع) — ليست نفس نسبة الإكمال في الشريط الجانبي.",
+    en: "Weighted blend of item statuses, human-reviewed findings, and working-paper conformance (including unreviewed items).",
+    ar: "مزيج مرجّح من حالات العناصر والنتائج المراجَعة ومطابقة أوراق العمل (بما فيها غير المراجَع).",
+  },
+  assessorSimulationScore: {
+    en: "Assessor-simulation score",
+    ar: "درجة محاكاة المقيّم",
+  },
+  readinessLensNote: {
+    en: "Computed differently from dashboard weighted conformance — models external-assessor-style scoring from the same synthetic inputs.",
+    ar: "تُحسب بطريقة مختلفة عن مطابقة لوحة الجاهزية المرجّحة — نمذجة تقييم بأسلوب المقيّم الخارجي من نفس مدخلات العرض التجريبي.",
   },
   heatMapTitle: { en: "Conformance heat map", ar: "خريطة حرارية للمطابقة" },
   heatMapSubtitle: {
@@ -110,7 +121,10 @@ export const UI_LABELS: LabelSet = {
     ar: "إعادة الاختبار الفاشلة تُعيد العنصر إلى المراجعة البشرية قبل إعادة بدء المعالجة.",
   },
   remediationRetestNoteTitle: { en: "Prior retest failure note", ar: "ملاحظة إعادة اختبار فاشلة سابقة" },
-  remediationOverdueAlert: { en: "Overdue by", ar: "متأخر بـ" },
+  remediationOverdueAlert: {
+    en: "Past due — review the action plan with the owner.",
+    ar: "تجاوز الموعد — راجع خطة العمل مع المسؤول.",
+  },
   remediationStart: { en: "Start remediation", ar: "بدء المعالجة" },
   remediationMarkReady: { en: "Mark ready for retest", ar: "تعيين جاهز لإعادة الاختبار" },
   remediationRetestPass: { en: "Retest passed", ar: "نجح إعادة الاختبار" },
@@ -131,8 +145,12 @@ export const UI_LABELS: LabelSet = {
     ar: "جاهزية محاكية — جميع النطاقات",
   },
   mockEqaOverallTitle: {
-    en: "Simulated overall readiness",
-    ar: "الجاهزية الإجمالية المحاكية",
+    en: "Assessor-simulation score",
+    ar: "درجة محاكاة المقيّم",
+  },
+  mockEqaProjectedPreview: {
+    en: "Projected preview — not yet formally run",
+    ar: "معاينة متوقعة — لم تُجرَ رسمياً بعد",
   },
   mockEqaOverallHint: {
     en: "External-assessor-style simulation from item statuses, human-reviewed findings, and working-paper conformance (including unreviewed). Not an official result.",
@@ -215,8 +233,8 @@ export const UI_LABELS: LabelSet = {
   },
   packRawBundled: { en: "Raw files bundled", ar: "ملفات خام مُضمَّنة" },
   packReadiness: {
-    en: "Simulated readiness summary",
-    ar: "ملخص الجاهزية المحاكية",
+    en: "Assessor-simulation score",
+    ar: "درجة محاكاة المقيّم",
   },
   packNoRawHint: {
     en: "Raw confidential evidence files are excluded by default. The pack contains references and metadata only.",

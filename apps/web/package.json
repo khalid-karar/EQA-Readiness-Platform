@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p ${PORT:-3000}",
     "type-check": "tsc --noEmit",
     "test:e2e": "playwright test",
     "test:e2e:install": "playwright install chromium"

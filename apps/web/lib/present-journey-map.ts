@@ -28,7 +28,12 @@ export interface JourneyCheckpoint {
   readonly step: number;
   readonly labelEn: string;
   readonly labelAr: string;
-  readonly href: "/dashboard" | "/remediation" | "/mock-eqa" | "/evidence-pack";
+  readonly href:
+    | "/dashboard"
+    | "/findings"
+    | "/remediation"
+    | "/mock-eqa"
+    | "/evidence-pack";
   readonly percent: number;
   readonly metricEn: string;
   readonly metricAr: string;
@@ -210,7 +215,7 @@ export function buildJourneyMapPresentation(
       step: 3,
       labelEn: "Gaps identified",
       labelAr: "تحديد الفجوات",
-      href: "/dashboard",
+      href: "/findings",
       percent: gapsPercent,
       metricEn: `${gapsReviewed}/${totalQ} items reviewed`,
       metricAr: `${gapsReviewed}/${totalQ} عنصر روجِع`,

@@ -214,6 +214,61 @@ export const UI_LABELS: LabelSet = {
     en: "Readiness journey steps",
     ar: "خطوات رحلة الجاهزية",
   },
+  findingsTitle: { en: "Findings & human review", ar: "النتائج والمراجعة البشرية" },
+  findingsSubtitle: {
+    en: "AI draft findings await your decision before they become final conclusions.",
+    ar: "مسودات النتائج من الذكاء الاصطناعي بانتظار قرارك قبل أن تصبح نتائج نهائية.",
+  },
+  findingsLocation: {
+    en: "Findings queue — human review",
+    ar: "قائمة النتائج — المراجعة البشرية",
+  },
+  findingsPendingCount: { en: "Pending review", ar: "بانتظار المراجعة" },
+  findingsSearch: { en: "Search findings…", ar: "بحث في النتائج…" },
+  findingsEmptyTitle: { en: "No findings to review", ar: "لا توجد نتائج للمراجعة" },
+  findingsEmptyDescription: {
+    en: "When AI flags a gap, the draft appears here for human review.",
+    ar: "عندما يحدد الذكاء الاصطناعي فجوة، تظهر المسودة هنا للمراجعة البشرية.",
+  },
+  findingsErrorDemo: {
+    en: "Could not load findings (demo error state).",
+    ar: "تعذر تحميل النتائج (حالة خطأ تجريبية).",
+  },
+  findingSource: { en: "Source", ar: "المصدر" },
+  findingAge: { en: "Age", ar: "العمر" },
+  findingDetailSubtitle: { en: "Assessment item", ar: "عنصر التقييم" },
+  findingDraftTitle: { en: "AI draft", ar: "مسودة الذكاء الاصطناعي" },
+  findingConclusionTitle: { en: "Final conclusion", ar: "النتيجة النهائية" },
+  findingProvenanceTitle: { en: "AI provenance", ar: "مصدر الذكاء الاصطناعي" },
+  findingPromptVersion: { en: "Prompt", ar: "الموجه" },
+  findingRubricVersion: { en: "Rubric", ar: "المعيار" },
+  findingModelAdapter: { en: "Model", ar: "النموذج" },
+  findingTimestamp: { en: "Generated", ar: "تاريخ التوليد" },
+  findingInputSummary: { en: "Redacted input summary", ar: "ملخص مدخلات مُنقّح" },
+  findingAccept: { en: "Accept draft", ar: "قبول المسودة" },
+  findingEdit: { en: "Edit", ar: "تعديل" },
+  findingEditAccept: { en: "Save & accept", ar: "حفظ وقبول" },
+  findingReject: { en: "Reject — no gap", ar: "رفض — لا فجوة" },
+  findingEditLabel: { en: "Edited conclusion", ar: "النتيجة المعدّلة" },
+  findingActionSuccess: { en: "Review recorded", ar: "تم تسجيل المراجعة" },
+  findingAcceptedHint: {
+    en: "Draft promoted via resolveHumanReview (demo UI only).",
+    ar: "تمت ترقية المسودة عبر resolveHumanReview (واجهة تجريبية فقط).",
+  },
+  findingRejectedHint: {
+    en: "Draft dismissed — item marked reviewed with no gap.",
+    ar: "تم رفض المسودة — العنصر مُعلَّم بلا فجوة.",
+  },
+  findingActionError: { en: "Review action failed", ar: "فشل إجراء المراجعة" },
+  findingReadOnlyHint: {
+    en: "This conclusion was recorded through human review.",
+    ar: "سُجِلت هذه النتيجة عبر المراجعة البشرية.",
+  },
+  findingBoardHint: {
+    en: "Board view is read-only — switch to an operational role to review drafts.",
+    ar: "عرض المجلس للقراءة فقط — انتقل إلى دور تشغيلي لمراجعة المسودات.",
+  },
+  closePanel: { en: "Close panel", ar: "إغلاق اللوحة" },
 };
 
 export function uiLabel(key: keyof typeof UI_LABELS, locale: Locale): string {

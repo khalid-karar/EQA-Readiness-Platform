@@ -72,7 +72,17 @@ export default tseslint.config(
         "error",
         {
           default: "disallow",
-          rules: [{ target: ["app", "shared"], allow: "src/index.ts" }],
+          rules: [
+            {
+              target: ["app", "shared"],
+              allow: [
+                "src/index.ts",
+                // Client-safe subpaths (no Puppeteer / Node-only PDF pipeline).
+                "src/human-review.ts",
+                "src/types.ts",
+              ],
+            },
+          ],
         },
       ],
     },

@@ -13,6 +13,7 @@ import {
 
 export type AppRoute =
   | "/dashboard"
+  | "/findings"
   | "/remediation"
   | "/mock-eqa"
   | "/evidence-pack";
@@ -53,7 +54,7 @@ export const APP_NAV_ITEMS: readonly NavItem[] = [
     labelEn: "Findings",
     labelAr: "النتائج",
     icon: FileSearch,
-    disabled: true,
+    href: "/findings",
   },
   {
     id: "working-papers",

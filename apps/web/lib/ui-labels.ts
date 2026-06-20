@@ -202,6 +202,18 @@ export const UI_LABELS: LabelSet = {
     en: "Read-only — Board can view and download a generated pack but cannot trigger generation.",
     ar: "للقراءة فقط — يمكن للمجلس عرض وتنزيل حزمة مُولَّدة لكن لا يمكنه تشغيل التوليد.",
   },
+  journeyMapTitle: {
+    en: "Readiness journey map",
+    ar: "خريطة رحلة الجاهزية",
+  },
+  journeyMapSubtitle: {
+    en: "Seven checkpoints to EQA-ready. Path fill reflects overall readiness.",
+    ar: "سبع محطات حتى الجاهزية لـ EQA. يعكس شريط المسار الجاهزية الإجمالية.",
+  },
+  journeyStepperLabel: {
+    en: "Readiness journey steps",
+    ar: "خطوات رحلة الجاهزية",
+  },
 };
 
 export function uiLabel(key: keyof typeof UI_LABELS, locale: Locale): string {

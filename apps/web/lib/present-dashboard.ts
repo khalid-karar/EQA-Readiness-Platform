@@ -10,6 +10,7 @@ import {
   type ItemStatus,
 } from "@eqa/workflows";
 import { uiLabel } from "./ui-labels";
+import { buildJourneyMapPresentation, type JourneyMapPresentation } from "./present-journey-map";
 
 export interface PresentedHeatMapCell {
   readonly standardNumber: string;
@@ -30,6 +31,7 @@ export interface DashboardPresentation {
   readonly heatMapCells: readonly PresentedHeatMapCell[];
   readonly cellPresentation: Readonly<Record<string, PresentedHeatMapCell>>;
   readonly statusLabels: Readonly<Record<ItemStatus, string>>;
+  readonly journeyMap: JourneyMapPresentation;
 }
 
 export function buildDashboardPresentation(
@@ -70,6 +72,7 @@ export function buildDashboardPresentation(
       heatMapCells.map((cell) => [cell.standardNumber, cell]),
     ),
     statusLabels,
+    journeyMap: buildJourneyMapPresentation(view, role),
   };
 }
 

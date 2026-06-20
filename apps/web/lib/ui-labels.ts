@@ -46,6 +46,11 @@ export const UI_LABELS: LabelSet = {
   },
   locale: { en: "Language", ar: "اللغة" },
   viewAs: { en: "View as", ar: "العرض كـ" },
+  roleCae: { en: "CAE", ar: "الرئيس التنفيذي للتدقيق" },
+  roleAuditStaff: { en: "Audit Staff", ar: "فريق التدقيق" },
+  roleBoard: { en: "Board", ar: "المجلس" },
+  localeEnglish: { en: "English", ar: "الإنجليزية" },
+  localeArabic: { en: "Arabic", ar: "العربية" },
   demoNote: {
     en: "Synthetic demo data — switch language and role to preview RBAC views.",
     ar: "بيانات تجريبية — بدّل اللغة والدور لمعاينة صلاحيات العرض.",
@@ -611,6 +616,20 @@ export function uiLabel(key: keyof typeof UI_LABELS, locale: Locale): string {
   const entry = UI_LABELS[key];
   if (!entry) return key;
   return entry[locale] ?? entry.en;
+}
+
+export function roleDisplayLabel(
+  role: "cae" | "audit_staff" | "board",
+  locale: Locale,
+): string {
+  switch (role) {
+    case "cae":
+      return uiLabel("roleCae", locale);
+    case "audit_staff":
+      return uiLabel("roleAuditStaff", locale);
+    case "board":
+      return uiLabel("roleBoard", locale);
+  }
 }
 
 export function progressStartedLabel(

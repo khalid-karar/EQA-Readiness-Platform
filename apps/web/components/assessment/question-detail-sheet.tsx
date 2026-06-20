@@ -6,6 +6,7 @@ import {
   SideSheetBody,
   SideSheetCloseButton,
   SideSheetContent,
+  detailPanelSide,
   SideSheetDescription,
   SideSheetHeader,
   SideSheetTitle,
@@ -36,8 +37,6 @@ export function QuestionDetailSheet({
   locale,
   isSummaryView,
 }: QuestionDetailSheetProps): ReactNode {
-  const sheetSide = locale === "ar" ? "start" : "end";
-
   if (!standard) return null;
 
   const question =
@@ -53,7 +52,10 @@ export function QuestionDetailSheet({
 
   return (
     <SideSheet open={open} onOpenChange={onOpenChange}>
-      <SideSheetContent side={sheetSide} aria-describedby="assessment-sheet-desc">
+      <SideSheetContent
+        side={detailPanelSide(locale)}
+        aria-describedby="assessment-sheet-desc"
+      >
         <SideSheetHeader>
           <div className="min-w-0 space-y-1 pe-2">
             <SideSheetTitle>
@@ -68,7 +70,7 @@ export function QuestionDetailSheet({
 
         <SideSheetBody className="space-y-6">
           {standard.questions.length > 1 ? (
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2" role="tablist" aria-label={uiLabel("questionItems", locale)}>
               {standard.questions.map((q) => {
                 const active = q.questionId === question.questionId;
                 const label =
@@ -79,7 +81,9 @@ export function QuestionDetailSheet({
                     type="button"
                     size="sm"
                     variant={active ? "default" : "outline"}
-                    className="h-auto max-w-full py-1.5 text-left"
+                    role="tab"
+                    aria-selected={active}
+                    className="h-auto max-w-full py-1.5 text-start"
                     onClick={() => onQuestionSelect(q.questionId)}
                   >
                     <span className="block truncate text-xs font-normal opacity-80">

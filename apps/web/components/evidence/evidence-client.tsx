@@ -7,10 +7,12 @@ import type {
   PresentedEvidenceItem,
 } from "@/lib/present-evidence";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
+import { ScreenAlertBanner } from "@/components/ui/screen-alert-banner";
 import { StatusPill } from "@/components/ui/status-pill";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EvidenceDetailSheet } from "@/components/evidence/evidence-detail-sheet";
 import { WhatsNextPanel } from "@/components/orientation/whats-next-panel";
+import { useDemoTableState } from "@/components/shell/use-demo-table-state";
 import { useSyncShellMeta } from "@/components/shell/use-sync-shell-meta";
 import { DEFAULT_TENANT_NAME } from "@/lib/nav-config";
 import { uiLabel } from "@/lib/ui-labels";
@@ -32,18 +34,12 @@ function EvidenceClientInner({
 }: EvidenceClientProps): ReactNode {
   const searchParams = useSearchParams();
   const { locale, isSummaryView } = presentation;
-  const [rows, setRows] = useState<PresentedEvidenceItem[]>(() => [
-    ...presentation.items,
-  ]);
+  const { rows, loading, error } = useDemoTableState(
+    presentation.items,
+    uiLabel("evidenceErrorDemo", locale),
+  );
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [loading, setLoading] = useState(
-    searchParams.get("demo") === "loading",
-  );
-  const error =
-    searchParams.get("demo") === "error"
-      ? uiLabel("evidenceErrorDemo", locale)
-      : null;
 
   const selected = rows.find((r) => r.id === selectedId) ?? null;
 
@@ -57,20 +53,6 @@ function EvidenceClientInner({
     roleLabel: presentation.roleLabel,
     isSummaryView,
   });
-
-  useEffect(() => {
-    if (searchParams.get("demo") === "loading") {
-      const t = setTimeout(() => setLoading(false), 800);
-      return () => clearTimeout(t);
-    }
-    return undefined;
-  }, [searchParams]);
-
-  useEffect(() => {
-    if (searchParams.get("demo") === "empty") {
-      setRows([]);
-    }
-  }, [searchParams]);
 
   useEffect(() => {
     const openId = searchParams.get("evidence");
@@ -159,27 +141,23 @@ function EvidenceClientInner({
 
   return (
     <div className="space-y-6">
-      <Card className="border-readiness-partial/30 bg-readiness-partial-bg/30">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base">
-            {uiLabel("evidenceQuarantineBanner", locale)}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="text-sm text-muted-foreground">
-          <p>{uiLabel("evidenceQuarantineBannerBody", locale)}</p>
-          <p className="mt-2 tabular-nums">
-            {uiLabel("evidenceScanSummary", locale)}:{" "}
-            <span className="font-semibold text-foreground">
-              {presentation.clearedCount}
-            </span>{' '}
-            {uiLabel("evidenceClearedLabel", locale)} ·{" "}
-            <span className="font-semibold text-readiness-partial">
-              {presentation.quarantinedCount}
-            </span>{' '}
-            {uiLabel("evidenceQuarantinedLabel", locale)}
-          </p>
-        </CardContent>
-      </Card>
+      <ScreenAlertBanner
+        variant="partial"
+        title={uiLabel("evidenceQuarantineBanner", locale)}
+      >
+        <p>{uiLabel("evidenceQuarantineBannerBody", locale)}</p>
+        <p className="mt-2 tabular-nums">
+          {uiLabel("evidenceScanSummary", locale)}:{" "}
+          <span className="font-semibold text-foreground">
+            {presentation.clearedCount}
+          </span>{' '}
+          {uiLabel("evidenceClearedLabel", locale)} ·{" "}
+          <span className="font-semibold text-readiness-partial">
+            {presentation.quarantinedCount}
+          </span>{' '}
+          {uiLabel("evidenceQuarantinedLabel", locale)}
+        </p>
+      </ScreenAlertBanner>
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
@@ -195,10 +173,14 @@ function EvidenceClientInner({
                 columns={columns}
                 data={rows}
                 getRowId={(row) => row.id}
+                getRowAriaLabel={(row) =>
+                  `${row.fileName}, ${row.standardNumber}, ${locale === "ar" ? row.scanLabelAr : row.scanLabelEn}`
+                }
                 selectedId={selectedId}
                 onSelectRow={handleSelect}
                 searchable
                 searchPlaceholder={uiLabel("evidenceSearch", locale)}
+                caption={uiLabel("evidenceTitle", locale)}
                 loading={loading}
                 error={error}
                 emptyTitle={uiLabel("evidenceEmptyTitle", locale)}

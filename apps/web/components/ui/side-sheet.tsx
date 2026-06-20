@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import type { Locale } from "@eqa/content";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -44,6 +45,14 @@ const SHEET_SIDE_CLASSES = {
     "rtl:data-[state=open]:slide-in-from-right rtl:data-[state=closed]:slide-out-to-right",
   ),
 } as const;
+
+/**
+ * Side edge for list detail panels — physical right in both EN and AR shell layouts
+ * (sidebar mirrors in RTL; panel stays on the outer trailing edge).
+ */
+export function detailPanelSide(locale: Locale): "start" | "end" {
+  return locale === "ar" ? "start" : "end";
+}
 
 const SideSheetContent = React.forwardRef<
   React.ComponentRef<typeof DialogPrimitive.Content>,

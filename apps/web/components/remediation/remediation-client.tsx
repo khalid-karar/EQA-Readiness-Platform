@@ -13,6 +13,7 @@ import { StatusPill, readinessVariantFromLevel } from "@/components/ui/status-pi
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RemediationDetailSheet } from "@/components/remediation/remediation-detail-sheet";
 import { WhatsNextPanel } from "@/components/orientation/whats-next-panel";
+import { useDemoTableState } from "@/components/shell/use-demo-table-state";
 import { useSyncShellMeta } from "@/components/shell/use-sync-shell-meta";
 import { DEFAULT_TENANT_NAME } from "@/lib/nav-config";
 import { uiLabel } from "@/lib/ui-labels";
@@ -49,18 +50,12 @@ function RemediationClientInner({
     statusLabels,
   } = presentation;
 
-  const [rows, setRows] = useState<PresentedRemediationRow[]>(() => [
-    ...presentation.rows,
-  ]);
+  const { rows, loading, error, setRows } = useDemoTableState(
+    presentation.rows,
+    uiLabel("remediationErrorDemo", locale),
+  );
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [loading, setLoading] = useState(
-    searchParams.get("demo") === "loading",
-  );
-  const error =
-    searchParams.get("demo") === "error"
-      ? uiLabel("remediationErrorDemo", locale)
-      : null;
 
   const selected = rows.find((r) => r.id === selectedId) ?? null;
 
@@ -74,14 +69,6 @@ function RemediationClientInner({
     roleLabel,
     isSummaryView,
   });
-
-  useEffect(() => {
-    if (searchParams.get("demo") === "loading") {
-      const t = setTimeout(() => setLoading(false), 800);
-      return () => clearTimeout(t);
-    }
-    return undefined;
-  }, [searchParams]);
 
   useEffect(() => {
     const openId = searchParams.get("remediation");
@@ -262,17 +249,17 @@ function RemediationClientInner({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">{openCount}</p>
+            <p className="text-3xl font-bold tabular-nums">{openCount}</p>
           </CardContent>
         </Card>
         <Card
-          className={overdueCount > 0 ? "ring-2 ring-readiness-red/40" : ""}
+          className={overdueCount > 0 ? "ring-2 ring-readiness-gap/40" : ""}
         >
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-base">
               {overdueCount > 0 ? (
                 <AlertTriangle
-                  className="h-4 w-4 text-readiness-red"
+                  className="h-4 w-4 text-readiness-gap"
                   aria-hidden
                 />
               ) : null}
@@ -282,8 +269,8 @@ function RemediationClientInner({
           <CardContent>
             <p
               className={cn(
-                "text-3xl font-bold",
-                overdueCount > 0 && "text-readiness-red",
+                "text-3xl font-bold tabular-nums",
+                overdueCount > 0 && "text-readiness-gap",
               )}
             >
               {overdueCount}
@@ -311,10 +298,14 @@ function RemediationClientInner({
                 columns={columns}
                 data={rows}
                 getRowId={(row) => row.id}
+                getRowAriaLabel={(row) =>
+                  `${row.standardNumber} — ${row.standardTitle}, ${row.statusLabel}`
+                }
                 selectedId={selectedId}
                 onSelectRow={handleSelect}
                 searchable
                 searchPlaceholder={uiLabel("remediationSearch", locale)}
+                caption={uiLabel("remediationTitle", locale)}
                 loading={loading}
                 error={error}
                 emptyTitle={uiLabel("remediationEmptyTitle", locale)}

@@ -11,7 +11,9 @@ import { StatusPill, readinessVariantFromLevel } from "@/components/ui/status-pi
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { QuestionDetailSheet } from "@/components/assessment/question-detail-sheet";
 import { WhatsNextPanel } from "@/components/orientation/whats-next-panel";
+import { useDemoTableState } from "@/components/shell/use-demo-table-state";
 import { useSyncShellMeta } from "@/components/shell/use-sync-shell-meta";
+import { ScreenAlertBanner } from "@/components/ui/screen-alert-banner";
 import { DEFAULT_TENANT_NAME } from "@/lib/nav-config";
 import { uxStatusLevel } from "@/lib/status-level";
 import { uiLabel } from "@/lib/ui-labels";
@@ -25,21 +27,15 @@ function AssessmentClientInner({
 }: AssessmentClientProps): ReactNode {
   const searchParams = useSearchParams();
   const { locale, isSummaryView } = presentation;
-  const [rows, setRows] = useState<PresentedAssessmentStandard[]>(() => [
-    ...presentation.standards,
-  ]);
+  const { rows, loading, error } = useDemoTableState(
+    presentation.standards,
+    uiLabel("assessmentErrorDemo", locale),
+  );
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(
     null,
   );
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [loading, setLoading] = useState(
-    searchParams.get("demo") === "loading",
-  );
-  const error =
-    searchParams.get("demo") === "error"
-      ? uiLabel("assessmentErrorDemo", locale)
-      : null;
 
   const selected = rows.find((r) => r.id === selectedId) ?? null;
 
@@ -53,20 +49,6 @@ function AssessmentClientInner({
     roleLabel: presentation.roleLabel,
     isSummaryView,
   });
-
-  useEffect(() => {
-    if (searchParams.get("demo") === "loading") {
-      const t = setTimeout(() => setLoading(false), 800);
-      return () => clearTimeout(t);
-    }
-    return undefined;
-  }, [searchParams]);
-
-  useEffect(() => {
-    if (searchParams.get("demo") === "empty") {
-      setRows([]);
-    }
-  }, [searchParams]);
 
   useEffect(() => {
     const standardParam = searchParams.get("standard");
@@ -170,23 +152,19 @@ function AssessmentClientInner({
 
   return (
     <div className="space-y-6">
-      <Card className="border-brand-gold/30 bg-brand-gold/5">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base">
-            {uiLabel("assessmentContentPack", locale)}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="text-sm text-muted-foreground">
-          <p>
-            {locale === "ar"
-              ? presentation.contentPackLabelAr
-              : presentation.contentPackLabelEn}
-          </p>
-          <p className="mt-1 text-xs">
-            {uiLabel("assessmentPinNote", locale)}
-          </p>
-        </CardContent>
-      </Card>
+      <ScreenAlertBanner
+        variant="brand"
+        title={uiLabel("assessmentContentPack", locale)}
+      >
+        <p>
+          {locale === "ar"
+            ? presentation.contentPackLabelAr
+            : presentation.contentPackLabelEn}
+        </p>
+        <p className="mt-1 text-xs">
+          {uiLabel("assessmentPinNote", locale)}
+        </p>
+      </ScreenAlertBanner>
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
@@ -209,10 +187,14 @@ function AssessmentClientInner({
                 columns={columns}
                 data={rows}
                 getRowId={(row) => row.id}
+                getRowAriaLabel={(row) =>
+                  `${row.standardNumber} — ${row.standardTitle}, ${locale === "ar" ? row.statusLabelAr : row.statusLabelEn}`
+                }
                 selectedId={selectedId}
                 onSelectRow={handleSelect}
                 searchable
                 searchPlaceholder={uiLabel("assessmentSearch", locale)}
+                caption={uiLabel("assessmentTitle", locale)}
                 loading={loading}
                 error={error}
                 emptyTitle={uiLabel("assessmentEmptyTitle", locale)}

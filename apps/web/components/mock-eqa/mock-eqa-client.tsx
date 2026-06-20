@@ -7,8 +7,10 @@ import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { SimulationDisclaimerBanner } from "@/components/mock-eqa/simulation-disclaimer";
 import { MockEqaDetailSheet } from "@/components/mock-eqa/mock-eqa-detail-sheet";
 import { WhatsNextPanel } from "@/components/orientation/whats-next-panel";
+import { useDemoTableState } from "@/components/shell/use-demo-table-state";
 import { useSyncShellMeta } from "@/components/shell/use-sync-shell-meta";
 import { DEFAULT_TENANT_NAME } from "@/lib/nav-config";
+import { readinessSemanticClasses } from "@/lib/readiness-display";
 import { uiLabel } from "@/lib/ui-labels";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -27,18 +29,17 @@ function MockEqaClientInner({
     presentation;
   const locale = view.locale;
 
+  const { rows, loading, error } = useDemoTableState(
+    presentation.standardRows,
+    uiLabel("mockEqaErrorDemo", locale),
+  );
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [loading, setLoading] = useState(
-    searchParams.get("demo") === "loading",
-  );
-  const error =
-    searchParams.get("demo") === "error"
-      ? uiLabel("mockEqaErrorDemo", locale)
-      : null;
 
   const selected =
-    presentation.standardRows.find((r) => r.id === selectedId) ?? null;
+    rows.find((r) => r.id === selectedId) ?? null;
+
+  const readinessClasses = readinessSemanticClasses(overallLevel);
 
   useSyncShellMeta({
     locale,
@@ -52,20 +53,12 @@ function MockEqaClientInner({
   });
 
   useEffect(() => {
-    if (searchParams.get("demo") === "loading") {
-      const t = setTimeout(() => setLoading(false), 800);
-      return () => clearTimeout(t);
-    }
-    return undefined;
-  }, [searchParams]);
-
-  useEffect(() => {
     const openId = searchParams.get("standard");
-    if (openId && presentation.standardRows.some((r) => r.id === openId)) {
+    if (openId && rows.some((r) => r.id === openId)) {
       setSelectedId(openId);
       setSheetOpen(true);
     }
-  }, [searchParams, presentation.standardRows]);
+  }, [searchParams, rows]);
 
   const pendingActions = view.isSummaryView
     ? []
@@ -149,12 +142,7 @@ function MockEqaClientInner({
       <SimulationDisclaimerBanner presentation={presentation} />
 
       <Card
-        className={cn(
-          "ring-2",
-          overallLevel === "green" && "ring-readiness-green/40",
-          overallLevel === "amber" && "ring-readiness-amber/40",
-          overallLevel === "red" && "ring-readiness-red/40",
-        )}
+        className={cn("ring-2", readinessClasses.ring)}
       >
         <CardHeader className="pb-2">
           <div className="flex flex-wrap items-center gap-2">
@@ -174,12 +162,7 @@ function MockEqaClientInner({
             <div
               className={cn(
                 "flex h-24 w-24 shrink-0 flex-col items-center justify-center rounded-full border-2 shadow-sm",
-                overallLevel === "green" &&
-                  "border-readiness-conformant/25 bg-readiness-conformant-bg text-readiness-conformant",
-                overallLevel === "amber" &&
-                  "border-readiness-partial/25 bg-readiness-partial-bg text-readiness-partial",
-                overallLevel === "red" &&
-                  "border-readiness-gap/25 bg-readiness-gap-bg text-readiness-gap",
+                readinessClasses.circle,
               )}
               role="img"
               aria-label={`${overallLabel}: ${overallScore}%`}
@@ -190,9 +173,7 @@ function MockEqaClientInner({
               <p
                 className={cn(
                   "text-2xl font-semibold",
-                  overallLevel === "green" && "text-readiness-green",
-                  overallLevel === "amber" && "text-readiness-amber",
-                  overallLevel === "red" && "text-readiness-red",
+                  readinessClasses.text,
                 )}
               >
                 {overallLabel}
@@ -225,12 +206,16 @@ function MockEqaClientInner({
             <CardContent>
               <DataTable
                 columns={columns}
-                data={presentation.standardRows}
+                data={rows}
                 getRowId={(row) => row.id}
+                getRowAriaLabel={(row) =>
+                  `${row.standardNumber} — ${row.standardTitle}, ${row.ratingScore}% ${row.ratingLabel}`
+                }
                 selectedId={selectedId}
                 onSelectRow={handleSelect}
                 searchable
                 searchPlaceholder={uiLabel("mockEqaSearch", locale)}
+                caption={uiLabel("mockEqaBreakdownTitle", locale)}
                 loading={loading}
                 error={error}
                 emptyTitle={uiLabel("mockEqaEmptyTitle", locale)}

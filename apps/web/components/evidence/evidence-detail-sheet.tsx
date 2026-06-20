@@ -7,6 +7,7 @@ import {
   SideSheetBody,
   SideSheetCloseButton,
   SideSheetContent,
+  detailPanelSide,
   SideSheetDescription,
   SideSheetHeader,
   SideSheetTitle,
@@ -39,8 +40,6 @@ export function EvidenceDetailSheet({
   locale,
   isSummaryView,
 }: EvidenceDetailSheetProps): ReactNode {
-  const sheetSide = locale === "ar" ? "start" : "end";
-
   if (!item) return null;
 
   const scanLabel = locale === "ar" ? item.scanLabelAr : item.scanLabelEn;
@@ -55,7 +54,10 @@ export function EvidenceDetailSheet({
 
   return (
     <SideSheet open={open} onOpenChange={onOpenChange}>
-      <SideSheetContent side={sheetSide} aria-describedby="evidence-sheet-desc">
+      <SideSheetContent
+        side={detailPanelSide(locale)}
+        aria-describedby="evidence-sheet-desc"
+      >
         <SideSheetHeader>
           <div className="min-w-0 space-y-1 pe-2">
             <SideSheetTitle className="truncate">{item.fileName}</SideSheetTitle>

@@ -63,7 +63,7 @@ export function AppSidebar({
             className={cn(
               "h-8 shrink-0 object-contain",
               collapsed
-                ? "w-8 object-cover object-left"
+                ? "w-8 object-cover object-start"
                 : "w-auto max-w-[140px]",
             )}
             decoding="async"

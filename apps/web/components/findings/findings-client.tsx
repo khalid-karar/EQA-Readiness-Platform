@@ -8,6 +8,7 @@ import { StatusPill } from "@/components/ui/status-pill";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FindingDetailSheet } from "@/components/findings/finding-detail-sheet";
 import { WhatsNextPanel } from "@/components/orientation/whats-next-panel";
+import { useDemoTableState } from "@/components/shell/use-demo-table-state";
 import { useSyncShellMeta } from "@/components/shell/use-sync-shell-meta";
 import { DEFAULT_TENANT_NAME } from "@/lib/nav-config";
 import { uiLabel } from "@/lib/ui-labels";
@@ -29,18 +30,12 @@ function FindingsClientInner({
 }: FindingsClientProps): ReactNode {
   const searchParams = useSearchParams();
   const { locale, canReview, isSummaryView } = presentation;
-  const [rows, setRows] = useState<PresentedFinding[]>(() => [
-    ...presentation.findings,
-  ]);
+  const { rows, loading, error, setRows } = useDemoTableState(
+    presentation.findings,
+    uiLabel("findingsErrorDemo", locale),
+  );
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [loading, setLoading] = useState(
-    searchParams.get("demo") === "loading",
-  );
-  const error =
-    searchParams.get("demo") === "error"
-      ? uiLabel("findingsErrorDemo", locale)
-      : null;
 
   const selected = rows.find((r) => r.id === selectedId) ?? null;
 
@@ -54,14 +49,6 @@ function FindingsClientInner({
     roleLabel: presentation.roleLabel,
     isSummaryView,
   });
-
-  useEffect(() => {
-    if (searchParams.get("demo") === "loading") {
-      const t = setTimeout(() => setLoading(false), 800);
-      return () => clearTimeout(t);
-    }
-    return undefined;
-  }, [searchParams]);
 
   useEffect(() => {
     const openId = searchParams.get("finding");
@@ -203,7 +190,7 @@ function FindingsClientInner({
             <CardContent className="space-y-4">
               <p className="text-sm text-muted-foreground">
                 {uiLabel("findingsPendingCount", locale)}:{" "}
-                <span className="font-semibold text-foreground">
+                <span className="font-semibold text-foreground tabular-nums">
                   {pendingCount}
                 </span>
               </p>
@@ -212,10 +199,14 @@ function FindingsClientInner({
                 columns={columns}
                 data={rows}
                 getRowId={(row) => row.id}
+                getRowAriaLabel={(row) =>
+                  `${row.standardNumber} — ${row.standardTitle}, ${locale === "ar" ? row.statusLabelAr : row.statusLabelEn}`
+                }
                 selectedId={selectedId}
                 onSelectRow={handleSelect}
                 searchable
                 searchPlaceholder={uiLabel("findingsSearch", locale)}
+                caption={uiLabel("findingsTitle", locale)}
                 loading={loading}
                 error={error}
                 emptyTitle={uiLabel("findingsEmptyTitle", locale)}

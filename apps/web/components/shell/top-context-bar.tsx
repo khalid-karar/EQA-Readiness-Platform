@@ -7,19 +7,11 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { StatusPill } from "@/components/ui/status-pill";
 import { Button } from "@/components/ui/button";
 import { DEFAULT_TENANT_NAME } from "@/lib/nav-config";
-import { uiLabel } from "@/lib/ui-labels";
+import { uiLabel, roleDisplayLabel } from "@/lib/ui-labels";
 import { cn } from "@/lib/utils";
 import { useShellPage } from "./shell-page-context";
 
-const ROLE_OPTIONS: {
-  value: DashboardRole;
-  labelEn: string;
-  labelAr: string;
-}[] = [
-  { value: "cae", labelEn: "CAE", labelAr: "الرئيس التنفيذي للتدقيق" },
-  { value: "audit_staff", labelEn: "Audit Staff", labelAr: "فريق التدقيق" },
-  { value: "board", labelEn: "Board", labelAr: "المجلس" },
-];
+const ROLE_OPTIONS: DashboardRole[] = ["cae", "audit_staff", "board"];
 
 interface TopContextBarProps {
   locale: Locale;
@@ -101,12 +93,14 @@ export function TopContextBar({
               locale={locale}
               target="en"
               label="EN"
+              ariaLabel={uiLabel("localeEnglish", locale)}
               onSelect={() => navigate({ locale: "en" })}
             />
             <LocaleToggle
               locale={locale}
               target="ar"
               label="AR"
+              ariaLabel={uiLabel("localeArabic", locale)}
               onSelect={() => navigate({ locale: "ar" })}
             />
           </div>
@@ -122,19 +116,20 @@ export function TopContextBar({
             </span>
             {ROLE_OPTIONS.map((opt) => (
               <Button
-                key={opt.value}
+                key={opt}
                 type="button"
                 size="sm"
                 variant="ghost"
-                onClick={() => navigate({ role: opt.value })}
+                onClick={() => navigate({ role: opt })}
                 className={cn(
                   "h-7 px-2 text-xs text-topbar-foreground/80 hover:bg-topbar-foreground/10 hover:text-topbar-foreground",
-                  role === opt.value &&
+                  role === opt &&
                     "bg-brand-gold text-brand-navy hover:bg-brand-gold/90 hover:text-brand-navy",
                 )}
-                aria-pressed={role === opt.value}
+                aria-pressed={role === opt}
+                aria-label={roleDisplayLabel(opt, locale)}
               >
-                {locale === "ar" ? opt.labelAr : opt.labelEn}
+                {roleDisplayLabel(opt, locale)}
               </Button>
             ))}
           </div>
@@ -148,11 +143,13 @@ function LocaleToggle({
   locale,
   target,
   label,
+  ariaLabel,
   onSelect,
 }: {
   locale: Locale;
   target: Locale;
   label: string;
+  ariaLabel: string;
   onSelect: () => void;
 }): React.ReactNode {
   const active = locale === target;
@@ -168,6 +165,7 @@ function LocaleToggle({
           "bg-brand-gold text-brand-navy hover:bg-brand-gold/90 hover:text-brand-navy",
       )}
       aria-pressed={active}
+      aria-label={ariaLabel}
       lang={target}
     >
       {label}

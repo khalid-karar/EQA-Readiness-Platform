@@ -98,6 +98,8 @@ function HeatMapCellButton({
         <button
           type="button"
           onClick={() => onSelect(cell)}
+          aria-pressed={isSelected}
+          aria-label={`${cell.standardNumber} ${cell.standardTitle}, ${cell.readinessScore}% ${cell.statusLabel}`}
           className={cn(
             "rounded-md border border-border border-s-4 bg-surface p-3 text-start text-sm shadow-sm motion-safe transition",
             "hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",

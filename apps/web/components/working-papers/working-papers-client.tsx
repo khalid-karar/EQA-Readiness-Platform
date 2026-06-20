@@ -11,7 +11,9 @@ import { StatusPill } from "@/components/ui/status-pill";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { WorkingPaperDetailSheet } from "@/components/working-papers/working-paper-detail-sheet";
 import { WhatsNextPanel } from "@/components/orientation/whats-next-panel";
+import { useDemoTableState } from "@/components/shell/use-demo-table-state";
 import { useSyncShellMeta } from "@/components/shell/use-sync-shell-meta";
+import { ScreenAlertBanner } from "@/components/ui/screen-alert-banner";
 import { DEFAULT_TENANT_NAME } from "@/lib/nav-config";
 import { uiLabel } from "@/lib/ui-labels";
 
@@ -33,18 +35,12 @@ function WorkingPapersClientInner({
 }: WorkingPapersClientProps): ReactNode {
   const searchParams = useSearchParams();
   const { locale, isSummaryView } = presentation;
-  const [rows, setRows] = useState<PresentedWorkingPaperItem[]>(() => [
-    ...presentation.items,
-  ]);
+  const { rows, loading, error } = useDemoTableState(
+    presentation.items,
+    uiLabel("wpErrorDemo", locale),
+  );
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [loading, setLoading] = useState(
-    searchParams.get("demo") === "loading",
-  );
-  const error =
-    searchParams.get("demo") === "error"
-      ? uiLabel("wpErrorDemo", locale)
-      : null;
 
   const selected = rows.find((r) => r.id === selectedId) ?? null;
 
@@ -58,20 +54,6 @@ function WorkingPapersClientInner({
     roleLabel: presentation.roleLabel,
     isSummaryView,
   });
-
-  useEffect(() => {
-    if (searchParams.get("demo") === "loading") {
-      const t = setTimeout(() => setLoading(false), 800);
-      return () => clearTimeout(t);
-    }
-    return undefined;
-  }, [searchParams]);
-
-  useEffect(() => {
-    if (searchParams.get("demo") === "empty") {
-      setRows([]);
-    }
-  }, [searchParams]);
 
   useEffect(() => {
     const openId = searchParams.get("item");
@@ -181,44 +163,40 @@ function WorkingPapersClientInner({
 
   return (
     <div className="space-y-6">
-      <Card className="border-readiness-unreviewed/30 bg-readiness-unreviewed-bg/40">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base text-readiness-unreviewed">
-            {uiLabel("wpUnreviewedBanner", locale)}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2 text-sm">
-          <p className="text-muted-foreground">{sampleRationale}</p>
-          <p className="tabular-nums">
-            <span className="font-semibold text-readiness-unreviewed">
-              {unreviewedCount}
-            </span>{' '}
-            {uiLabel("wpUnreviewedRollup", locale)} ·{" "}
-            <span className="font-semibold text-foreground">
-              {presentation.reviewedCount}
-            </span>
-            /{presentation.totalCount}{' '}
-            {uiLabel("wpReviewedRollup", locale)}
-          </p>
-          <div className="flex flex-wrap gap-2 pt-1">
-            <StatusPill variant="conformant" size="sm">
-              {presentation.conformantCount}{' '}
-              {uiLabel("wpConformantLabel", locale)}
-            </StatusPill>
-            <StatusPill variant="partial" size="sm">
-              {presentation.partialCount}{' '}
-              {uiLabel("wpPartialLabel", locale)}
-            </StatusPill>
-            <StatusPill variant="gap" size="sm">
-              {presentation.nonConformantCount}{' '}
-              {uiLabel("wpNonConformantLabel", locale)}
-            </StatusPill>
-            <StatusPill variant="unreviewed" size="sm">
-              {unreviewedCount} {uiLabel("unreviewed", locale)}
-            </StatusPill>
-          </div>
-        </CardContent>
-      </Card>
+      <ScreenAlertBanner
+        variant="unreviewed"
+        title={uiLabel("wpUnreviewedBanner", locale)}
+      >
+        <p>{sampleRationale}</p>
+        <p className="mt-2 tabular-nums">
+          <span className="font-semibold text-readiness-unreviewed">
+            {unreviewedCount}
+          </span>{' '}
+          {uiLabel("wpUnreviewedRollup", locale)} ·{" "}
+          <span className="font-semibold text-foreground">
+            {presentation.reviewedCount}
+          </span>
+          /{presentation.totalCount}{' '}
+          {uiLabel("wpReviewedRollup", locale)}
+        </p>
+        <div className="flex flex-wrap gap-2 pt-2">
+          <StatusPill variant="conformant" size="sm">
+            {presentation.conformantCount}{' '}
+            {uiLabel("wpConformantLabel", locale)}
+          </StatusPill>
+          <StatusPill variant="partial" size="sm">
+            {presentation.partialCount}{' '}
+            {uiLabel("wpPartialLabel", locale)}
+          </StatusPill>
+          <StatusPill variant="gap" size="sm">
+            {presentation.nonConformantCount}{' '}
+            {uiLabel("wpNonConformantLabel", locale)}
+          </StatusPill>
+          <StatusPill variant="unreviewed" size="sm">
+            {unreviewedCount} {uiLabel("unreviewed", locale)}
+          </StatusPill>
+        </div>
+      </ScreenAlertBanner>
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
@@ -237,10 +215,14 @@ function WorkingPapersClientInner({
                 columns={columns}
                 data={rows}
                 getRowId={(row) => row.id}
+                getRowAriaLabel={(row) =>
+                  `${row.workingPaperRef}, ${row.standardNumber}, ${locale === "ar" ? row.conformanceLabelAr : row.conformanceLabelEn}`
+                }
                 selectedId={selectedId}
                 onSelectRow={handleSelect}
                 searchable
                 searchPlaceholder={uiLabel("wpSearch", locale)}
+                caption={uiLabel("wpTitle", locale)}
                 loading={loading}
                 error={error}
                 emptyTitle={uiLabel("wpEmptyTitle", locale)}

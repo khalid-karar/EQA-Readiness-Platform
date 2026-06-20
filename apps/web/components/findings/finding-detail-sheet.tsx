@@ -8,6 +8,7 @@ import {
   SideSheetBody,
   SideSheetCloseButton,
   SideSheetContent,
+  detailPanelSide,
   SideSheetDescription,
   SideSheetHeader,
   SideSheetTitle,
@@ -47,8 +48,6 @@ export function FindingDetailSheet({
   const [editText, setEditText] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
-
-  const sheetSide = locale === "ar" ? "start" : "end";
 
   useEffect(() => {
     if (finding?.draft) {
@@ -106,7 +105,10 @@ export function FindingDetailSheet({
 
   return (
     <SideSheet open={open} onOpenChange={onOpenChange}>
-      <SideSheetContent side={sheetSide} aria-describedby="finding-sheet-desc">
+      <SideSheetContent
+        side={detailPanelSide(locale)}
+        aria-describedby="finding-sheet-desc"
+      >
         <SideSheetHeader>
           <div className="min-w-0 space-y-1 pe-2">
             <SideSheetTitle>

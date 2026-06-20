@@ -7,6 +7,7 @@ import {
   SideSheetBody,
   SideSheetCloseButton,
   SideSheetContent,
+  detailPanelSide,
   SideSheetDescription,
   SideSheetHeader,
   SideSheetTitle,
@@ -40,8 +41,6 @@ export function WorkingPaperDetailSheet({
   locale,
   isSummaryView,
 }: WorkingPaperDetailSheetProps): ReactNode {
-  const sheetSide = locale === "ar" ? "start" : "end";
-
   if (!item) return null;
 
   const itemText = locale === "ar" ? item.itemTextAr : item.itemTextEn;
@@ -55,7 +54,10 @@ export function WorkingPaperDetailSheet({
 
   return (
     <SideSheet open={open} onOpenChange={onOpenChange}>
-      <SideSheetContent side={sheetSide} aria-describedby="wp-sheet-desc">
+      <SideSheetContent
+        side={detailPanelSide(locale)}
+        aria-describedby="wp-sheet-desc"
+      >
         <SideSheetHeader>
           <div className="min-w-0 space-y-1 pe-2">
             <SideSheetTitle className="line-clamp-2">{itemText}</SideSheetTitle>

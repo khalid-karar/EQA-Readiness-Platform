@@ -53,6 +53,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@eqa/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
       '@eqa/content':
         specifier: workspace:*
         version: link:../../packages/content

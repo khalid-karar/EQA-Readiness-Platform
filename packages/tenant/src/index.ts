@@ -22,4 +22,8 @@ export {
   type ResolveInput,
   type TenantResolution,
 } from "./resolve";
+export {
+  createAllowlistTenantDirectory,
+  createAllowlistTenantDirectoryFromSlugs,
+} from "./allowlist-directory";
 export { isValidIdentifier, SHARED_SCHEMA, tenantSchemaName } from "./schema";

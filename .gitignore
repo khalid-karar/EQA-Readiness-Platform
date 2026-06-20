@@ -42,3 +42,7 @@ Thumbs.db
 # Generated sample renders (regenerate via pnpm generate:sample-pack)
 samples/*.pdf
 samples/*.png
+
+# Torture corpus baselines — local review only until visually approved
+packages/workflows/src/__fixtures__/evidence-pack-ar-mixed-script-torture-page1-baseline.png
+packages/workflows/src/__fixtures__/visual-baselines/mixed-script-torture/

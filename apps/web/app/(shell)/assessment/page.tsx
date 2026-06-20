@@ -1,9 +1,17 @@
 import { AssessmentClient } from "@/components/assessment/assessment-client";
 import { buildAssessmentPresentation } from "@/lib/present-assessment";
 import { parseLocale, parseRole } from "@/lib/dashboard-params";
+import { metadataForShellPage } from "@/lib/page-metadata";
+import type { Metadata } from "next";
 
 interface AssessmentPageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
+}
+
+export async function generateMetadata({
+  searchParams,
+}: AssessmentPageProps): Promise<Metadata> {
+  return metadataForShellPage("assessment", searchParams);
 }
 
 export default async function AssessmentPage({

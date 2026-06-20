@@ -2,6 +2,7 @@ import { evaluateRequestGate } from "@eqa/auth";
 import { isPublicRoute } from "@eqa/tenant";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { LOCALE_COOKIE, LOCALE_HEADER } from "./lib/request-locale";
 import { getTenantGateDependencies } from "./lib/tenant-gate";
 
 // Headers a client might use to try to assert/override its tenant. They are
@@ -12,6 +13,30 @@ const SPOOFABLE_TENANT_HEADERS = [
   "x-tenant-id",
   "x-resolved-tenant-slug",
 ];
+
+function resolveLocale(request: NextRequest): "en" | "ar" {
+  const localeParam = request.nextUrl.searchParams.get("locale");
+  if (localeParam === "ar" || localeParam === "en") {
+    return localeParam;
+  }
+  const cookieLocale = request.cookies.get(LOCALE_COOKIE)?.value;
+  return cookieLocale === "ar" ? "ar" : "en";
+}
+
+function applyLocale(
+  request: NextRequest,
+  response: NextResponse,
+): NextResponse {
+  const localeParam = request.nextUrl.searchParams.get("locale");
+  if (localeParam === "ar" || localeParam === "en") {
+    response.cookies.set(LOCALE_COOKIE, localeParam, {
+      path: "/",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 365,
+    });
+  }
+  return response;
+}
 
 /**
  * Request gate.
@@ -31,26 +56,34 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
     requestHeaders.delete(header);
   }
 
+  const locale = resolveLocale(request);
+  requestHeaders.set(LOCALE_HEADER, locale);
+  const nextOpts = { request: { headers: requestHeaders } };
+
+  let response: NextResponse;
+
   if (isPublicRoute(pathname)) {
-    return NextResponse.next({ request: { headers: requestHeaders } });
-  }
-
-  const { provider, directory } = getTenantGateDependencies();
-  const outcome = await evaluateRequestGate(
-    pathname,
-    requestHeaders,
-    provider,
-    directory,
-  );
-
-  if (!outcome.allowed) {
-    return NextResponse.json(
-      { error: outcome.error, path: pathname },
-      { status: outcome.status },
+    response = NextResponse.next(nextOpts);
+  } else {
+    const { provider, directory } = getTenantGateDependencies();
+    const outcome = await evaluateRequestGate(
+      pathname,
+      requestHeaders,
+      provider,
+      directory,
     );
+
+    if (!outcome.allowed) {
+      return NextResponse.json(
+        { error: outcome.error, path: pathname },
+        { status: outcome.status },
+      );
+    }
+
+    response = NextResponse.next(nextOpts);
   }
 
-  return NextResponse.next({ request: { headers: requestHeaders } });
+  return applyLocale(request, response);
 }
 
 export const config = {

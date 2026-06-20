@@ -40,6 +40,7 @@ describe("middleware config — matcher coverage", () => {
     expect(middlewareMatcherMatches("/_next/image/logo")).toBe(false);
     expect(middlewareMatcherMatches("/favicon.ico")).toBe(false);
     expect(middlewareMatcherMatches("/brand/maya-ai-logo.jpg")).toBe(false);
+    expect(middlewareMatcherMatches("/brand/maya-ai-mark.png")).toBe(false);
   });
 });
 

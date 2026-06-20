@@ -1,4 +1,5 @@
 import { loadBundledCatalog, type ContentPin } from "@eqa/content";
+import type { DraftFinding } from "./findings";
 import type { AssessmentResponse } from "./types";
 import type { FinalConclusion } from "./findings";
 import type { RemediationItem } from "./remediation";
@@ -32,6 +33,12 @@ export const SEERA_DEMO_STANDARDS = {
 export const SEERA_DEMO_RETEST_FAIL_NOTE =
   "Synthetic failed retest — evidence incomplete";
 
+/** Journey map: mock-EQA checkpoint stays not-started until a simulation is run. */
+export const SEERA_DEMO_JOURNEY_MOCK_EQA_STARTED = false;
+
+/** Journey map: evidence-pack checkpoint stays not-started until a pack is generated. */
+export const SEERA_DEMO_JOURNEY_PACK_STARTED = false;
+
 export function createSeeraDemoAssessmentName(): {
   readonly en: string;
   readonly ar: string;
@@ -64,8 +71,84 @@ export function createSeeraDemoStatusesByQuestion(): Map<string, ItemStatus> {
     [SEERA_DEMO_QUESTIONS.OBJECTIVITY_THREATS, "gap_confirmed"],
     [SEERA_DEMO_QUESTIONS.COI_DECLARATIONS, "under_human_review"],
     [SEERA_DEMO_QUESTIONS.FUNCTIONAL_REPORTING, "evidence_submitted"],
-    [SEERA_DEMO_QUESTIONS.BUDGET_INDEPENDENCE, "not_assessed"],
+    [SEERA_DEMO_QUESTIONS.BUDGET_INDEPENDENCE, "not_applicable"],
   ]);
+}
+
+function draftProvenance(
+  output: string,
+  timestamp: string,
+): DraftFinding["provenance"] {
+  return {
+    promptVersion: "gap-flag@1.0.0",
+    rubricVersion: "1.0.0",
+    modelAdapter: "local-stub",
+    adapterLocation: "local",
+    inputSummary: "excerpts=2; redacted=yes",
+    output,
+    timestamp,
+  };
+}
+
+/** AI drafts pending human review — surfaced on findings and dashboard pending actions. */
+export function createSeeraDemoDraftFindings(
+  locale: "en" | "ar",
+): DraftFinding[] {
+  const pin = createSeeraDemoContentPin();
+
+  const coiSummary =
+    locale === "ar"
+      ? "مسودة: إقرارات تضارب المصالح غير مكتملة لثلاثة أعضاء مجلس الإدارة."
+      : "DRAFT: Conflict-of-interest declarations incomplete for three board members.";
+
+  const budgetSummary =
+    locale === "ar"
+      ? "مسودة: لا يوجد دليل على استقلالية الميزانية في أوراق العمل المراجَعة."
+      : "DRAFT: No evidence of budget independence in reviewed working papers.";
+
+  const ethicsSummary =
+    locale === "ar"
+      ? "مسودة: فجوة محتملة في توثيق ميثاق الأخلاق — يتطلب مراجعة بشرية."
+      : "DRAFT: Potential gap in ethics charter documentation — requires human review.";
+
+  return [
+    {
+      kind: "draft_finding",
+      status: "draft",
+      findingId: "finding-coi-review",
+      assessmentId: SEERA_DEMO_ASSESSMENT_ID,
+      questionId: SEERA_DEMO_QUESTIONS.COI_DECLARATIONS,
+      standardNumber: SEERA_DEMO_STANDARDS.OBJECTIVITY,
+      draftSummary: coiSummary,
+      provenance: draftProvenance(coiSummary, "2026-06-10T10:00:00.000Z"),
+      contentPin: pin,
+      requiresHumanReview: true,
+    },
+    {
+      kind: "draft_finding",
+      status: "draft",
+      findingId: "finding-budget-wp",
+      assessmentId: SEERA_DEMO_ASSESSMENT_ID,
+      questionId: SEERA_DEMO_QUESTIONS.BUDGET_INDEPENDENCE,
+      standardNumber: SEERA_DEMO_STANDARDS.ORG_INDEPENDENCE,
+      draftSummary: budgetSummary,
+      provenance: draftProvenance(budgetSummary, "2026-06-17T09:00:00.000Z"),
+      contentPin: pin,
+      requiresHumanReview: true,
+    },
+    {
+      kind: "draft_finding",
+      status: "draft",
+      findingId: "finding-ethics-flag",
+      assessmentId: SEERA_DEMO_ASSESSMENT_ID,
+      questionId: SEERA_DEMO_QUESTIONS.ETHICS_CHARTER,
+      standardNumber: SEERA_DEMO_STANDARDS.ETHICS,
+      draftSummary: ethicsSummary,
+      provenance: draftProvenance(ethicsSummary, "2026-06-18T14:30:00.000Z"),
+      contentPin: pin,
+      requiresHumanReview: true,
+    },
+  ];
 }
 
 /** Human-reviewed gap conclusions — includes edit_accept on Q-1-2-1. */
@@ -97,8 +180,8 @@ export function createSeeraDemoConformanceByStandard(): Map<
       {
         standardNumber: SEERA_DEMO_STANDARDS.ETHICS,
         pin,
-        conforms: 0,
-        doesNotConform: 1,
+        conforms: 1,
+        doesNotConform: 0,
         notApplicable: 0,
         unreviewed: 2,
         totalItems: 3,
@@ -109,10 +192,10 @@ export function createSeeraDemoConformanceByStandard(): Map<
       {
         standardNumber: SEERA_DEMO_STANDARDS.OBJECTIVITY,
         pin,
-        conforms: 0,
+        conforms: 1,
         doesNotConform: 0,
         notApplicable: 0,
-        unreviewed: 3,
+        unreviewed: 2,
         totalItems: 3,
       },
     ],
@@ -164,11 +247,29 @@ export function createSeeraDemoRemediationItems(
           ? "تحديث إجراء إقرار تضارب المصالح"
           : "Update conflict-of-interest declaration process",
       owner: locale === "ar" ? "مدير التدقيق" : "Audit Manager",
-      targetDate: "2026-08-01",
+      targetDate: "2026-05-01",
       createdBy: "synthetic",
       createdAt: "2026-04-10T10:00:00.000Z",
       updatedBy: "synthetic",
       updatedAt: "2026-05-01T10:00:00.000Z",
+      closedAt: null,
+      retestNote: null,
+    },
+    {
+      remediationId: "rem-functional-reporting",
+      assessmentId: SEERA_DEMO_ASSESSMENT_ID,
+      questionId: SEERA_DEMO_QUESTIONS.FUNCTIONAL_REPORTING,
+      standardNumber: SEERA_DEMO_STANDARDS.ORG_INDEPENDENCE,
+      action:
+        locale === "ar"
+          ? "توثيق خط التقارير الوظيفي للتدقيق الداخلي"
+          : "Document internal audit functional reporting line",
+      owner: locale === "ar" ? "رئيس التدقيق" : "Chief Audit Executive",
+      targetDate: "2026-09-01",
+      createdBy: "synthetic",
+      createdAt: "2026-05-01T10:00:00.000Z",
+      updatedBy: "synthetic",
+      updatedAt: "2026-06-10T10:00:00.000Z",
       closedAt: null,
       retestNote: null,
     },

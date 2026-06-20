@@ -38,6 +38,7 @@ export function createSyntheticRemediationView(
   const statusesByQuestion = new Map<string, ItemStatus>([
     [SEERA_DEMO_QUESTIONS.ETHICS_CHARTER, "closed_ready"],
     [SEERA_DEMO_QUESTIONS.OBJECTIVITY_THREATS, "remediation_in_progress"],
+    [SEERA_DEMO_QUESTIONS.FUNCTIONAL_REPORTING, "ready_for_retest"],
   ]);
 
   return buildRemediationTrackerView({

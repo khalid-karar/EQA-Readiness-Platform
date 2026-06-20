@@ -8,9 +8,22 @@ import {
   type DashboardRole,
 } from "@eqa/workflows";
 
+export interface PresentedPackPreviewRow {
+  readonly id: string;
+  readonly standardNumber: string;
+  readonly standardTitleEn: string;
+  readonly standardTitleAr: string;
+  readonly domainNumber: string;
+  readonly evidenceRefCount: number;
+  readonly gapSummaryEn: string;
+  readonly gapSummaryAr: string;
+}
+
 export interface EvidencePackPresentation {
   readonly assessmentId: string;
   readonly assessmentName: string;
+  readonly assessmentNameEn: string;
+  readonly assessmentNameAr: string;
   readonly locale: Locale;
   readonly role: DashboardRole;
   readonly roleLabel: string;
@@ -25,24 +38,52 @@ export interface EvidencePackPresentation {
   readonly readinessLabel: string;
   readonly bundledFileCount: 0;
   readonly sampleDownloadPath: string;
+  readonly previewRows: readonly PresentedPackPreviewRow[];
 }
 
 export function buildEvidencePackPresentation(
   locale: Locale,
   role: DashboardRole,
 ): EvidencePackPresentation {
-  const input = createSyntheticEvidencePackInput(locale);
-  const manifest = buildEvidencePackManifest(input);
+  const inputEn = createSyntheticEvidencePackInput("en");
+  const inputAr = createSyntheticEvidencePackInput("ar");
+  const manifestEn = buildEvidencePackManifest(inputEn);
+  const manifestAr = buildEvidencePackManifest(inputAr);
   const isSummaryView = role === "board";
-  const evidenceReferenceCount = manifest.standards.reduce(
-    (sum, std) => sum + std.evidenceIndex.length,
+
+  const arByStandard = new Map(
+    manifestAr.standards.map((s) => [s.standardNumber, s]),
+  );
+
+  const previewRows: PresentedPackPreviewRow[] = manifestEn.standards.map(
+    (std) => {
+      const arStd = arByStandard.get(std.standardNumber);
+      return {
+        id: std.standardNumber,
+        standardNumber: std.standardNumber,
+        standardTitleEn: std.standardTitle,
+        standardTitleAr: arStd?.standardTitle ?? std.standardTitle,
+        domainNumber: std.domainNumber,
+        evidenceRefCount: std.evidenceIndex.length,
+        gapSummaryEn: std.gapStatusSummary,
+        gapSummaryAr: arStd?.gapStatusSummary ?? std.gapStatusSummary,
+      };
+    },
+  );
+
+  const evidenceReferenceCount = previewRows.reduce(
+    (sum, row) => sum + row.evidenceRefCount,
     0,
   );
 
   return {
-    assessmentId: manifest.assessmentId,
+    assessmentId: manifestEn.assessmentId,
     assessmentName:
-      locale === "ar" ? manifest.assessmentName.ar : manifest.assessmentName.en,
+      locale === "ar"
+        ? manifestEn.assessmentName.ar
+        : manifestEn.assessmentName.en,
+    assessmentNameEn: manifestEn.assessmentName.en,
+    assessmentNameAr: manifestEn.assessmentName.ar,
     locale,
     role,
     roleLabel: ROLE_LABELS[role][locale],
@@ -58,12 +99,13 @@ export function buildEvidencePackPresentation(
       locale === "ar"
         ? EVIDENCE_PACK_CONFIDENTIALITY.ar
         : EVIDENCE_PACK_CONFIDENTIALITY.en,
-    standardCount: manifest.standards.length,
+    standardCount: previewRows.length,
     evidenceReferenceCount,
-    readinessScore: manifest.readinessSummary.score,
-    readinessLabel: manifest.readinessSummary.label,
+    readinessScore: manifestEn.readinessSummary.score,
+    readinessLabel: manifestEn.readinessSummary.label,
     bundledFileCount: 0,
     sampleDownloadPath: `/api/evidence-pack/sample?locale=${locale}`,
+    previewRows,
   };
 }
 

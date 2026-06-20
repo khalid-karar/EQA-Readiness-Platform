@@ -49,13 +49,15 @@ function stateAriaLabel(
   state: JourneyCheckpointState,
   locale: Locale,
 ): string {
-  const labels: Record<JourneyCheckpointState, { en: string; ar: string }> = {
-    cleared: { en: "Cleared", ar: "مكتمل" },
-    "in-progress": { en: "In progress", ar: "قيد التنفيذ" },
-    "not-started": { en: "Not started", ar: "لم يبدأ" },
-    blocked: { en: "Blocked", ar: "متوقف" },
-  };
-  return locale === "ar" ? labels[state].ar : labels[state].en;
+  const key =
+    state === "cleared"
+      ? "journeyStateCleared"
+      : state === "in-progress"
+        ? "journeyStateInProgress"
+        : state === "not-started"
+          ? "journeyStateNotStarted"
+          : "journeyStateBlocked";
+  return uiLabel(key, locale);
 }
 
 export function ReadinessJourneyMap({

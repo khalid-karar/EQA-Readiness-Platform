@@ -17,9 +17,9 @@ import { cn } from "@/lib/utils";
 import { uiLabel } from "@/lib/ui-labels";
 
 const CELL_BORDER = {
-  green: "border-l-readiness-conformant",
-  amber: "border-l-readiness-partial",
-  red: "border-l-readiness-gap",
+  green: "border-s-readiness-conformant",
+  amber: "border-s-readiness-partial",
+  red: "border-s-readiness-gap",
 } as const;
 
 interface ConformanceHeatMapProps {
@@ -99,7 +99,7 @@ function HeatMapCellButton({
           type="button"
           onClick={() => onSelect(cell)}
           className={cn(
-            "rounded-md border border-border border-l-4 bg-surface p-3 text-left text-sm shadow-sm motion-safe transition",
+            "rounded-md border border-border border-s-4 bg-surface p-3 text-start text-sm shadow-sm motion-safe transition",
             "hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
             CELL_BORDER[cell.readinessLevel],
             isSelected && "ring-2 ring-brand-gold ring-offset-2",

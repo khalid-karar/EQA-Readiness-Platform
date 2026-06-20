@@ -138,7 +138,7 @@ export function DataTable<T>({
       ) : (
         <div className="overflow-x-auto rounded-lg border bg-surface shadow-sm">
           <table className="w-full min-w-[480px] text-sm">
-            <thead className="border-b bg-muted/40 text-left">
+            <thead className="border-b bg-muted/40 text-start">
               <tr>
                 {columns.map((col) => {
                   const sortable = Boolean(col.sortValue);
@@ -148,10 +148,21 @@ export function DataTable<T>({
                       key={col.id}
                       className={cn(
                         "px-3 py-2 font-medium text-muted-foreground",
-                        sortable && "cursor-pointer select-none hover:text-foreground",
+                        sortable &&
+                          "cursor-pointer select-none hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                         col.className,
                       )}
+                      tabIndex={sortable ? 0 : undefined}
                       onClick={() => toggleSort(col.id, sortable)}
+                      onKeyDown={(e) => {
+                        if (
+                          sortable &&
+                          (e.key === "Enter" || e.key === " ")
+                        ) {
+                          e.preventDefault();
+                          toggleSort(col.id, sortable);
+                        }
+                      }}
                       aria-sort={
                         isActive
                           ? sortDir === "asc"

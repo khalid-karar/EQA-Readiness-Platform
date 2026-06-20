@@ -11,7 +11,7 @@ import {
   SideSheetTitle,
 } from "@/components/ui/side-sheet";
 import { StatusPill, readinessVariantFromLevel } from "@/components/ui/status-pill";
-import { uiLabel } from "@/lib/ui-labels";
+import { gapSourceLabel, uiLabel } from "@/lib/ui-labels";
 
 interface MockEqaDetailSheetProps {
   row: PresentedStandardRow | null;
@@ -26,7 +26,7 @@ export function MockEqaDetailSheet({
   onOpenChange,
   locale,
 }: MockEqaDetailSheetProps): React.ReactNode {
-  const sheetSide = locale === "ar" ? "left" : "right";
+  const sheetSide = locale === "ar" ? "start" : "end";
 
   if (!row) return null;
 
@@ -72,7 +72,7 @@ export function MockEqaDetailSheet({
                     className="rounded-md border bg-muted/20 px-3 py-2 text-sm"
                   >
                     <span className="text-xs font-medium uppercase text-muted-foreground">
-                      {gap.source.replace(/_/g, " ")}
+                      {gapSourceLabel(gap.source, locale)}
                     </span>
                     <p>{gap.summary}</p>
                   </li>

@@ -1,8 +1,8 @@
 "use client";
 
-import type { MockEqaPresentation } from "@/lib/present-mock-eqa";
-import { cn } from "@/lib/utils";
 import { AlertTriangle } from "lucide-react";
+import { AlertBanner } from "@/components/ui/alert-banner";
+import type { MockEqaPresentation } from "@/lib/present-mock-eqa";
 import { uiLabel } from "@/lib/ui-labels";
 
 interface SimulationDisclaimerBannerProps {
@@ -19,34 +19,18 @@ export function SimulationDisclaimerBanner({
   const { disclaimerText, disclaimerShort, view } = presentation;
 
   return (
-    <div
-      role="alert"
-      aria-live="polite"
-      data-testid="mock-eqa-disclaimer"
-      className={cn(
-        "rounded-lg border-2 border-amber-500 bg-amber-50 px-4 py-4 shadow-sm",
-        "dark:border-amber-600 dark:bg-amber-950/50",
-      )}
+    <AlertBanner
+      variant="partial"
+      icon={AlertTriangle}
+      title={disclaimerShort}
+      testId="mock-eqa-disclaimer"
     >
-      <div className="flex gap-3">
-        <AlertTriangle
-          className="mt-0.5 h-6 w-6 shrink-0 text-amber-600 dark:text-amber-400"
-          aria-hidden
-        />
-        <div className="space-y-2">
-          <p className="text-base font-bold uppercase tracking-wide text-amber-900 dark:text-amber-100">
-            {disclaimerShort}
-          </p>
-          <p className="text-sm font-medium leading-relaxed text-amber-950 dark:text-amber-50">
-            {disclaimerText}
-          </p>
-          {view.isSummaryView ? (
-            <p className="text-xs text-amber-800 dark:text-amber-200">
-              {uiLabel("mockEqaBoardReadOnly", view.locale)}
-            </p>
-          ) : null}
-        </div>
-      </div>
-    </div>
+      <p>{disclaimerText}</p>
+      {view.isSummaryView ? (
+        <p className="text-xs opacity-90">
+          {uiLabel("mockEqaBoardReadOnly", view.locale)}
+        </p>
+      ) : null}
+    </AlertBanner>
   );
 }

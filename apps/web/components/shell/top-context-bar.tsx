@@ -70,7 +70,7 @@ export function TopContextBar({
         <div
           className="flex flex-wrap items-center gap-2 text-xs md:gap-3"
           role="toolbar"
-          aria-label={uiLabel("demoNote", locale)}
+          aria-label={uiLabel("viewControlsLabel", locale)}
         >
           {roleLabel ? (
             <div className="flex items-center gap-2 text-topbar-foreground/80">

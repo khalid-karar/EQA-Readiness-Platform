@@ -28,13 +28,27 @@ SideSheetOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
 interface SideSheetContentProps
   extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> {
-  side?: "left" | "right";
+  /** Logical inline edge — `end` is default reading-order trailing side. */
+  side?: "start" | "end";
 }
+
+const SHEET_SIDE_CLASSES = {
+  end: cn(
+    "end-0 top-0",
+    "data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right",
+    "rtl:data-[state=open]:slide-in-from-left rtl:data-[state=closed]:slide-out-to-left",
+  ),
+  start: cn(
+    "start-0 top-0",
+    "data-[state=open]:slide-in-from-left data-[state=closed]:slide-out-to-left",
+    "rtl:data-[state=open]:slide-in-from-right rtl:data-[state=closed]:slide-out-to-right",
+  ),
+} as const;
 
 const SideSheetContent = React.forwardRef<
   React.ComponentRef<typeof DialogPrimitive.Content>,
   SideSheetContentProps
->(({ className, children, side = "right", ...props }, ref) => (
+>(({ className, children, side = "end", ...props }, ref) => (
   <SideSheetPortal>
     <SideSheetOverlay />
     <DialogPrimitive.Content
@@ -42,9 +56,7 @@ const SideSheetContent = React.forwardRef<
       className={cn(
         "fixed z-50 flex h-full w-full max-w-md flex-col border bg-surface shadow-lg motion-safe transition-transform",
         "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-200 data-[state=open]:duration-200",
-        side === "right"
-          ? "end-0 top-0 data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right"
-          : "start-0 top-0 data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left",
+        SHEET_SIDE_CLASSES[side],
         className,
       )}
       {...props}

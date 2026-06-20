@@ -38,7 +38,7 @@ export function AppSidebar({
         "flex shrink-0 flex-col bg-sidebar text-sidebar-foreground motion-safe transition-[width]",
         collapsed ? "w-16" : "w-60",
       )}
-      aria-label={locale === "ar" ? "التنقل الرئيسي" : "Main navigation"}
+      aria-label={uiLabel("mainNavLabel", locale)}
     >
       <div
         className={cn(
@@ -49,7 +49,7 @@ export function AppSidebar({
         <Link
           href={`/dashboard${suffix}`}
           className="flex items-center gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-accent"
-          aria-label="Maya AI"
+          aria-label={uiLabel("brandName", locale)}
         >
           <Image
             src="/brand/maya-ai-logo.png"
@@ -61,7 +61,7 @@ export function AppSidebar({
           />
           {!collapsed && (
             <span className="text-sm font-semibold tracking-tight">
-              Maya AI
+              {uiLabel("brandName", locale)}
             </span>
           )}
         </Link>
@@ -90,7 +90,7 @@ export function AppSidebar({
                   </span>
                 </TooltipTrigger>
                 <TooltipContent side={locale === "ar" ? "left" : "right"}>
-                  {locale === "ar" ? "قريباً" : "Coming soon"}
+                  {uiLabel("comingSoon", locale)}
                 </TooltipContent>
               </Tooltip>
             );
@@ -140,22 +140,16 @@ export function AppSidebar({
           aria-expanded={!collapsed}
           aria-label={
             collapsed
-              ? locale === "ar"
-                ? "توسيع الشريط الجانبي"
-                : "Expand sidebar"
-              : locale === "ar"
-                ? "طي الشريط الجانبي"
-                : "Collapse sidebar"
+              ? uiLabel("expandSidebar", locale)
+              : uiLabel("collapseSidebar", locale)
           }
         >
           {collapsed ? (
-            <PanelLeftOpen className="h-4 w-4" aria-hidden />
+            <PanelLeftOpen className="h-4 w-4 rtl:rotate-180" aria-hidden />
           ) : (
             <>
-              <PanelLeftClose className="h-4 w-4" aria-hidden />
-              <span className="text-xs">
-                {locale === "ar" ? "طي" : "Collapse"}
-              </span>
+              <PanelLeftClose className="h-4 w-4 rtl:rotate-180" aria-hidden />
+              <span className="text-xs">{uiLabel("collapse", locale)}</span>
             </>
           )}
         </Button>

@@ -201,9 +201,6 @@ function RemediationClientInner({
         ),
         sortValue: (row) => row.standardNumber,
         filterValue: (row) => `${row.standardNumber} ${row.standardTitle}`,
-        className: cn(
-          "border-s-4 border-s-transparent",
-        ),
       },
       {
         id: "owner",

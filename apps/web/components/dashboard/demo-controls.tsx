@@ -2,7 +2,7 @@
 
 import type { DashboardView, ItemStatus } from "@eqa/workflows";
 import type { PresentedHeatMapCell } from "@/lib/present-dashboard";
-import { StatusBadge } from "@/components/orientation/status-badge";
+import { StatusPill, readinessVariantFromLevel } from "@/components/ui/status-pill";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { uiLabel } from "@/lib/ui-labels";
 import { uxStatusLevel } from "@/lib/status-level";
@@ -45,11 +45,13 @@ export function StandardDetailPanel({
             {uiLabel("questionItems", locale)}
           </p>
           {heatCell && (
-            <StatusBadge
-              status={heatCell.dominantStatus}
-              label={cell.statusLabel}
-              level={uxStatusLevel(heatCell.dominantStatus)}
-            />
+            <StatusPill
+              variant={readinessVariantFromLevel(
+                uxStatusLevel(heatCell.dominantStatus),
+              )}
+            >
+              {cell.statusLabel}
+            </StatusPill>
           )}
           {!view.isSummaryView && heatCell?.statusBreakdown && (
             <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
@@ -57,11 +59,14 @@ export function StandardDetailPanel({
                 .filter(([, count]) => (count ?? 0) > 0)
                 .map(([status, count]) => (
                   <li key={status} className="flex items-center gap-2">
-                    <StatusBadge
-                      status={status as ItemStatus}
-                      label={statusLabels[status as ItemStatus]}
-                      level={uxStatusLevel(status as ItemStatus)}
-                    />
+                    <StatusPill
+                      variant={readinessVariantFromLevel(
+                        uxStatusLevel(status as ItemStatus),
+                      )}
+                      size="sm"
+                    >
+                      {statusLabels[status as ItemStatus]}
+                    </StatusPill>
                     <span>× {count}</span>
                   </li>
                 ))}

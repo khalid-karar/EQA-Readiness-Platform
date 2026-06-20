@@ -109,7 +109,7 @@ export function RemediationDetailSheet({
 
   if (!row) return null;
 
-  const sheetSide = locale === "ar" ? "left" : "right";
+  const sheetSide = locale === "ar" ? "start" : "end";
   const closed = isClosedStatus(row.itemStatus);
   const scheduleLabel =
     locale === "ar" ? row.scheduleLabelAr : row.scheduleLabelEn;

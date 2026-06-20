@@ -1,6 +1,7 @@
 "use client";
 
 import { useToast } from "@/hooks/use-toast";
+import { uiLabel } from "@/lib/ui-labels";
 import {
   Toast,
   ToastClose,
@@ -10,7 +11,7 @@ import {
   ToastViewport,
 } from "@/components/ui/toast";
 
-export function Toaster(): React.ReactNode {
+export function Toaster({ locale = "en" }: { locale?: "en" | "ar" }): React.ReactNode {
   const { toasts } = useToast();
 
   return (
@@ -24,7 +25,7 @@ export function Toaster(): React.ReactNode {
             ) : null}
           </div>
           {action}
-          <ToastClose />
+          <ToastClose aria-label={uiLabel("closeToast", locale)} />
         </Toast>
       ))}
       <ToastViewport />

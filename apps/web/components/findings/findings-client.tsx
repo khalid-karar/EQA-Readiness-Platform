@@ -7,6 +7,7 @@ import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { StatusPill } from "@/components/ui/status-pill";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FindingDetailSheet } from "@/components/findings/finding-detail-sheet";
+import { WhatsNextPanel } from "@/components/orientation/whats-next-panel";
 import { useSyncShellMeta } from "@/components/shell/use-sync-shell-meta";
 import { DEFAULT_TENANT_NAME } from "@/lib/nav-config";
 import { uiLabel } from "@/lib/ui-labels";
@@ -147,13 +148,21 @@ function FindingsClientInner({
             standardTitle: row.standardTitle,
             questionId: row.questionId,
             status,
-            statusLabelEn:
-              status === "gap_confirmed" ? "Gap confirmed" : "No gap",
-            statusLabelAr:
-              status === "gap_confirmed" ? "فجوة مؤكدة" : "لا توجد فجوة",
+            statusLabelEn: uiLabel(
+              status === "gap_confirmed"
+                ? "findingStatusGapConfirmed"
+                : "findingStatusNoGap",
+              "en",
+            ),
+            statusLabelAr: uiLabel(
+              status === "gap_confirmed"
+                ? "findingStatusGapConfirmed"
+                : "findingStatusNoGap",
+              "ar",
+            ),
             source: "human",
-            sourceLabelEn: "Human review",
-            sourceLabelAr: "مراجعة بشرية",
+            sourceLabelEn: uiLabel("findingSourceHuman", "en"),
+            sourceLabelAr: uiLabel("findingSourceHuman", "ar"),
             ageDays: row.ageDays,
             ageLabelEn: row.ageLabelEn,
             ageLabelAr: row.ageLabelAr,
@@ -168,37 +177,66 @@ function FindingsClientInner({
   );
 
   const pendingCount = rows.filter((r) => !r.resolved).length;
+  const pendingActions =
+    pendingCount > 0 && canReview
+      ? [
+          {
+            id: "pending-findings",
+            count: pendingCount,
+            label: uiLabel("findingsWhatsNextAction", locale),
+            priority: "high" as const,
+          },
+        ]
+      : [];
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle>{uiLabel("findingsTitle", locale)}</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            {uiLabel("findingsSubtitle", locale)}
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-sm text-muted-foreground">
-            {uiLabel("findingsPendingCount", locale)}:{" "}
-            <span className="font-semibold text-foreground">{pendingCount}</span>
-          </p>
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle>{uiLabel("findingsTitle", locale)}</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                {uiLabel("findingsSubtitle", locale)}
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                {uiLabel("findingsPendingCount", locale)}:{" "}
+                <span className="font-semibold text-foreground">
+                  {pendingCount}
+                </span>
+              </p>
 
-          <DataTable
-            columns={columns}
-            data={rows}
-            getRowId={(row) => row.id}
-            selectedId={selectedId}
-            onSelectRow={handleSelect}
-            searchable
-            searchPlaceholder={uiLabel("findingsSearch", locale)}
-            loading={loading}
-            error={error}
-            emptyTitle={uiLabel("findingsEmptyTitle", locale)}
-            emptyDescription={uiLabel("findingsEmptyDescription", locale)}
+              <DataTable
+                columns={columns}
+                data={rows}
+                getRowId={(row) => row.id}
+                selectedId={selectedId}
+                onSelectRow={handleSelect}
+                searchable
+                searchPlaceholder={uiLabel("findingsSearch", locale)}
+                loading={loading}
+                error={error}
+                emptyTitle={uiLabel("findingsEmptyTitle", locale)}
+                emptyDescription={uiLabel(
+                  "findingsEmptyDescription",
+                  locale,
+                )}
+              />
+            </CardContent>
+          </Card>
+        </div>
+
+        <aside>
+          <WhatsNextPanel
+            locale={locale}
+            isSummaryView={isSummaryView}
+            pendingActions={pendingActions}
+            summaryHint={uiLabel("findingBoardHint", locale)}
           />
-        </CardContent>
-      </Card>
+        </aside>
+      </div>
 
       <FindingDetailSheet
         finding={selected}

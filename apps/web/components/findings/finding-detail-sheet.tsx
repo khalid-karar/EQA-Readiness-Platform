@@ -48,7 +48,7 @@ export function FindingDetailSheet({
   const [isEditing, setIsEditing] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
 
-  const sheetSide = locale === "ar" ? "left" : "right";
+  const sheetSide = locale === "ar" ? "start" : "end";
 
   useEffect(() => {
     if (finding?.draft) {

@@ -300,6 +300,56 @@ export const UI_LABELS: LabelSet = {
     en: "Download the sample PDF to verify disclaimer and confidentiality footer on every page.",
     ar: "نزّل PDF التجريبي للتحقق من إخلاء المسؤولية وتذييل السرية في كل صفحة.",
   },
+  packConfidentialityHeading: { en: "Confidential", ar: "سري" },
+  skipToContent: { en: "Skip to content", ar: "تخطي إلى المحتوى" },
+  shellLoading: { en: "Loading…", ar: "جاري التحميل…" },
+  mainNavLabel: { en: "Main navigation", ar: "التنقل الرئيسي" },
+  brandName: { en: "Maya AI", ar: "Maya AI" },
+  comingSoon: { en: "Coming soon", ar: "قريباً" },
+  expandSidebar: { en: "Expand sidebar", ar: "توسيع الشريط الجانبي" },
+  collapseSidebar: { en: "Collapse sidebar", ar: "طي الشريط الجانبي" },
+  collapse: { en: "Collapse", ar: "طي" },
+  viewControlsLabel: {
+    en: "Language and role controls",
+    ar: "عناصر اللغة والدور",
+  },
+  demoDisabledHint: {
+    en: "Demo UI — job wired in backend",
+    ar: "واجهة تجريبية — الوظيفة مربوطة في الخادم",
+  },
+  closeToast: { en: "Close notification", ar: "إغلاق الإشعار" },
+  findingStatusGapConfirmed: { en: "Gap confirmed", ar: "فجوة مؤكدة" },
+  findingStatusNoGap: { en: "No gap", ar: "لا توجد فجوة" },
+  findingSourceHuman: { en: "Human review", ar: "مراجعة بشرية" },
+  findingsWhatsNextAction: {
+    en: "Review pending AI draft findings",
+    ar: "مراجعة مسودات النتائج المعلقة",
+  },
+  journeyStateCleared: { en: "Cleared", ar: "مكتمل" },
+  journeyStateInProgress: { en: "In progress", ar: "قيد التنفيذ" },
+  journeyStateNotStarted: { en: "Not started", ar: "لم يبدأ" },
+  journeyStateBlocked: { en: "Blocked", ar: "متوقف" },
+  gapSourceConfirmedGap: {
+    en: "Confirmed gap status",
+    ar: "حالة فجوة مؤكدة",
+  },
+  gapSourceHumanFinding: {
+    en: "Human-reviewed finding",
+    ar: "نتيجة مراجَعة بشرية",
+  },
+  gapSourcePendingReview: {
+    en: "Pending human review",
+    ar: "بانتظار المراجعة البشرية",
+  },
+  gapSourceNotStarted: { en: "Not started", ar: "لم يبدأ" },
+  gapSourceWpNonConformance: {
+    en: "Working-paper non-conformance",
+    ar: "عدم مطابقة في أوراق العمل",
+  },
+  gapSourceWpUnreviewed: {
+    en: "Working-paper unreviewed",
+    ar: "أوراق عمل غير مراجَعة",
+  },
   journeyMapTitle: {
     en: "Readiness journey map",
     ar: "خريطة رحلة الجاهزية",
@@ -402,4 +452,19 @@ export function progressRemainingLabel(locale: Locale, count: number): string {
 
 export function progressNotStartedLabel(locale: Locale, count: number): string {
   return locale === "ar" ? `${count} لم يبدأ` : `${count} not started`;
+}
+
+const GAP_SOURCE_LABEL_KEYS: Record<string, keyof typeof UI_LABELS> = {
+  confirmed_gap_status: "gapSourceConfirmedGap",
+  human_reviewed_finding: "gapSourceHumanFinding",
+  pending_human_review: "gapSourcePendingReview",
+  not_started: "gapSourceNotStarted",
+  wp_non_conformance: "gapSourceWpNonConformance",
+  wp_unreviewed: "gapSourceWpUnreviewed",
+};
+
+export function gapSourceLabel(source: string, locale: Locale): string {
+  const key = GAP_SOURCE_LABEL_KEYS[source];
+  if (key) return uiLabel(key, locale);
+  return source.replace(/_/g, " ");
 }

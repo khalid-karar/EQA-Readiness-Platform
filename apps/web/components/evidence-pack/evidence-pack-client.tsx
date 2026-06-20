@@ -230,7 +230,11 @@ function EvidencePackClientInner({
                 <p className="text-sm text-muted-foreground">
                   {uiLabel("packGenerateHint", locale)}
                 </p>
-                <Button size="sm" disabled title="Demo UI — job wired in backend">
+                <Button
+                  size="sm"
+                  disabled
+                  title={uiLabel("demoDisabledHint", locale)}
+                >
                   {uiLabel("packGenerateButton", locale)}
                 </Button>
               </CardContent>

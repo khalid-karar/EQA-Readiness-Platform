@@ -1,12 +1,13 @@
 "use client";
 
-import { Suspense, useState, type ReactNode } from "react";
+import { Suspense, useEffect, useState, type ReactNode } from "react";
 import { parseLocale, parseRole } from "@/lib/dashboard-params";
 import { Toaster } from "@/components/ui/toaster";
 import { AppSidebar } from "./app-sidebar";
 import { ShellPageProvider } from "./shell-page-context";
 import { TopContextBar } from "./top-context-bar";
 import { cn } from "@/lib/utils";
+import { uiLabel } from "@/lib/ui-labels";
 import { useSearchParams } from "next/navigation";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
@@ -21,6 +22,11 @@ function AppShellInner({ children }: AppShellProps): ReactNode {
   const [collapsed, setCollapsed] = useState(false);
   const dir = locale === "ar" ? "rtl" : "ltr";
 
+  useEffect(() => {
+    document.documentElement.lang = locale;
+    document.documentElement.dir = dir;
+  }, [locale, dir]);
+
   return (
     <div
       dir={dir}
@@ -34,7 +40,7 @@ function AppShellInner({ children }: AppShellProps): ReactNode {
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-2 focus:rounded-md focus:bg-brand-gold focus:px-4 focus:py-2 focus:text-brand-navy"
       >
-        {locale === "ar" ? "تخطي إلى المحتوى" : "Skip to content"}
+        {uiLabel("skipToContent", locale)}
       </a>
 
       <AppSidebar
@@ -52,7 +58,7 @@ function AppShellInner({ children }: AppShellProps): ReactNode {
           <div className="mx-auto max-w-7xl space-y-6">{children}</div>
         </main>
       </div>
-      <Toaster />
+      <Toaster locale={locale} />
     </div>
   );
 }
@@ -72,7 +78,7 @@ export function AppShell({ children }: AppShellProps): ReactNode {
 function ShellFallback(): ReactNode {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background text-sm text-muted-foreground">
-      Loading…
+      {uiLabel("shellLoading", "en")}
     </div>
   );
 }

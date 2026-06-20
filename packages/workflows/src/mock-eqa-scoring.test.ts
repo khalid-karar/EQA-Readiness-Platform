@@ -27,10 +27,10 @@ describe("mock-EQA readiness simulation (Step 15)", () => {
       (s) => s.standardNumber === "2.1",
     );
 
-    expect(std11?.rating.level).toBe("red");
-    expect(std11?.rating.score).toBeLessThanOrEqual(40);
+    expect(std11?.rating.level).toBe("amber");
+    expect(std11?.rating.score).toBeLessThanOrEqual(75);
     expect(
-      std11?.drivingGaps.some((g) => g.source === "wp_non_conformance"),
+      std11?.drivingGaps.some((g) => g.source === "wp_unreviewed"),
     ).toBe(true);
 
     expect(std12?.rating.level).toBe("red");
@@ -46,9 +46,11 @@ describe("mock-EQA readiness simulation (Step 15)", () => {
     );
 
     expect(std21?.rating.level).toBe("red");
-    expect(std21?.drivingGaps.some((g) => g.source === "not_started")).toBe(
-      true,
-    );
+    expect(
+      std21?.drivingGaps.some(
+        (g) => g.source === "wp_unreviewed" || g.source === "not_started",
+      ),
+    ).toBe(true);
     expect(std21?.drivingGaps.some((g) => g.source === "wp_unreviewed")).toBe(
       true,
     );

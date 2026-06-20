@@ -27,7 +27,7 @@ describe("synthetic Seera demo fixture (rule 5 — synthetic only)", () => {
       "evidence_submitted",
     );
     expect(statuses.get(SEERA_DEMO_QUESTIONS.BUDGET_INDEPENDENCE)).toBe(
-      "not_assessed",
+      "not_applicable",
     );
   });
 
@@ -42,8 +42,9 @@ describe("synthetic Seera demo fixture (rule 5 — synthetic only)", () => {
   it("leaves working-paper checklist items unreviewed across standards", () => {
     const conformance = createSeeraDemoConformanceByStandard();
     expect(conformance.get(SEERA_DEMO_STANDARDS.ETHICS)?.unreviewed).toBe(2);
+    expect(conformance.get(SEERA_DEMO_STANDARDS.ETHICS)?.conforms).toBe(1);
     expect(conformance.get(SEERA_DEMO_STANDARDS.OBJECTIVITY)?.unreviewed).toBe(
-      3,
+      2,
     );
     expect(
       conformance.get(SEERA_DEMO_STANDARDS.ORG_INDEPENDENCE)?.unreviewed,

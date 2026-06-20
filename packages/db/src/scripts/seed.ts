@@ -2,6 +2,7 @@ import { createLocalKmsFromEnv } from "@eqa/crypto";
 import type { Database } from "../database";
 import { createPgDatabase } from "../pg-backend";
 import { seedSeeraPilot } from "../seed";
+import { seedSeeraPilotDemoData } from "../seed-demo-data";
 
 /**
  * Runnable seed for local/dev environments.
@@ -29,6 +30,7 @@ async function main(): Promise<void> {
 
   try {
     const tenant = await seedSeeraPilot(db, kms);
+    await seedSeeraPilotDemoData(db, kms, tenant);
     console.log(
       `[seed] Tenant ready: ${tenant.name} (slug=${tenant.slug}, schema=${tenant.schemaName}, id=${tenant.id})`,
     );

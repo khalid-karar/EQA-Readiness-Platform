@@ -43,3 +43,4 @@ export { createGapFlagSink } from "./gap-flag-system";
 export type { AuditEntry, VerifyResult } from "@eqa/audit-log";
 
 export { seedSeeraPilot, SEERA_PILOT } from "./seed";
+export { seedSeeraPilotDemoData } from "./seed-demo-data";

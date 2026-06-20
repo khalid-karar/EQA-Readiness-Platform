@@ -1,5 +1,7 @@
 import {
   createSyntheticRemediationView,
+  SEERA_DEMO_JOURNEY_MOCK_EQA_STARTED,
+  SEERA_DEMO_JOURNEY_PACK_STARTED,
   type DashboardRole,
   type DashboardView,
   type HeatMapCell,
@@ -182,10 +184,16 @@ export function buildJourneyMapPresentation(
         : 0;
 
   const mockEqa = buildMockEqaPresentation(locale, role);
-  const mockPercent = clampPercent(mockEqa.overallScore);
+  const mockStarted = SEERA_DEMO_JOURNEY_MOCK_EQA_STARTED;
+  const mockPercent = mockStarted
+    ? clampPercent(mockEqa.overallScore)
+    : 0;
 
   const evidencePack = buildEvidencePackPresentation(locale, role);
-  const packPercent = clampPercent(evidencePack.readinessScore);
+  const packStarted = SEERA_DEMO_JOURNEY_PACK_STARTED;
+  const packPercent = packStarted
+    ? clampPercent(evidencePack.readinessScore)
+    : 0;
 
   const checkpoints: JourneyCheckpoint[] = [
     {
@@ -262,10 +270,15 @@ export function buildJourneyMapPresentation(
       labelAr: "اجتياز المحاكاة",
       href: "/mock-eqa",
       percent: mockPercent,
-      metricEn: `${mockPercent}% readiness simulation`,
-      metricAr: `محاكاة جاهزية ${mockPercent}%`,
-      state:
-        mockEqa.overallLevel === "green"
+      metricEn: mockStarted
+        ? `${mockPercent}% readiness simulation`
+        : "Not yet run",
+      metricAr: mockStarted
+        ? `محاكاة جاهزية ${mockPercent}%`
+        : "لم تُجرَ بعد",
+      state: !mockStarted
+        ? "not-started"
+        : mockEqa.overallLevel === "green"
           ? "cleared"
           : mockEqa.overallLevel === "red"
             ? "blocked"
@@ -278,10 +291,15 @@ export function buildJourneyMapPresentation(
       labelAr: "حزمة الأدلة جاهزة",
       href: "/evidence-pack",
       percent: packPercent,
-      metricEn: `${packPercent}% pack readiness`,
-      metricAr: `جاهزية الحزمة ${packPercent}%`,
-      state:
-        packPercent >= 75
+      metricEn: packStarted
+        ? `${packPercent}% pack readiness`
+        : "Pack not generated",
+      metricAr: packStarted
+        ? `جاهزية الحزمة ${packPercent}%`
+        : "لم تُنشأ الحزمة بعد",
+      state: !packStarted
+        ? "not-started"
+        : packPercent >= 75
           ? "cleared"
           : packPercent >= 40
             ? "in-progress"

@@ -2,15 +2,12 @@ import type { Locale } from "@eqa/content";
 import type { DraftFinding } from "@eqa/workflows";
 import {
   createSeeraDemoAssessmentName,
-  createSeeraDemoContentPin,
+  createSeeraDemoDraftFindings,
   createSeeraDemoFinalConclusions,
   ROLE_LABELS,
-  SEERA_DEMO_ASSESSMENT_ID,
   SEERA_DEMO_PACK_ID,
   SEERA_DEMO_PACK_VERSION,
-  SEERA_DEMO_QUESTIONS,
   SEERA_DEMO_REFERENCE_DATE,
-  SEERA_DEMO_STANDARDS,
   renderQuestionnaire,
   type DashboardRole,
 } from "@eqa/workflows";
@@ -81,79 +78,6 @@ function standardTitleFor(
   return standardNumber;
 }
 
-function baseProvenance(
-  output: string,
-  timestamp: string,
-): DraftFinding["provenance"] {
-  return {
-    promptVersion: "gap-flag@1.0.0",
-    rubricVersion: "1.0.0",
-    modelAdapter: "local-stub",
-    adapterLocation: "local",
-    inputSummary: "excerpts=2; redacted=yes",
-    output,
-    timestamp,
-  };
-}
-
-function createSyntheticDraftFindings(locale: Locale): DraftFinding[] {
-  const pin = createSeeraDemoContentPin();
-
-  const coiSummary =
-    locale === "ar"
-      ? "مسودة: إقرارات تضارب المصالح غير مكتملة لثلاثة أعضاء مجلس الإدارة."
-      : "DRAFT: Conflict-of-interest declarations incomplete for three board members.";
-
-  const budgetSummary =
-    locale === "ar"
-      ? "مسودة: لا يوجد دليل على استقلالية الميزانية في أوراق العمل المراجَعة."
-      : "DRAFT: No evidence of budget independence in reviewed working papers.";
-
-  const ethicsSummary =
-    locale === "ar"
-      ? "مسودة: فجوة محتملة في توثيق ميثاق الأخلاق — يتطلب مراجعة بشرية."
-      : "DRAFT: Potential gap in ethics charter documentation — requires human review.";
-
-  return [
-    {
-      kind: "draft_finding",
-      status: "draft",
-      findingId: "finding-coi-review",
-      assessmentId: SEERA_DEMO_ASSESSMENT_ID,
-      questionId: SEERA_DEMO_QUESTIONS.COI_DECLARATIONS,
-      standardNumber: SEERA_DEMO_STANDARDS.OBJECTIVITY,
-      draftSummary: coiSummary,
-      provenance: baseProvenance(coiSummary, "2026-06-10T10:00:00.000Z"),
-      contentPin: pin,
-      requiresHumanReview: true,
-    },
-    {
-      kind: "draft_finding",
-      status: "draft",
-      findingId: "finding-budget-wp",
-      assessmentId: SEERA_DEMO_ASSESSMENT_ID,
-      questionId: SEERA_DEMO_QUESTIONS.BUDGET_INDEPENDENCE,
-      standardNumber: SEERA_DEMO_STANDARDS.ORG_INDEPENDENCE,
-      draftSummary: budgetSummary,
-      provenance: baseProvenance(budgetSummary, "2026-06-17T09:00:00.000Z"),
-      contentPin: pin,
-      requiresHumanReview: true,
-    },
-    {
-      kind: "draft_finding",
-      status: "draft",
-      findingId: "finding-ethics-flag",
-      assessmentId: SEERA_DEMO_ASSESSMENT_ID,
-      questionId: SEERA_DEMO_QUESTIONS.ETHICS_CHARTER,
-      standardNumber: SEERA_DEMO_STANDARDS.ETHICS,
-      draftSummary: ethicsSummary,
-      provenance: baseProvenance(ethicsSummary, "2026-06-18T14:30:00.000Z"),
-      contentPin: pin,
-      requiresHumanReview: true,
-    },
-  ];
-}
-
 function presentDraft(
   draft: DraftFinding,
   locale: Locale,
@@ -187,7 +111,7 @@ export function buildFindingsPresentation(
   const isSummaryView = role === "board";
   const canReview = !isSummaryView;
 
-  const pending = createSyntheticDraftFindings(locale).map((d) =>
+  const pending = createSeeraDemoDraftFindings(locale).map((d) =>
     presentDraft(d, locale),
   );
 

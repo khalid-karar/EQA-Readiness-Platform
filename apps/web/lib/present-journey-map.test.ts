@@ -27,7 +27,8 @@ describe("present-journey-map", () => {
 
     const mockEqa = journeyMap.checkpoints.find((c) => c.id === "mock-eqa");
     expect(mockEqa?.href).toBe("/mock-eqa");
-    expect(mockEqa?.percent).toBeGreaterThan(0);
+    expect(mockEqa?.state).toBe("not-started");
+    expect(mockEqa?.percent).toBe(0);
 
     const pack = journeyMap.checkpoints.find((c) => c.id === "evidence-pack");
     expect(pack?.href).toBe("/evidence-pack");
@@ -40,5 +41,27 @@ describe("present-journey-map", () => {
       expect(checkpoint.labelAr.length).toBeGreaterThan(0);
       expect(checkpoint.metricAr.length).toBeGreaterThan(0);
     }
+  });
+
+  it("shows a realistic mix of checkpoint states for the Seera demo story", () => {
+    const { journeyMap } = buildDashboardPresentation("en", "cae");
+    const states = journeyMap.checkpoints.map((c) => c.state);
+
+    expect(states.filter((s) => s === "cleared").length).toBeGreaterThanOrEqual(2);
+    expect(states).toContain("in-progress");
+    expect(states).toContain("blocked");
+    expect(states).toContain("not-started");
+
+    const scope = journeyMap.checkpoints.find((c) => c.id === "scope");
+    const evidence = journeyMap.checkpoints.find((c) => c.id === "evidence");
+    const gaps = journeyMap.checkpoints.find((c) => c.id === "gaps-identified");
+    const mockEqa = journeyMap.checkpoints.find((c) => c.id === "mock-eqa");
+    const pack = journeyMap.checkpoints.find((c) => c.id === "evidence-pack");
+
+    expect(scope?.state).toBe("cleared");
+    expect(evidence?.state).toBe("cleared");
+    expect(gaps?.state).toBe("blocked");
+    expect(mockEqa?.state).toBe("not-started");
+    expect(pack?.state).toBe("not-started");
   });
 });

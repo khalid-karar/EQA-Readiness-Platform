@@ -11,6 +11,11 @@ export default defineConfig({
       "apps/**/*.{test,spec}.{ts,tsx}",
       "packages/**/*.{test,spec}.{ts,tsx}",
     ],
-    exclude: ["**/node_modules/**", "**/dist/**", "**/.next/**"],
+    exclude: [
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/.next/**",
+      "apps/web/e2e/**",
+    ],
   },
 });

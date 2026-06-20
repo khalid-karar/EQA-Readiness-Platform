@@ -47,6 +47,30 @@
           "height": 39
         }
       ]
+    },
+    {
+      "id": "mixed-script-torture",
+      "locale": "ar",
+      "pages": 1,
+      "diffMode": "region",
+      "regions": [
+        {
+          "id": "metadata-timestamp",
+          "page": 1,
+          "x": 0,
+          "y": 135,
+          "width": 794,
+          "height": 98
+        },
+        {
+          "id": "evidence-index-ev-99-qa-001",
+          "page": 1,
+          "x": 0,
+          "y": 335,
+          "width": 794,
+          "height": 43
+        }
+      ]
     }
   ]
 }

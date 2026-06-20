@@ -20,8 +20,9 @@ describe("mock-EQA presentation output", () => {
   it("surfaces per-domain and per-standard simulated ratings with driving gaps", () => {
     const presentation = buildMockEqaPresentation("en", "cae");
     expect(presentation.domains.length).toBeGreaterThan(0);
+    expect(presentation.standardRows.length).toBeGreaterThan(0);
     expect(presentation.overallLevel).toBe("red");
-    const std12 = presentation.domains[0]?.standards.find(
+    const std12 = presentation.standardRows.find(
       (s) => s.standardNumber === "1.2",
     );
     expect(std12?.drivingGaps.length).toBeGreaterThan(0);

@@ -9,13 +9,17 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  StatusPill,
+  readinessVariantFromLevel,
+} from "@/components/ui/status-pill";
 import { cn } from "@/lib/utils";
 import { uiLabel } from "@/lib/ui-labels";
 
-const CELL_BG = {
-  green: "bg-readiness-green hover:bg-readiness-green/90",
-  amber: "bg-readiness-amber hover:bg-readiness-amber/90",
-  red: "bg-readiness-red hover:bg-readiness-red/90",
+const CELL_BORDER = {
+  green: "border-s-readiness-conformant",
+  amber: "border-s-readiness-partial",
+  red: "border-s-readiness-gap",
 } as const;
 
 interface ConformanceHeatMapProps {
@@ -36,9 +40,7 @@ export function ConformanceHeatMap({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">
-          {uiLabel("heatMapTitle", locale)}
-        </CardTitle>
+        <CardTitle>{uiLabel("heatMapTitle", locale)}</CardTitle>
         <p className="text-sm text-muted-foreground">
           {uiLabel("heatMapSubtitle", locale)}
         </p>
@@ -88,6 +90,8 @@ function HeatMapCellButton({
   isSelected: boolean;
   onSelect: (cell: PresentedHeatMapCell) => void;
 }): React.ReactNode {
+  const pillVariant = readinessVariantFromLevel(cell.readinessLevel);
+
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -95,18 +99,21 @@ function HeatMapCellButton({
           type="button"
           onClick={() => onSelect(cell)}
           className={cn(
-            "rounded-md p-3 text-left text-sm text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-            CELL_BG[cell.readinessLevel],
-            isSelected && "ring-2 ring-offset-2 ring-foreground",
+            "rounded-md border border-border border-s-4 bg-surface p-3 text-start text-sm shadow-sm motion-safe transition",
+            "hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            CELL_BORDER[cell.readinessLevel],
+            isSelected && "ring-2 ring-brand-gold ring-offset-2",
           )}
         >
-          <div className="font-semibold">
+          <div className="font-semibold text-foreground">
             {cell.standardNumber} — {cell.standardTitle}
           </div>
-          <div className="mt-1 text-xs opacity-90">{cell.readinessScore}%</div>
-          <div className="mt-2 text-xs font-medium opacity-95">
-            {cell.statusLabel}
+          <div className="mt-1 text-xs tabular-nums text-muted-foreground">
+            {cell.readinessScore}%
           </div>
+          <StatusPill variant={pillVariant} size="sm" className="mt-2">
+            {cell.statusLabel}
+          </StatusPill>
         </button>
       </TooltipTrigger>
       <TooltipContent side="top" className="max-w-xs space-y-1">

@@ -37,8 +37,7 @@ describe("evidence pack mixed-script torture (Arabic bidi)", () => {
     expect(first).toEqual(second);
   }, 60_000);
 
-  it.skip(// TODO(step-16): un-skip after torture baseline visually approved
-  "matches committed region baselines (metadata + evidence rows, ≤0.5%)", async () => {
+  it("matches committed region baselines (metadata + evidence rows, ≤0.5%)", async () => {
     const manifestMeta = readVisualBaselineManifest();
     expect(manifestMeta.chromiumRevision).toBe(PINNED_CHROMIUM_REVISION);
 

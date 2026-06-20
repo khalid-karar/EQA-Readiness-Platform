@@ -1,16 +1,29 @@
 import type { Locale } from "@eqa/content";
 import { localize } from "@eqa/content";
-import {
-  IllegalRemediationStateError,
-  InvalidRemediationInputError,
-} from "./errors";
+import { InvalidRemediationInputError } from "./errors";
 import {
   isSummaryView,
   uxStatusLabel,
   type DashboardRole,
 } from "./readiness-dashboard";
+import {
+  daysOverdue,
+  isRemediationClosed,
+  isRemediationOverdue,
+} from "./remediation-pure";
 import type { ItemStatus } from "./state-machine";
 import { INITIAL_ITEM_STATUS } from "./state-machine";
+
+export {
+  daysOverdue,
+  isRemediationClosed,
+  isRemediationOverdue,
+  resolveAssignRemediation,
+  resolveReadyForRetest,
+  resolveRetestFail,
+  resolveRetestPass,
+  type RemediationTransition,
+} from "./remediation-pure";
 
 /** A tracked remediation plan for one confirmed gap (one assessment item). */
 export interface RemediationItem {
@@ -44,11 +57,6 @@ export interface UpdateRemediationInput {
   readonly action?: string;
   readonly owner?: string;
   readonly targetDate?: string;
-}
-
-export interface RemediationTransition {
-  readonly from: ItemStatus;
-  readonly to: ItemStatus;
 }
 
 export interface RemediationTrackerRow {
@@ -101,11 +109,6 @@ export interface RemediationStore {
   listForAssessment(assessmentId: string): Promise<RemediationItem[]>;
 }
 
-const CLOSED_STATUSES: ReadonlySet<ItemStatus> = new Set([
-  "closed_ready",
-  "not_applicable",
-]);
-
 function assertNonEmpty(value: string, field: string): void {
   if (!value.trim()) {
     throw new InvalidRemediationInputError(`${field} is required.`);
@@ -118,78 +121,6 @@ function assertDate(value: string): void {
       `targetDate must be an ISO calendar date (YYYY-MM-DD), got '${value}'.`,
     );
   }
-}
-
-/** Pure transition for assigning remediation: gap_confirmed → remediation_in_progress. */
-export function resolveAssignRemediation(
-  currentStatus: ItemStatus,
-): RemediationTransition {
-  if (currentStatus !== "gap_confirmed") {
-    throw new IllegalRemediationStateError(
-      `Remediation can only be assigned when the item is 'gap_confirmed'; ` +
-        `got '${currentStatus}'.`,
-    );
-  }
-  return { from: currentStatus, to: "remediation_in_progress" };
-}
-
-/** Pure transition: remediation_in_progress → ready_for_retest. */
-export function resolveReadyForRetest(
-  currentStatus: ItemStatus,
-): RemediationTransition {
-  if (currentStatus !== "remediation_in_progress") {
-    throw new IllegalRemediationStateError(
-      `Ready-for-retest requires 'remediation_in_progress'; got '${currentStatus}'.`,
-    );
-  }
-  return { from: currentStatus, to: "ready_for_retest" };
-}
-
-/** Pure transition: ready_for_retest → closed_ready (retest passed). */
-export function resolveRetestPass(
-  currentStatus: ItemStatus,
-): RemediationTransition {
-  if (currentStatus !== "ready_for_retest") {
-    throw new IllegalRemediationStateError(
-      `Retest pass requires 'ready_for_retest'; got '${currentStatus}'.`,
-    );
-  }
-  return { from: currentStatus, to: "closed_ready" };
-}
-
-/** Pure transition: ready_for_retest → under_human_review (retest failed). */
-export function resolveRetestFail(
-  currentStatus: ItemStatus,
-): RemediationTransition {
-  if (currentStatus !== "ready_for_retest") {
-    throw new IllegalRemediationStateError(
-      `Retest fail requires 'ready_for_retest'; got '${currentStatus}'.`,
-    );
-  }
-  return { from: currentStatus, to: "under_human_review" };
-}
-
-/** True when the target date has passed and the item is not yet closed. */
-export function isRemediationOverdue(
-  targetDate: string,
-  itemStatus: ItemStatus,
-  referenceDate: string,
-): boolean {
-  if (CLOSED_STATUSES.has(itemStatus)) return false;
-  return targetDate < referenceDate.slice(0, 10);
-}
-
-/** Whole days past the target date (0 when not overdue). */
-export function daysOverdue(
-  targetDate: string,
-  itemStatus: ItemStatus,
-  referenceDate: string,
-): number {
-  if (!isRemediationOverdue(targetDate, itemStatus, referenceDate)) return 0;
-  const target = new Date(`${targetDate}T00:00:00.000Z`);
-  const ref = new Date(`${referenceDate.slice(0, 10)}T00:00:00.000Z`);
-  const diff = ref.getTime() - target.getTime();
-  return Math.max(0, Math.floor(diff / (24 * 60 * 60 * 1000)));
 }
 
 export interface BuildRemediationTrackerInput {
@@ -234,7 +165,7 @@ export function buildRemediationTrackerView(
     };
   });
 
-  const openRows = rows.filter((r) => !CLOSED_STATUSES.has(r.itemStatus));
+  const openRows = rows.filter((r) => !isRemediationClosed(r.itemStatus));
   const overdueRows = openRows.filter((r) => r.isOverdue);
 
   const pendingActions: RemediationPendingAction[] = [];

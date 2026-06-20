@@ -12,6 +12,8 @@ out/
 # Test / coverage
 coverage/
 .vitest/
+apps/web/test-results/
+apps/web/playwright-report/
 
 # Pinned Chromium cache (provisioned at install/image-build — see packages/workflows/CHROMIUM.md)
 packages/workflows/.chromium-cache/
@@ -43,7 +45,3 @@ Thumbs.db
 # Generated sample renders (regenerate via pnpm generate:sample-pack)
 samples/*.pdf
 samples/*.png
-
-# Torture corpus baselines — local review only until visually approved
-packages/workflows/src/__fixtures__/evidence-pack-ar-mixed-script-torture-page1-baseline.png
-packages/workflows/src/__fixtures__/visual-baselines/mixed-script-torture/

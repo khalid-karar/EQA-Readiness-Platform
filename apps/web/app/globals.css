@@ -4,29 +4,98 @@
 
 @layer base {
   :root {
+    /* Maya AI brand */
+    --brand-navy: 240 35% 13%;
+    --brand-gold: 41 52% 54%;
+
+    /* Surfaces — light data screens */
     --background: 210 20% 98%;
-    --foreground: 222 47% 11%;
+    --foreground: 215 25% 20%;
+    --surface: 0 0% 100%;
+    --surface-muted: 210 20% 97%;
+
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-    --primary: 221 83% 40%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 16% 93%;
-    --secondary-foreground: 222 47% 11%;
-    --muted: 210 16% 93%;
+    --card-foreground: 215 25% 20%;
+
+    /* Primary actions — restrained gold accent */
+    --primary: 41 52% 54%;
+    --primary-foreground: 240 35% 13%;
+
+    --secondary: 214 20% 93%;
+    --secondary-foreground: 215 25% 20%;
+
+    --muted: 214 20% 93%;
     --muted-foreground: 215 16% 42%;
-    --accent: 210 16% 93%;
-    --accent-foreground: 222 47% 11%;
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 210 40% 98%;
+
+    --accent: 214 20% 93%;
+    --accent-foreground: 215 25% 20%;
+
+    --destructive: 0 72% 45%;
+    --destructive-foreground: 0 0% 100%;
+
     --border: 214 20% 88%;
     --input: 214 20% 88%;
-    --ring: 221 83% 40%;
-    --radius: 0.5rem;
-    --readiness-green: 142 71% 38%;
-    --readiness-amber: 38 92% 45%;
-    --readiness-red: 0 72% 51%;
+    --ring: 41 52% 54%;
+
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 215 25% 20%;
+
+    /* Shell chrome */
+    --sidebar: 240 35% 13%;
+    --sidebar-foreground: 210 20% 96%;
+    --sidebar-accent: 41 52% 54%;
+    --sidebar-muted: 240 25% 22%;
+    --topbar: 240 35% 13%;
+    --topbar-foreground: 210 20% 96%;
+
+    /* Readiness semantics — AA contrast on light surfaces */
+    --readiness-conformant: 142 64% 28%;
+    --readiness-conformant-bg: 142 40% 94%;
+    --readiness-partial: 32 90% 38%;
+    --readiness-partial-bg: 48 96% 93%;
+    --readiness-gap: 0 72% 42%;
+    --readiness-gap-bg: 0 60% 96%;
+    --readiness-unreviewed: 215 16% 38%;
+    --readiness-unreviewed-bg: 210 20% 96%;
+
+    /* Legacy aliases */
+    --readiness-green: var(--readiness-conformant);
+    --readiness-amber: var(--readiness-partial);
+    --readiness-red: var(--readiness-gap);
+
+    /* Layout tokens */
+    --radius: 0.5rem;
+    --radius-sm: 0.375rem;
+    --radius-lg: 0.75rem;
+
+    /* Spacing scale (4px base) — reference tokens */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+
+    /* Typography scale */
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.125rem;
+    --text-xl: 1.25rem;
+    --text-2xl: 1.5rem;
+    --text-3xl: 1.875rem;
+
+    /* Shadows — subtle elevation */
+    --shadow-sm: 0 1px 2px 0 rgb(22 22 46 / 0.04);
+    --shadow-md: 0 4px 6px -1px rgb(22 22 46 / 0.06),
+      0 2px 4px -2px rgb(22 22 46 / 0.04);
+    --shadow-lg: 0 10px 15px -3px rgb(22 22 46 / 0.08),
+      0 4px 6px -4px rgb(22 22 46 / 0.04);
+
+    /* Motion */
+    --motion-fast: 150ms;
+    --motion-base: 200ms;
+    --motion-ease: cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   * {
@@ -35,5 +104,17 @@
 
   body {
     @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+}
+
+@layer utilities {
+  .motion-safe {
+    transition-duration: var(--motion-base);
+    transition-timing-function: var(--motion-ease);
   }
 }

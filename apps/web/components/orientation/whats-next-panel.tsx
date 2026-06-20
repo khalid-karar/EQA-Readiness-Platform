@@ -1,7 +1,7 @@
 import type { Locale } from "@eqa/content";
 import { ArrowRight, ListTodo } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { StatusPill } from "@/components/ui/status-pill";
 import { uiLabel } from "@/lib/ui-labels";
 
 export interface PendingActionView {
@@ -19,9 +19,9 @@ interface WhatsNextPanelProps {
 }
 
 const PRIORITY_VARIANT = {
-  high: "red",
-  medium: "amber",
-  low: "secondary",
+  high: "gap",
+  medium: "partial",
+  low: "neutral",
 } as const;
 
 export function WhatsNextPanel({
@@ -58,14 +58,18 @@ export function WhatsNextPanel({
               >
                 <div className="flex items-start gap-2">
                   <ArrowRight
-                    className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground"
+                    className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground rtl:rotate-180"
                     aria-hidden
                   />
                   <span>{action.label}</span>
                 </div>
-                <Badge variant={PRIORITY_VARIANT[action.priority]}>
+                <StatusPill
+                  variant={PRIORITY_VARIANT[action.priority]}
+                  size="sm"
+                  className="tabular-nums"
+                >
                   {action.count}
-                </Badge>
+                </StatusPill>
               </li>
             ))}
           </ul>

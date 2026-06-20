@@ -7,10 +7,7 @@ import {
   type DashboardRole,
   type ReadinessLevel,
 } from "./readiness-dashboard";
-import {
-  INITIAL_ITEM_STATUS,
-  type ItemStatus,
-} from "./state-machine";
+import { INITIAL_ITEM_STATUS, type ItemStatus } from "./state-machine";
 import type { QuestionnaireView, StandardView } from "./types";
 import type { StandardConformanceSummary } from "./working-paper-review";
 
@@ -114,9 +111,7 @@ export interface FormalAssessmentResult {
   readonly overallRating: string;
 }
 
-export type AssessmentResult =
-  | MockEqaSimulationResult
-  | FormalAssessmentResult;
+export type AssessmentResult = MockEqaSimulationResult | FormalAssessmentResult;
 
 export interface MockEqaScoringInput {
   readonly assessmentId: string;
@@ -445,8 +440,7 @@ export function buildMockEqaSimulationView(
     readonly simulation?: MockEqaSimulationResult;
   },
 ): MockEqaSimulationView {
-  const simulation =
-    input.simulation ?? computeMockEqaSimulation(input);
+  const simulation = input.simulation ?? computeMockEqaSimulation(input);
   const summary = isSummaryView(input.role);
 
   return {

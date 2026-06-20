@@ -150,13 +150,13 @@ describe("Mock-EQA readiness simulation composed end-to-end", () => {
     const audit = await repos.audit.list();
     expect(
       audit.some(
-        (e) => e.entity === `job:${MOCK_EQA_SIMULATION_JOB}` && e.entityId === jobId,
+        (e) =>
+          e.entity === `job:${MOCK_EQA_SIMULATION_JOB}` && e.entityId === jobId,
       ),
     ).toBe(true);
     expect(
       audit.some(
-        (e) =>
-          e.entity === "mock_eqa_simulation" && e.action === "create",
+        (e) => e.entity === "mock_eqa_simulation" && e.action === "create",
       ),
     ).toBe(true);
   });

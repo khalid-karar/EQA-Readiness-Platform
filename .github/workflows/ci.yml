@@ -32,6 +32,14 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: "true"
+
+      - name: Provision pinned Chromium (install-time only)
+        run: pnpm provision:chromium
+
+      - name: Install Poppler (pdftoppm) for PDF visual regression
+        run: sudo apt-get update && sudo apt-get install -y poppler-utils
 
       - name: Lint
         run: pnpm lint
@@ -41,6 +49,36 @@ jobs:
 
       - name: Test
         run: pnpm test
+
+  pdf-determinism:
+    name: Evidence pack PDF determinism
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: "true"
+
+      - name: Provision pinned Chromium (install-time only)
+        run: pnpm provision:chromium
+
+      - name: Assert byte-identical PDF renders
+        run: pnpm test:pdf-determinism
+        env:
+          # Fresh Chromium per render — catches drift a shared browser would mask.
+          EQA_PDF_REUSE_BROWSER: "false"
 
   secret-scan:
     name: Secret scanning (gitleaks)

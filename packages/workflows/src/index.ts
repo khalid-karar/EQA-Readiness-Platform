@@ -114,6 +114,69 @@ export {
 } from "./mock-eqa-scoring";
 export { createSyntheticMockEqaInput } from "./synthetic-mock-eqa";
 export {
+  buildEvidencePackManifest,
+  EVIDENCE_PACK_CONFIDENTIALITY,
+  EVIDENCE_PACK_KIND,
+  isEvidencePackManifest,
+  packStatusLabel,
+  type EvidenceIndexEntry,
+  type EvidenceMetadataForPack,
+  type EvidencePackAssemblyInput,
+  type EvidencePackFormat,
+  type EvidencePackManifest,
+  type EvidencePackReadinessSummary,
+  type QuestionPackDetail,
+  type StandardPackSection,
+} from "./evidence-pack";
+export {
+  closeEvidencePackBrowser,
+  evidencePackPdfSha256,
+  PINNED_CHROMIUM_REVISION,
+} from "./evidence-pack-pdf-chromium";
+export {
+  pdfContainsText,
+  renderEvidencePackPdf,
+  PACK_PDF_MARKERS,
+  readPdfPackMetadata,
+  verifyPdfPackCompliance,
+} from "./evidence-pack-pdf";
+export {
+  defaultEvidencePackRenderer,
+  EVIDENCE_PACK_EXPORT_JOB,
+  createEvidencePackHandler,
+  type EvidencePackExportPayload,
+  type EvidencePackExportRecord,
+  type EvidencePackJobDeps,
+  type EvidencePackLoader,
+  type EvidencePackRenderer,
+  type EvidencePackSink,
+} from "./evidence-pack-job";
+export { createSyntheticEvidencePackInput } from "./synthetic-evidence-pack";
+export {
+  createSeeraDemoAssessmentName,
+  createSeeraDemoConformanceByStandard,
+  createSeeraDemoContentPin,
+  createSeeraDemoEvidenceMetadata,
+  createSeeraDemoFinalConclusions,
+  createSeeraDemoRemediationItems,
+  createSeeraDemoResponses,
+  createSeeraDemoStatusesByQuestion,
+  SEERA_DEMO_ASSESSMENT_ID,
+  SEERA_DEMO_PACK_ID,
+  SEERA_DEMO_PACK_VERSION,
+  SEERA_DEMO_PENDING_REVIEW_COUNT,
+  SEERA_DEMO_QUESTIONS,
+  SEERA_DEMO_REFERENCE_DATE,
+  SEERA_DEMO_RETEST_FAIL_NOTE,
+  SEERA_DEMO_STANDARDS,
+} from "./synthetic-seera-demo";
+export {
+  createMixedScriptTortureEvidencePackInput,
+  MIXED_SCRIPT_TORTURE_CONTENT_HASH,
+  MIXED_SCRIPT_TORTURE_GENERATED_AT,
+  mixedScriptTortureMachineTokens,
+} from "./synthetic-mixed-script-torture";
+export {
   aggregateEngagementConformance,
   buildChecklistReviewView,
   countConformance,

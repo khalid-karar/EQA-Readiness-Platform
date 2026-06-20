@@ -128,6 +128,80 @@ export const UI_LABELS: LabelSet = {
     en: "Read-only oversight of the simulated score. Board cannot run simulations.",
     ar: "إشراف للقراءة فقط على الدرجة المحاكية. لا يمكن للمجلس تشغيل المحاكاة.",
   },
+  packLocation: {
+    en: "Evidence pack — export & download",
+    ar: "حزمة الأدلة — التصدير والتنزيل",
+  },
+  packSummaryTitle: {
+    en: "Pack summary (synthetic demo)",
+    ar: "ملخص الحزمة (عرض تجريبي)",
+  },
+  packStandards: { en: "Standards covered", ar: "المعايير المشمولة" },
+  packEvidenceRefs: {
+    en: "Evidence references (metadata only)",
+    ar: "مراجع الأدلة (بيانات وصفية فقط)",
+  },
+  packRawBundled: { en: "Raw files bundled", ar: "ملفات خام مُضمَّنة" },
+  packReadiness: {
+    en: "Simulated readiness summary",
+    ar: "ملخص الجاهزية المحاكية",
+  },
+  packNoRawHint: {
+    en: "Raw confidential evidence files are excluded by default. The pack contains references and metadata only.",
+    ar: "تُستبعد ملفات الأدلة السرية الخام افتراضياً. تحتوي الحزمة على المراجع والبيانات الوصفية فقط.",
+  },
+  packContentsHint: {
+    en: "Each standard section in the generated pack includes:",
+    ar: "يتضمن قسم كل معيار في الحزمة المُولَّدة:",
+  },
+  packContentsIndex: {
+    en: "Evidence index — which files support the standard (references, not raw files)",
+    ar: "فهرس الأدلة — الملفات الداعمة للمعيار (مراجع، وليست ملفات خام)",
+  },
+  packContentsNotes: {
+    en: "Reviewer notes from questionnaire responses and human review",
+    ar: "ملاحظات المراجع من الاستبيان والمراجعة البشرية",
+  },
+  packContentsGaps: {
+    en: "Gap status per assessment item",
+    ar: "حالة الفجوات لكل عنصر",
+  },
+  packContentsRemediation: {
+    en: "Remediation status for confirmed gaps",
+    ar: "حالة المعالجة للفجوات المؤكدة",
+  },
+  packContentsReadiness: {
+    en: "Final simulated readiness summary (not a formal assessor conclusion)",
+    ar: "ملخص الجاهزية المحاكية النهائي (ليس استنتاجاً رسمياً للمقيّم)",
+  },
+  packGenerateHint: {
+    en: "CAE and Audit Staff enqueue a tenant-scoped background export (Step 6.5). Demo shows synthetic summary; generate button wires in Phase 5.",
+    ar: "يُشغِّل الرئيس التنفيذي للتدقيق وفريق التدقيق تصديراً خلفياً ضمن المستأجر (الخطوة 6.5). يعرض العرض التجريبي ملخصاً تجريبياً؛ زر التوليد يُربَط في المرحلة 5.",
+  },
+  packGenerateButton: {
+    en: "Generate evidence pack",
+    ar: "توليد حزمة الأدلة",
+  },
+  packGenerateAction: {
+    en: "Generate a new evidence pack (background job)",
+    ar: "توليد حزمة أدلة جديدة (مهمة خلفية)",
+  },
+  packDownloadTitle: {
+    en: "Download sample pack (PDF)",
+    ar: "تنزيل حزمة تجريبية (PDF)",
+  },
+  packDownloadHint: {
+    en: "Synthetic demo PDF — verify confidentiality footer, assessor disclaimer, and that no raw evidence is embedded.",
+    ar: "PDF تجريبي — تحقق من تذييل السرية وإخلاء المسؤولية وعدم تضمين أدلة خام.",
+  },
+  packDownloadButton: {
+    en: "Download sample PDF",
+    ar: "تنزيل PDF تجريبي",
+  },
+  packBoardHint: {
+    en: "Read-only — Board can view and download a generated pack but cannot trigger generation.",
+    ar: "للقراءة فقط — يمكن للمجلس عرض وتنزيل حزمة مُولَّدة لكن لا يمكنه تشغيل التوليد.",
+  },
 };
 
 export function uiLabel(key: keyof typeof UI_LABELS, locale: Locale): string {

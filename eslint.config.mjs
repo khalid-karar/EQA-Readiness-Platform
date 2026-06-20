@@ -20,6 +20,10 @@ export default tseslint.config(
       // The secret-scan fixtures intentionally contain fake secrets and are
       // not real source code; they are exercised by gitleaks, not ESLint.
       "tools/secret-scan/fixtures/**",
+      // Pinned Chromium browser bundle (provisioned locally / in CI).
+      "packages/workflows/.chromium-cache/**",
+      // Violation fixture for standing-rules-conformance.test.ts (linted ad hoc).
+      "apps/web/__conformance-fixtures__/**",
     ],
   },
 
@@ -90,7 +94,11 @@ export default tseslint.config(
 
   // Config / tooling files run in Node and may use devDependencies freely.
   {
-    files: ["**/*.config.{js,mjs,cjs,ts}", "vitest.config.ts"],
+    files: [
+      "**/*.config.{js,mjs,cjs,ts}",
+      "vitest.config.ts",
+      "packages/workflows/scripts/**/*.mjs",
+    ],
     languageOptions: { globals: { ...globals.node } },
   },
 

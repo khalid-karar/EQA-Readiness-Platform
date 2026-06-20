@@ -36,10 +36,10 @@ describe("readiness dashboard (Step 13 UI data)", () => {
       inputEn.statusesByQuestion,
     );
     expect(progress.totalStandards).toBe(3);
-    expect(progress.startedCount).toBe(2);
+    expect(progress.startedCount).toBe(3);
     expect(progress.completedCount).toBe(1);
-    expect(progress.notStartedCount).toBe(1);
-    expect(progress.inProgressCount).toBe(1);
+    expect(progress.notStartedCount).toBe(0);
+    expect(progress.inProgressCount).toBe(2);
     expect(progress.percentComplete).toBe(33);
   });
 
@@ -103,7 +103,10 @@ describe("readiness dashboard (Step 13 UI data)", () => {
     expect(board.pendingActions.some((a) => a.id === "not-started")).toBe(
       false,
     );
-    expect(cae.pendingActions.some((a) => a.id === "not-started")).toBe(true);
+    expect(cae.pendingActions.some((a) => a.id === "not-started")).toBe(false);
+    expect(cae.pendingActions.some((a) => a.id === "draft-findings")).toBe(
+      true,
+    );
   });
 
   it("pending actions surface review, evidence, and working-paper gaps", () => {
@@ -167,6 +170,6 @@ describe("readiness dashboard (Step 13 UI data)", () => {
     const partial = new Map(inputEn.statusesByQuestion);
     partial.delete("Q-2-1-2");
     const progress = computeAssessmentProgress(inputEn.questionnaire, partial);
-    expect(progress.startedCount).toBe(2);
+    expect(progress.startedCount).toBe(3);
   });
 });

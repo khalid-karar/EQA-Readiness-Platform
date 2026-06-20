@@ -345,6 +345,27 @@ export const TENANT_MIGRATIONS: readonly TenantMigration[] = [
       )`,
     ],
   },
+  {
+    id: "0013_evidence_pack_exports",
+    statements: (schema) => [
+      `CREATE TABLE IF NOT EXISTS "${schema}".evidence_pack_exports (
+        export_id text PRIMARY KEY,
+        assessment_id text NOT NULL,
+        kind text NOT NULL DEFAULT 'readiness_evidence_pack',
+        locale text NOT NULL,
+        format text NOT NULL DEFAULT 'pdf',
+        include_raw_evidence integer NOT NULL DEFAULT 0,
+        object_key text NOT NULL,
+        file_name text NOT NULL,
+        size_bytes integer NOT NULL,
+        manifest_json text NOT NULL,
+        generated_by text NOT NULL,
+        generated_at text NOT NULL,
+        CHECK (kind = 'readiness_evidence_pack'),
+        CHECK (include_raw_evidence IN (0, 1))
+      )`,
+    ],
+  },
 ];
 
 async function ensureLedger(db: Database): Promise<void> {

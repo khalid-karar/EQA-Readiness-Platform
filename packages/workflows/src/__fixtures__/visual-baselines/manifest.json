@@ -1,0 +1,52 @@
+{
+  "chromiumRevision": "148.0.7778.97",
+  "approvalRequired": true,
+  "suites": [
+    {
+      "id": "seera-demo",
+      "locale": "en",
+      "pages": 2,
+      "diffMode": "page"
+    },
+    {
+      "id": "seera-demo",
+      "locale": "ar",
+      "pages": 2,
+      "diffMode": "region",
+      "regions": [
+        {
+          "id": "metadata-timestamp",
+          "page": 1,
+          "x": 0,
+          "y": 137,
+          "width": 794,
+          "height": 94
+        },
+        {
+          "id": "evidence-index-ev-ethics-charter",
+          "page": 1,
+          "x": 0,
+          "y": 370,
+          "width": 794,
+          "height": 39
+        },
+        {
+          "id": "evidence-index-ev-coi-process",
+          "page": 1,
+          "x": 0,
+          "y": 633,
+          "width": 794,
+          "height": 39
+        },
+        {
+          "id": "evidence-index-ev-board-minutes",
+          "page": 1,
+          "x": 0,
+          "y": 882,
+          "width": 794,
+          "height": 39
+        }
+      ]
+    }
+  ]
+}

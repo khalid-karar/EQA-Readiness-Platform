@@ -71,7 +71,7 @@ data, backup, key material, or log may leave KSA.
 
 ## 6. Application routes & auth (before real data)
 
-- [ ] Remove `/dashboard`, `/remediation`, and `/mock-eqa` from the public-route allowlist (`packages/tenant/src/public-routes.ts`) and require authenticated tenant-bound access before any real client data is shown.
+- [ ] Remove `/dashboard`, `/remediation`, `/mock-eqa`, and `/evidence-pack` from the public-route allowlist (`packages/tenant/src/public-routes.ts`) and require authenticated tenant-bound access before any real client data is shown.
 - [ ] Demo locale/role switchers are dev-only or removed in production builds.
 
 ---

@@ -79,7 +79,11 @@ export function MockEqaClient({
                 <p className="mb-3 text-sm text-muted-foreground">
                   {uiLabel("mockEqaRunHint", view.locale)}
                 </p>
-                <Button size="sm" disabled title="Demo UI — job wired in backend">
+                <Button
+                  size="sm"
+                  disabled
+                  title="Demo UI — job wired in backend"
+                >
                   {uiLabel("mockEqaRunButton", view.locale)}
                 </Button>
               </div>

@@ -287,7 +287,9 @@ export function createMockEqaScoringLoader(
  * Tenant-scoped, system-audited — the result is always
  * {@link READINESS_SIMULATION_KIND}, never a formal assessment conclusion.
  */
-export function createMockEqaSimulationSink(db: Database): MockEqaSimulationSink {
+export function createMockEqaSimulationSink(
+  db: Database,
+): MockEqaSimulationSink {
   return {
     async persistSimulation(
       tenant: TenantContext,

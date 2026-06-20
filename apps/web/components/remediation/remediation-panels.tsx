@@ -129,11 +129,7 @@ export function RemediationTable({
                     <td className="py-3 align-top">
                       <Badge
                         variant={
-                          closed
-                            ? "green"
-                            : row.isOverdue
-                              ? "red"
-                              : "secondary"
+                          closed ? "green" : row.isOverdue ? "red" : "secondary"
                         }
                       >
                         {remediationTrackLabel(locale, row.isOverdue, closed)}
@@ -239,9 +235,7 @@ export function RemediationDetailPanel({
                 {uiLabel("schedule", locale)}
               </p>
               <Badge
-                variant={
-                  closed ? "green" : row.isOverdue ? "red" : "secondary"
-                }
+                variant={closed ? "green" : row.isOverdue ? "red" : "secondary"}
               >
                 {remediationTrackLabel(locale, row.isOverdue, closed)}
               </Badge>

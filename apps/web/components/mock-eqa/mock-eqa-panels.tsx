@@ -120,9 +120,7 @@ export function MockEqaDomainBreakdown({
                       key={std.standardNumber}
                       type="button"
                       onClick={() =>
-                        onSelectStandard(
-                          selected ? null : std.standardNumber,
-                        )
+                        onSelectStandard(selected ? null : std.standardNumber)
                       }
                       className={cn(
                         "flex w-full flex-col gap-2 px-4 py-3 text-start transition-colors hover:bg-muted/40",

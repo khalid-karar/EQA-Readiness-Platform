@@ -38,3 +38,7 @@ Thumbs.db
 
 # Local tool binaries (e.g. gitleaks downloaded for local scans)
 .tools/
+
+# Generated sample renders (regenerate via pnpm generate:sample-pack)
+samples/*.pdf
+samples/*.png

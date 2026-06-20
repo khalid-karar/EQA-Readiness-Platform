@@ -31,6 +31,8 @@ describe("public-route allowlist", () => {
     "/dashboard",
     "/remediation",
     "/mock-eqa",
+    "/evidence-pack",
+    "/api/evidence-pack/sample",
   ])("treats %s as public", (path) => {
     expect(isPublicRoute(path)).toBe(true);
   });

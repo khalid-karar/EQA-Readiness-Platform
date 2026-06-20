@@ -1,6 +1,7 @@
 import type { AuthSession } from "@eqa/auth";
 import type { TenantCipher } from "@eqa/crypto";
 import type { JobQueue } from "@eqa/jobs";
+import type { ObjectStore } from "@eqa/storage";
 import { MissingTenantContextError } from "@eqa/tenant";
 import type { Database } from "./database";
 import { TenantAuditReader } from "./scoped/audit-reader";
@@ -9,6 +10,7 @@ import { TenantEvidenceRepository } from "./scoped/evidence-repository";
 import { TenantHumanReviewRepository } from "./scoped/human-review-repository";
 import { TenantItemStatusRepository } from "./scoped/item-status-repository";
 import { TenantKvRepository } from "./scoped/kv-repository";
+import { TenantEvidencePackRepository } from "./scoped/evidence-pack-repository";
 import { TenantMockEqaRepository } from "./scoped/mock-eqa-repository";
 import { TenantRemediationRepository } from "./scoped/remediation-repository";
 import { TenantResponseRepository } from "./scoped/response-repository";
@@ -42,6 +44,8 @@ export interface TenantRepositories {
   readonly remediation: TenantRemediationRepository;
   /** Mock-EQA readiness simulations (readiness_simulation only). */
   readonly mockEqa: TenantMockEqaRepository;
+  /** EQA evidence pack exports (references only by default). */
+  readonly evidencePack: TenantEvidencePackRepository;
   /** Read-only access to the tenant's immutable, hash-chained audit log. */
   readonly audit: TenantAuditReader;
   /**
@@ -59,6 +63,8 @@ export interface RepositoryOptions {
   readonly cipher?: TenantCipher;
   /** Job queue for background simulations (mock-EQA Step 6.5 job). */
   readonly jobQueue?: JobQueue;
+  /** Object store for evidence pack PDF output. */
+  readonly objectStore?: ObjectStore;
 }
 
 /**
@@ -90,6 +96,7 @@ export function createTenantRepositories(
     workingPaperReview: TenantWorkingPaperReviewRepository;
     remediation: TenantRemediationRepository;
     mockEqa: TenantMockEqaRepository;
+    evidencePack: TenantEvidencePackRepository;
     audit: TenantAuditReader;
     secure?: TenantSecureRepository;
   } = {
@@ -103,6 +110,12 @@ export function createTenantRepositories(
     workingPaperReview: new TenantWorkingPaperReviewRepository(exec, session),
     remediation: new TenantRemediationRepository(exec, session),
     mockEqa: new TenantMockEqaRepository(exec, session, options?.jobQueue),
+    evidencePack: new TenantEvidencePackRepository(
+      exec,
+      session,
+      options?.jobQueue,
+      options?.objectStore,
+    ),
     audit: new TenantAuditReader(exec, session),
   };
   if (options?.cipher) {

@@ -8,7 +8,6 @@ import {
   type DashboardRole,
   type MockEqaSimulationView,
 } from "@eqa/workflows";
-import { uiLabel } from "./ui-labels";
 
 export interface PresentedDrivingGap {
   readonly id: string;
@@ -74,9 +73,7 @@ export function buildMockEqaPresentation(
         standardNumber: gap.standardNumber,
         source: gap.source,
         summary: gap.summary,
-        ...(gap.questionId === undefined
-          ? {}
-          : { questionId: gap.questionId }),
+        ...(gap.questionId === undefined ? {} : { questionId: gap.questionId }),
       })),
     })),
   }));

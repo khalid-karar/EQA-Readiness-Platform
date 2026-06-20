@@ -79,6 +79,8 @@ export default tseslint.config(
                 "src/index.ts",
                 // Client-safe subpaths (no Puppeteer / Node-only PDF pipeline).
                 "src/human-review.ts",
+                "src/remediation-pure.ts",
+                "src/remediation.ts",
                 "src/types.ts",
               ],
             },

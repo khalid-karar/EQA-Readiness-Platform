@@ -164,11 +164,29 @@ export function createSeeraDemoRemediationItems(
           ? "تحديث إجراء إقرار تضارب المصالح"
           : "Update conflict-of-interest declaration process",
       owner: locale === "ar" ? "مدير التدقيق" : "Audit Manager",
-      targetDate: "2026-08-01",
+      targetDate: "2026-05-01",
       createdBy: "synthetic",
       createdAt: "2026-04-10T10:00:00.000Z",
       updatedBy: "synthetic",
       updatedAt: "2026-05-01T10:00:00.000Z",
+      closedAt: null,
+      retestNote: null,
+    },
+    {
+      remediationId: "rem-functional-reporting",
+      assessmentId: SEERA_DEMO_ASSESSMENT_ID,
+      questionId: SEERA_DEMO_QUESTIONS.FUNCTIONAL_REPORTING,
+      standardNumber: SEERA_DEMO_STANDARDS.ORG_INDEPENDENCE,
+      action:
+        locale === "ar"
+          ? "توثيق خط التقارير الوظيفي للتدقيق الداخلي"
+          : "Document internal audit functional reporting line",
+      owner: locale === "ar" ? "رئيس التدقيق" : "Chief Audit Executive",
+      targetDate: "2026-06-01",
+      createdBy: "synthetic",
+      createdAt: "2026-05-01T10:00:00.000Z",
+      updatedBy: "synthetic",
+      updatedAt: "2026-06-10T10:00:00.000Z",
       closedAt: null,
       retestNote: null,
     },

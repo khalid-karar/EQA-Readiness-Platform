@@ -69,8 +69,8 @@ export const UI_LABELS: LabelSet = {
     ar: "عرض إشرافي للقراءة فقط. الأدوار التشغيلية يمكنها تحديث بنود المعالجة.",
   },
   selectRowHint: {
-    en: "Click a row for detail. Operational roles can advance status in a future build.",
-    ar: "انقر على صف للتفاصيل. الأدوار التشغيلية ستتمكن من تقديم الحالة لاحقاً.",
+    en: "Click a row to open detail. Operational roles can advance remediation status.",
+    ar: "انقر على صف لفتح التفاصيل. الأدوار التشغيلية يمكنها تقديم حالة المعالجة.",
   },
   boardRemediationTableHint: {
     en: "Oversight view — standards and status only. Switch to an operational role for owner and deadline detail.",
@@ -80,6 +80,52 @@ export const UI_LABELS: LabelSet = {
     en: "Oversight summary. Owner names and target dates are available to operational roles only.",
     ar: "ملخص إشرافي. أسماء المسؤولين والتواريخ المستهدفة متاحة للأدوار التشغيلية فقط.",
   },
+  remediationSubtitle: {
+    en: "Track confirmed gaps through remediation, retest, and closure.",
+    ar: "تتبع الفجوات المؤكدة عبر المعالجة وإعادة الاختبار والإغلاق.",
+  },
+  remediationSearch: { en: "Search remediation items…", ar: "بحث في بنود المعالجة…" },
+  remediationEmptyTitle: {
+    en: "No remediation items",
+    ar: "لا توجد بنود معالجة",
+  },
+  remediationEmptyDescription: {
+    en: "Confirmed gaps with remediation plans will appear here.",
+    ar: "ستظهر هنا الفجوات المؤكدة التي لها خطط معالجة.",
+  },
+  remediationErrorDemo: {
+    en: "Could not load remediation tracker (demo error state).",
+    ar: "تعذّر تحميل متتبع المعالجة (حالة خطأ تجريبية).",
+  },
+  remediationDetailSubtitle: { en: "Remediation item", ar: "بند المعالجة" },
+  remediationLifecycleTitle: { en: "Lifecycle", ar: "دورة الحياة" },
+  remediationLifecycleGap: { en: "Gap confirmed", ar: "فجوة مؤكدة" },
+  remediationLifecycleInProgress: { en: "In progress", ar: "قيد التنفيذ" },
+  remediationLifecycleReadyRetest: { en: "Ready for retest", ar: "جاهز لإعادة الاختبار" },
+  remediationLifecycleClosed: { en: "Closed", ar: "مغلق" },
+  remediationLifecycleHumanReview: { en: "Human review", ar: "مراجعة بشرية" },
+  remediationRetestLoopTitle: { en: "Failed retest loop", ar: "حلقة إعادة الاختبار الفاشلة" },
+  remediationRetestLoopHint: {
+    en: "A failed retest returns the item to human review before remediation can restart.",
+    ar: "إعادة الاختبار الفاشلة تُعيد العنصر إلى المراجعة البشرية قبل إعادة بدء المعالجة.",
+  },
+  remediationRetestNoteTitle: { en: "Prior retest failure note", ar: "ملاحظة إعادة اختبار فاشلة سابقة" },
+  remediationOverdueAlert: { en: "Overdue by", ar: "متأخر بـ" },
+  remediationStart: { en: "Start remediation", ar: "بدء المعالجة" },
+  remediationMarkReady: { en: "Mark ready for retest", ar: "تعيين جاهز لإعادة الاختبار" },
+  remediationRetestPass: { en: "Retest passed", ar: "نجح إعادة الاختبار" },
+  remediationRetestFail: { en: "Retest failed", ar: "فشل إعادة الاختبار" },
+  remediationActionSuccess: { en: "Remediation updated", ar: "تم تحديث المعالجة" },
+  remediationActionError: { en: "Remediation action failed", ar: "فشل إجراء المعالجة" },
+  remediationClosedHint: {
+    en: "This item is closed. Prior retest history is shown when applicable.",
+    ar: "هذا البند مغلق. تُعرض تاريخ إعادة الاختبار السابق عند الانطباق.",
+  },
+  remediationHumanReviewHint: {
+    en: "Item returned to human review after a failed retest.",
+    ar: "أُعيد العنصر إلى المراجعة البشرية بعد فشل إعادة الاختبار.",
+  },
+  remediationDue: { en: "Due", ar: "الموعد" },
   mockEqaLocation: {
     en: "Simulated readiness — all domains",
     ar: "جاهزية محاكية — جميع النطاقات",

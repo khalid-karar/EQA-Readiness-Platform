@@ -8,6 +8,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./human-review": "./src/human-review.ts",
+    "./remediation": "./src/remediation.ts",
+    "./remediation-pure": "./src/remediation-pure.ts",
     "./types": "./src/types.ts"
   },
   "scripts": {

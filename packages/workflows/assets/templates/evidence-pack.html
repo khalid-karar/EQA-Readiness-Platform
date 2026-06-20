@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="{{LANG}}" dir="{{DIR}}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="eqa-pack-title" content="{{META_TITLE}}" />
+    <meta name="eqa-pack-subject" content="{{META_SUBJECT}}" />
+    <meta name="eqa-pack-keywords" content="{{META_KEYWORDS}}" />
+    <title>{{META_TITLE}}</title>
+    <style>
+      @font-face {
+        font-family: "EqaArabic";
+        src: url("{{FONT_ARABIC}}") format("truetype");
+        font-weight: 400;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "EqaLatin";
+        src: url("{{FONT_LATIN}}") format("truetype");
+        font-weight: 400;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "EqaLatin";
+        src: url("{{FONT_LATIN_BOLD}}") format("truetype");
+        font-weight: 700;
+        font-style: normal;
+      }
+
+      @page {
+        size: A4;
+        margin: 20mm 18mm 28mm 18mm;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        color: #1a1a1a;
+        font-family: "EqaLatin", "EqaArabic", sans-serif;
+        font-size: 10pt;
+        line-height: 1.45;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      [dir="rtl"] body {
+        font-family: "EqaArabic", "EqaLatin", sans-serif;
+      }
+
+      .page-footer {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 22mm;
+        padding: 2mm 18mm 0;
+        border-top: 0.5pt solid #999;
+        font-size: 7pt;
+        color: #732626;
+      }
+
+      .page-footer .muted {
+        color: #666;
+        font-size: 6pt;
+      }
+
+      h1 {
+        margin: 0 0 12pt;
+        font-size: 16pt;
+        font-weight: 700;
+      }
+
+      .disclaimer {
+        margin: 0 0 8pt;
+        font-weight: 700;
+        color: #993300;
+      }
+
+      .confidentiality {
+        margin: 0 0 16pt;
+      }
+
+      .standard {
+        margin: 0 0 12pt;
+        break-inside: avoid-page;
+      }
+
+      .standard h2 {
+        margin: 0 0 6pt;
+        font-size: 12pt;
+        font-weight: 700;
+      }
+
+      .meta-line {
+        margin: 0 0 4pt;
+      }
+
+      .evidence-index {
+        margin: 6pt 0;
+      }
+
+      .evidence-index h3 {
+        margin: 0 0 4pt;
+        font-size: 10pt;
+        font-weight: 700;
+      }
+
+      .question {
+        margin: 2pt 0 2pt 12pt;
+      }
+
+      .question .note,
+      .question .finding {
+        margin: 0 0 2pt 12pt;
+        color: #333;
+      }
+
+      .ltr-atom,
+      bdi.ltr-atom {
+        unicode-bidi: isolate;
+        direction: ltr;
+      }
+    </style>
+  </head>
+  <body>
+    <footer class="page-footer" aria-hidden="true">
+      <div>{{FOOTER_CONFIDENTIALITY}}</div>
+      <div>{{FOOTER_DISCLAIMER}}</div>
+      <div class="muted">{{FOOTER_RAW_EXCLUDED}}</div>
+    </footer>
+
+    <h1>{{TITLE}}</h1>
+    <p class="disclaimer">{{ASSESSOR_DISCLAIMER}}</p>
+    <p class="confidentiality">{{CONFIDENTIALITY}}</p>
+
+    <div data-visual-region="metadata-band" data-region-id="metadata-timestamp">
+      <p class="meta-line">
+        <strong>{{LABEL_ASSESSMENT}}</strong> {{ASSESSMENT_NAME}}
+      </p>
+      <p class="meta-line">
+        <strong>{{LABEL_GENERATED}}</strong> {{GENERATED_AT}}
+      </p>
+      <p class="meta-line">
+        <strong>{{LABEL_READINESS}}</strong> {{READINESS_SCORE}} —
+        {{READINESS_LABEL}}
+      </p>
+      <p class="meta-line">{{BUNDLED_LINE}}</p>
+    </div>
+
+    {{STANDARDS_BODY}}
+  </body>
+</html>

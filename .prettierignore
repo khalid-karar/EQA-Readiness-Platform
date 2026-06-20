@@ -8,3 +8,5 @@ pnpm-lock.yaml
 *.tsbuildinfo
 .tools
 tools/secret-scan/fixtures
+samples/**/*.pdf
+samples/**/*.png

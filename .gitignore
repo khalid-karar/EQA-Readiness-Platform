@@ -13,6 +13,12 @@ out/
 coverage/
 .vitest/
 
+# Pinned Chromium cache (provisioned at install/image-build — see packages/workflows/CHROMIUM.md)
+packages/workflows/.chromium-cache/
+
+# Optional local poppler download for baseline generation on Windows
+tools/.poppler/
+
 # Secrets — never commit real secrets (see .env.example for required vars)
 .env
 .env.*

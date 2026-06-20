@@ -9,12 +9,19 @@
     ".": "./src/index.ts"
   },
   "scripts": {
+    "postinstall": "node ./scripts/provision-chromium.mjs",
+    "provision-chromium": "node ./scripts/provision-chromium.mjs",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@eqa/ai": "workspace:*",
     "@eqa/content": "workspace:*",
     "@eqa/jobs": "workspace:*",
-    "@eqa/tenant": "workspace:*"
+    "@eqa/tenant": "workspace:*",
+    "@puppeteer/browsers": "2.13.2",
+    "pdf-lib": "^1.17.1",
+    "pixelmatch": "^7.1.0",
+    "pngjs": "^7.0.0",
+    "puppeteer": "24.43.1"
   }
 }

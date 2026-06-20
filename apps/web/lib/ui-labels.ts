@@ -174,6 +174,32 @@ export const UI_LABELS: LabelSet = {
     en: "Read-only oversight of the simulated score. Board cannot run simulations.",
     ar: "إشراف للقراءة فقط على الدرجة المحاكية. لا يمكن للمجلس تشغيل المحاكاة.",
   },
+  mockEqaBoardReadOnly: {
+    en: "Read-only oversight view — Board cannot run the simulation.",
+    ar: "عرض إشرافي للقراءة فقط — لا يمكن للمجلس تشغيل المحاكاة.",
+  },
+  mockEqaSimulationBadge: {
+    en: "Simulation — not a formal result",
+    ar: "محاكاة — ليست نتيجة رسمية",
+  },
+  mockEqaSearch: { en: "Search standards…", ar: "بحث في المعايير…" },
+  mockEqaEmptyTitle: { en: "No standards in simulation", ar: "لا معايير في المحاكاة" },
+  mockEqaEmptyDescription: {
+    en: "Run a simulation to surface per-standard ratings.",
+    ar: "شغّل محاكاة لعرض درجات كل معيار.",
+  },
+  mockEqaErrorDemo: {
+    en: "Could not load mock-EQA simulation (demo error state).",
+    ar: "تعذّر تحميل محاكاة EQA التجريبية (حالة خطأ تجريبية).",
+  },
+  mockEqaDomain: { en: "Domain", ar: "النطاق" },
+  mockEqaRating: { en: "Simulated rating", ar: "الدرجة المحاكية" },
+  mockEqaGaps: { en: "Driving gaps", ar: "الفجوات المؤثرة" },
+  mockEqaRunPending: {
+    en: "Run a new readiness simulation (demo)",
+    ar: "تشغيل محاكاة جاهزية جديدة (تجريبي)",
+  },
+  mockEqaDetailSubtitle: { en: "Standard rating detail", ar: "تفاصيل درجة المعيار" },
   packLocation: {
     en: "Evidence pack — export & download",
     ar: "حزمة الأدلة — التصدير والتنزيل",
@@ -247,6 +273,32 @@ export const UI_LABELS: LabelSet = {
   packBoardHint: {
     en: "Read-only — Board can view and download a generated pack but cannot trigger generation.",
     ar: "للقراءة فقط — يمكن للمجلس عرض وتنزيل حزمة مُولَّدة لكن لا يمكنه تشغيل التوليد.",
+  },
+  packSubtitle: {
+    en: "Bilingual preview of pack contents — references and metadata only, no raw files.",
+    ar: "معاينة ثنائية اللغة لمحتويات الحزمة — مراجع وبيانات وصفية فقط، دون ملفات خام.",
+  },
+  packBilingualTitle: {
+    en: "Bilingual assessment title",
+    ar: "عنوان التقييم ثنائي اللغة",
+  },
+  packTitleEn: { en: "English title", ar: "العنوان بالإنجليزية" },
+  packTitleAr: { en: "Arabic title", ar: "العنوان بالعربية" },
+  packPreviewTitle: { en: "Standard sections preview", ar: "معاينة أقسام المعايير" },
+  packPreviewSearch: { en: "Search standards…", ar: "بحث في المعايير…" },
+  packEmptyTitle: { en: "No standards in pack", ar: "لا معايير في الحزمة" },
+  packEmptyDescription: {
+    en: "Standards will appear when a pack is generated.",
+    ar: "ستظهر المعايير عند توليد الحزمة.",
+  },
+  packErrorDemo: {
+    en: "Could not load evidence pack preview (demo error state).",
+    ar: "تعذّر تحميل معاينة حزمة الأدلة (حالة خطأ تجريبية).",
+  },
+  packGapSummary: { en: "Gap summary", ar: "ملخص الفجوات" },
+  packDownloadCta: {
+    en: "Download the sample PDF to verify disclaimer and confidentiality footer on every page.",
+    ar: "نزّل PDF التجريبي للتحقق من إخلاء المسؤولية وتذييل السرية في كل صفحة.",
   },
   journeyMapTitle: {
     en: "Readiness journey map",

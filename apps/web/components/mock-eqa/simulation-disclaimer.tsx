@@ -3,6 +3,7 @@
 import type { MockEqaPresentation } from "@/lib/present-mock-eqa";
 import { cn } from "@/lib/utils";
 import { AlertTriangle } from "lucide-react";
+import { uiLabel } from "@/lib/ui-labels";
 
 interface SimulationDisclaimerBannerProps {
   presentation: MockEqaPresentation;
@@ -41,9 +42,7 @@ export function SimulationDisclaimerBanner({
           </p>
           {view.isSummaryView ? (
             <p className="text-xs text-amber-800 dark:text-amber-200">
-              {view.locale === "ar"
-                ? "عرض إشرافي للقراءة فقط — لا يمكن للمجلس تشغيل المحاكاة."
-                : "Read-only oversight view — Board cannot run the simulation."}
+              {uiLabel("mockEqaBoardReadOnly", view.locale)}
             </p>
           ) : null}
         </div>

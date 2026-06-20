@@ -17,11 +17,17 @@ describe("evidence pack presentation output", () => {
     expect(ar.disclaimerText).toMatch(/محاكاة الجاهزية فقط/);
   });
 
-  it("exposes zero bundled raw files and evidence references only", () => {
+  it("exposes zero bundled raw files and bilingual preview rows", () => {
     const presentation = buildEvidencePackPresentation("en", "cae");
     expect(presentation.bundledFileCount).toBe(0);
     expect(presentation.evidenceReferenceCount).toBeGreaterThan(0);
     expect(presentation.standardCount).toBe(3);
+    expect(presentation.previewRows.length).toBe(3);
+    expect(presentation.assessmentNameEn).toBeTruthy();
+    expect(presentation.assessmentNameAr).toBeTruthy();
+    expect(presentation.previewRows[0]?.standardTitleEn).not.toBe(
+      presentation.previewRows[0]?.standardTitleAr,
+    );
   });
 
   it("marks Board as read-only for generation", () => {

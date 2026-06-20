@@ -33,6 +33,7 @@ export interface JourneyCheckpoint {
   readonly href:
     | "/dashboard"
     | "/assessment"
+    | "/evidence"
     | "/findings"
     | "/remediation"
     | "/mock-eqa"
@@ -213,7 +214,7 @@ export function buildJourneyMapPresentation(
       step: 2,
       labelEn: "Evidence collected",
       labelAr: "جمع الأدلة",
-      href: "/dashboard",
+      href: "/evidence",
       percent: evidencePercent,
       metricEn: `${evidenceCollected}/${totalQ} items with evidence`,
       metricAr: `${evidenceCollected}/${totalQ} عنصر مع أدلة`,

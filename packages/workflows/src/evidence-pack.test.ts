@@ -38,6 +38,7 @@ describe("EQA evidence pack export (Step 16)", () => {
     );
     expect(std12?.gapStatusSummary).toMatch(/confirmed|remediation|1/);
     expect(std12?.remediationSummary).toBeDefined();
+    expect(std12?.evidenceIndex).toHaveLength(2);
     expect(
       std12?.questions.find((q) => q.questionId === "Q-1-2-1")?.gapFinding,
     ).toBeDefined();
@@ -45,7 +46,12 @@ describe("EQA evidence pack export (Step 16)", () => {
     const pending = std12?.questions.find((q) => q.questionId === "Q-1-2-2");
     expect(pending?.reviewerNote).toMatch(/CAE review/i);
 
-    expect(std21?.evidenceIndex).toHaveLength(1);
+    expect(std21?.evidenceIndex).toHaveLength(2);
+    expect(
+      std21?.evidenceIndex.some(
+        (e) => e.fileName === "budget-independence-memo-draft.docx",
+      ),
+    ).toBe(true);
     expect(manifestEn.readinessSummary.score).toBeGreaterThan(0);
     expect(isEvidencePackManifest(manifestEn)).toBe(true);
   });

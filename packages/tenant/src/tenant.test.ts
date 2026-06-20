@@ -29,6 +29,8 @@ describe("public-route allowlist", () => {
     "/auth",
     "/auth/sign-in",
     "/dashboard",
+    "/assessment",
+    "/evidence",
     "/findings",
     "/remediation",
     "/mock-eqa",

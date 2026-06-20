@@ -489,6 +489,63 @@ export const UI_LABELS: LabelSet = {
     en: "Board view is read-only — switch to an operational role to review drafts.",
     ar: "عرض المجلس للقراءة فقط — انتقل إلى دور تشغيلي لمراجعة المسودات.",
   },
+  evidenceTitle: {
+    en: "Evidence repository",
+    ar: "مستودع الأدلة",
+  },
+  evidenceSubtitle: {
+    en: "Uploaded files stay quarantined until malware scan clears them for download and pack export.",
+    ar: "تبقى الملفات المرفوعة في الحجر حتى يُزيل فحص البرمجيات الخبيثة الحجر للتنزيل وتصدير الحزمة.",
+  },
+  evidenceLocation: {
+    en: "Evidence repository — scan gate",
+    ar: "مستودع الأدلة — بوابة الفحص",
+  },
+  evidenceType: { en: "Type", ar: "النوع" },
+  evidenceRef: { en: "Evidence ref", ar: "مرجع الدليل" },
+  evidenceScanStatus: { en: "Scan status", ar: "حالة الفحص" },
+  evidenceSearch: { en: "Search evidence…", ar: "بحث في الأدلة…" },
+  evidenceEmptyTitle: { en: "No evidence uploaded", ar: "لا أدلة مرفوعة" },
+  evidenceEmptyDescription: {
+    en: "When auditors upload files against standards, they appear here with scan status.",
+    ar: "عندما يرفع المدققون ملفات مقابل المعايير، تظهر هنا مع حالة الفحص.",
+  },
+  evidenceErrorDemo: {
+    en: "Could not load evidence (demo error state).",
+    ar: "تعذر تحميل الأدلة (حالة خطأ تجريبية).",
+  },
+  evidenceQuarantineBanner: {
+    en: "Quarantine-until-cleared gate",
+    ar: "بوابة الحجر حتى الإزالة",
+  },
+  evidenceQuarantineBannerBody: {
+    en: "Files are not downloadable or linkable in working papers until the background scan marks them clean.",
+    ar: "لا يمكن تنزيل الملفات أو ربطها في أوراق العمل حتى يُعلِم الفحص الخلفي أنها نظيفة.",
+  },
+  evidenceScanSummary: { en: "Scan summary", ar: "ملخص الفحص" },
+  evidenceClearedLabel: { en: "cleared", ar: "مُزال الحجر" },
+  evidenceQuarantinedLabel: { en: "quarantined", ar: "في الحجر" },
+  evidenceDetailSubtitle: { en: "Evidence item", ar: "عنصر دليل" },
+  evidenceSize: { en: "File size", ar: "حجم الملف" },
+  evidenceUploaded: { en: "Uploaded", ar: "تاريخ الرفع" },
+  evidenceLinks: { en: "Linked items", ar: "العناصر المرتبطة" },
+  evidenceDownload: { en: "Download file", ar: "تنزيل الملف" },
+  evidenceDownloadBlocked: {
+    en: "Download blocked — file not cleared",
+    ar: "التنزيل محظور — الملف لم يُزَل الحجر عنه",
+  },
+  evidenceQuarantineGate: {
+    en: "Quarantine gate: download stays disabled until scan status is cleared.",
+    ar: "بوابة الحجر: يبقى التنزيل معطّلاً حتى تصبح حالة الفحص «مُزال الحجر».",
+  },
+  evidenceWhatsNextAction: {
+    en: "Wait for malware scan on quarantined uploads",
+    ar: "انتظر فحص البرمجيات الخبيثة للملفات في الحجر",
+  },
+  evidenceBoardHint: {
+    en: "Board view — evidence metadata is read-only; downloads require an operational role.",
+    ar: "عرض المجلس — بيانات الأدلة للقراءة فقط؛ التنزيل يتطلب دور تشغيلي.",
+  },
   closePanel: { en: "Close panel", ar: "إغلاق اللوحة" },
 };
 

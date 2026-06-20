@@ -383,6 +383,32 @@ export function createSeeraDemoEvidenceMetadata(): EvidenceMetadataForPack[] {
       ],
       uploadedAt: "2026-05-01T14:00:00.000Z",
     },
+    {
+      evidenceId: "ev-budget-memo",
+      version: 1,
+      fileName: "budget-independence-memo-draft.docx",
+      contentType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      sizeBytes: 89_000,
+      scanStatus: "quarantined",
+      links: [
+        SEERA_DEMO_STANDARDS.ORG_INDEPENDENCE,
+        SEERA_DEMO_QUESTIONS.BUDGET_INDEPENDENCE,
+      ],
+      uploadedAt: "2026-06-12T08:30:00.000Z",
+    },
+    {
+      evidenceId: "ev-coi-spreadsheet",
+      version: 1,
+      fileName: "coi-declarations-register.xlsx",
+      contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      sizeBytes: 156_000,
+      scanStatus: "quarantined",
+      links: [
+        SEERA_DEMO_STANDARDS.OBJECTIVITY,
+        SEERA_DEMO_QUESTIONS.COI_DECLARATIONS,
+      ],
+      uploadedAt: "2026-06-17T16:45:00.000Z",
+    },
   ];
 }
 

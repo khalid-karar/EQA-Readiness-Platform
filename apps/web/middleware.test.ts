@@ -47,18 +47,12 @@ describe("middleware — tenant gate at the edge", () => {
     gate.mockReset();
   });
 
-  it("forwards public routes when the gate allows without tenant context", async () => {
-    gate.mockResolvedValue({ allowed: true, kind: "public" });
+  it("short-circuits public routes without calling the tenant gate", async () => {
     const response = await middleware(
       new NextRequest(new URL("http://localhost/health")),
     );
     expect(response.status).toBe(200);
-    expect(gate).toHaveBeenCalledWith(
-      "/health",
-      expect.any(Headers),
-      expect.anything(),
-      expect.anything(),
-    );
+    expect(gate).not.toHaveBeenCalled();
   });
 
   it("returns a central rejection before handlers when tenant context is missing", async () => {

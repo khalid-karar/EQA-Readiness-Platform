@@ -546,6 +546,64 @@ export const UI_LABELS: LabelSet = {
     en: "Board view — evidence metadata is read-only; downloads require an operational role.",
     ar: "عرض المجلس — بيانات الأدلة للقراءة فقط؛ التنزيل يتطلب دور تشغيلي.",
   },
+  wpTitle: {
+    en: "Working-paper review",
+    ar: "مراجعة أوراق العمل",
+  },
+  wpSubtitle: {
+    en: "Test whether documented methodology was followed — each row is a pinned checklist item.",
+    ar: "اختبر ما إذا كانت المنهجية الموثَّقة قد اُتبعت — كل صف عنصر في قائمة فحص مثبتة.",
+  },
+  wpLocation: {
+    en: "Working-paper review — methodology test",
+    ar: "مراجعة أوراق العمل — اختبار المنهجية",
+  },
+  wpEngagement: { en: "Engagement / paper", ar: "المهمة / الورقة" },
+  wpChecklistItem: { en: "Checklist item", ar: "عنصر القائمة" },
+  wpSearch: { en: "Search checklist items…", ar: "بحث في عناصر القائمة…" },
+  wpEmptyTitle: { en: "No checklist items in sample", ar: "لا عناصر قائمة في العيّنة" },
+  wpEmptyDescription: {
+    en: "When a completed engagement is sampled, checklist items appear here for conformance review.",
+    ar: "عند أخذ عيّنة من مهمة مكتملة، تظهر عناصر القائمة هنا لمراجعة المطابقة.",
+  },
+  wpErrorDemo: {
+    en: "Could not load working papers (demo error state).",
+    ar: "تعذر تحميل أوراق العمل (حالة خطأ تجريبية).",
+  },
+  wpUnreviewedBanner: {
+    en: "Unreviewed checklist items",
+    ar: "عناصر القائمة غير المراجَعة",
+  },
+  wpUnreviewedRollup: {
+    en: "checklist items still unreviewed",
+    ar: "عنصر قائمة لم يُراجَع بعد",
+  },
+  wpReviewedRollup: { en: "items reviewed", ar: "عنصر روجِع" },
+  wpConformantLabel: { en: "conformant", ar: "مطابق" },
+  wpPartialLabel: { en: "partial", ar: "جزئي" },
+  wpNonConformantLabel: { en: "non-conformant", ar: "غير مطابق" },
+  wpDetailSubtitle: { en: "Checklist item", ar: "عنصر القائمة" },
+  wpWorkingPaper: { en: "Working paper", ar: "ورقة العمل" },
+  wpPinnedChecklist: { en: "Pinned checklist", ar: "قائمة الفحص المثبتة" },
+  wpRecorded: { en: "Recorded", ar: "تاريخ التسجيل" },
+  wpReviewerNote: { en: "Reviewer note", ar: "ملاحظة المراجع" },
+  wpRecordConformance: { en: "Record conformance", ar: "تسجيل المطابقة" },
+  wpRecordHint: {
+    en: "Conformance is recorded against the pinned Step 5 checklist version.",
+    ar: "يُسجَّل المطابقة مقابل نسخة قائمة الفحص المثبتة من الخطوة 5.",
+  },
+  wpUnreviewedGate: {
+    en: "Unreviewed items block methodology clearance and drive readiness penalties until reviewed.",
+    ar: "العناصر غير المراجَعة تمنع إغلاق المنهجية وتخفض الجاهزية حتى تُراجَع.",
+  },
+  wpWhatsNextAction: {
+    en: "Review unreviewed working-paper checklist items",
+    ar: "راجع عناصر قائمة أوراق العمل غير المراجَعة",
+  },
+  wpBoardHint: {
+    en: "Board view — working-paper conformance is read-only.",
+    ar: "عرض المجلس — مطابقة أوراق العمل للقراءة فقط.",
+  },
   closePanel: { en: "Close panel", ar: "إغلاق اللوحة" },
 };
 

@@ -20,6 +20,7 @@ export const PUBLIC_ROUTE_PATTERNS: readonly RegExp[] = [
   /^\/assessment(?:\/.*)?$/,
   /^\/evidence(?:\/.*)?$/,
   /^\/findings(?:\/.*)?$/,
+  /^\/working-papers(?:\/.*)?$/,
   /^\/remediation(?:\/.*)?$/,
   /^\/mock-eqa(?:\/.*)?$/,
   /^\/evidence-pack(?:\/.*)?$/,

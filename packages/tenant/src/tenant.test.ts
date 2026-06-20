@@ -32,6 +32,7 @@ describe("public-route allowlist", () => {
     "/assessment",
     "/evidence",
     "/findings",
+    "/working-papers",
     "/remediation",
     "/mock-eqa",
     "/evidence-pack",

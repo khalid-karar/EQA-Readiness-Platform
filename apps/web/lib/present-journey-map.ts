@@ -35,6 +35,7 @@ export interface JourneyCheckpoint {
     | "/assessment"
     | "/evidence"
     | "/findings"
+    | "/working-papers"
     | "/remediation"
     | "/mock-eqa"
     | "/evidence-pack";
@@ -236,7 +237,7 @@ export function buildJourneyMapPresentation(
       step: 4,
       labelEn: "Methodology tested",
       labelAr: "اختبار المنهجية",
-      href: "/dashboard",
+      href: "/working-papers",
       percent: methodologyPercent,
       metricEn: `${methodology.reviewed}/${methodology.total} WP items reviewed`,
       metricAr: `${methodology.reviewed}/${methodology.total} عنصر ورقة عمل روجِع`,

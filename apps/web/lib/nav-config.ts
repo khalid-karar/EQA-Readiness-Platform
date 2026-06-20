@@ -16,6 +16,7 @@ export type AppRoute =
   | "/assessment"
   | "/evidence"
   | "/findings"
+  | "/working-papers"
   | "/remediation"
   | "/mock-eqa"
   | "/evidence-pack";
@@ -63,7 +64,7 @@ export const APP_NAV_ITEMS: readonly NavItem[] = [
     labelEn: "Working Papers",
     labelAr: "أوراق العمل",
     icon: FileStack,
-    disabled: true,
+    href: "/working-papers",
   },
   {
     id: "remediation",

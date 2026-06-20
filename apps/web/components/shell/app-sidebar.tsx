@@ -1,7 +1,6 @@
 "use client";
 
 import type { Locale } from "@eqa/content";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
@@ -48,21 +47,28 @@ export function AppSidebar({
       >
         <Link
           href={`/dashboard${suffix}`}
-          className="flex items-center gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-accent"
+          className={cn(
+            "flex items-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-accent",
+            collapsed ? "justify-center" : "gap-2",
+          )}
           aria-label={uiLabel("brandName", locale)}
         >
-          <Image
-            src="/brand/maya-ai-logo.png"
+          {/* JPEG wordmark — icon crop when collapsed, full mark when expanded */}
+          <img
+            src="/brand/maya-ai-logo.jpg"
             alt=""
-            width={28}
-            height={28}
-            className="rounded-sm"
-            priority
+            width={collapsed ? 32 : 140}
+            height={32}
+            className={cn(
+              "h-8 shrink-0 object-contain",
+              collapsed
+                ? "w-8 object-cover object-left"
+                : "w-auto max-w-[140px]",
+            )}
+            decoding="async"
           />
           {!collapsed && (
-            <span className="text-sm font-semibold tracking-tight">
-              {uiLabel("brandName", locale)}
-            </span>
+            <span className="sr-only">{uiLabel("brandName", locale)}</span>
           )}
         </Link>
       </div>

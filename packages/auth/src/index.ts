@@ -41,3 +41,10 @@ export {
   authenticateRequest,
   type HeaderSource,
 } from "./authenticate";
+
+export {
+  evaluateRequestGate,
+  type RequestGateOutcome,
+  type RequestGateRejection,
+  type RequestGateSuccess,
+} from "./request-gate";

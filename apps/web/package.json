@@ -10,6 +10,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@eqa/auth": "workspace:*",
     "@eqa/content": "workspace:*",
     "@eqa/tenant": "workspace:*",
     "@eqa/workflows": "workspace:*",

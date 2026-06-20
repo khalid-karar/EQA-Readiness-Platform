@@ -1,4 +1,5 @@
 import { evaluateRequestGate } from "@eqa/auth";
+import { isPublicRoute } from "@eqa/tenant";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getTenantGateDependencies } from "./lib/tenant-gate";
@@ -28,6 +29,10 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
   const requestHeaders = new Headers(request.headers);
   for (const header of SPOOFABLE_TENANT_HEADERS) {
     requestHeaders.delete(header);
+  }
+
+  if (isPublicRoute(pathname)) {
+    return NextResponse.next({ request: { headers: requestHeaders } });
   }
 
   const { provider, directory } = getTenantGateDependencies();

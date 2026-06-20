@@ -38,24 +38,45 @@ function createMiddlewareIdentityProvider(): IdentityProvider {
   });
 }
 
-let cached: TenantGateDependencies | undefined;
+let cachedDirectory: TenantDirectory | undefined;
+let cachedProvider: IdentityProvider | undefined;
 
-/** Lazily builds middleware gate dependencies (JWKS + tenant allowlist). */
-export function getTenantGateDependencies(): TenantGateDependencies {
-  if (!cached) {
-    cached = {
-      provider: createMiddlewareIdentityProvider(),
-      directory: createAllowlistTenantDirectoryFromSlugs(
-        parseTenantAllowlist(process.env.TENANT_ALLOWLIST),
-      ),
-    };
+function getTenantDirectory(): TenantDirectory {
+  if (!cachedDirectory) {
+    cachedDirectory = createAllowlistTenantDirectoryFromSlugs(
+      parseTenantAllowlist(process.env.TENANT_ALLOWLIST),
+    );
   }
-  return cached;
+  return cachedDirectory;
+}
+
+function getMiddlewareIdentityProvider(): IdentityProvider {
+  if (!cachedProvider) {
+    cachedProvider = createMiddlewareIdentityProvider();
+  }
+  return cachedProvider;
+}
+
+/**
+ * Builds gate dependencies for tenant-scoped routes only — never call for
+ * public allowlist paths (middleware short-circuits those first).
+ */
+export function getTenantGateDependencies(): TenantGateDependencies {
+  return {
+    provider: getMiddlewareIdentityProvider(),
+    directory: getTenantDirectory(),
+  };
 }
 
 /** Test hook — inject gate dependencies without touching process env caches. */
 export function setTenantGateDependenciesForTests(
   deps: TenantGateDependencies | undefined,
 ): void {
-  cached = deps;
+  if (deps) {
+    cachedProvider = deps.provider;
+    cachedDirectory = deps.directory;
+  } else {
+    cachedProvider = undefined;
+    cachedDirectory = undefined;
+  }
 }

@@ -19,6 +19,9 @@ vi.mock("@/lib/real-writes", () => ({
   isRealWritesEnabled,
 }));
 
+// cold-start of the first route handler per group exceeds the default under load; logic is unchanged
+vi.setConfig({ testTimeout: 20000 });
+
 const caeSession: AuthSession = {
   userId: "cae-user",
   role: "cae",

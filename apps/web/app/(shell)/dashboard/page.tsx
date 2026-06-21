@@ -1,9 +1,17 @@
 import { buildDashboardPresentation } from "@/lib/present-dashboard";
 import { parseLocale, parseRole } from "@/lib/dashboard-params";
 import { DashboardClient } from "@/components/dashboard/dashboard-client";
+import { metadataForShellPage } from "@/lib/page-metadata";
+import type { Metadata } from "next";
 
 interface DashboardPageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
+}
+
+export async function generateMetadata({
+  searchParams,
+}: DashboardPageProps): Promise<Metadata> {
+  return metadataForShellPage("dashboard", searchParams);
 }
 
 export default async function DashboardPage({

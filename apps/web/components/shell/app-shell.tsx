@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState, type ReactNode } from "react";
+import { Suspense, useState, type ReactNode } from "react";
 import { parseLocale, parseRole } from "@/lib/dashboard-params";
 import { Toaster } from "@/components/ui/toaster";
 import { AppSidebar } from "./app-sidebar";
@@ -21,11 +21,6 @@ function AppShellInner({ children }: AppShellProps): ReactNode {
   const role = parseRole(searchParams.get("role") ?? undefined);
   const [collapsed, setCollapsed] = useState(false);
   const dir = locale === "ar" ? "rtl" : "ltr";
-
-  useEffect(() => {
-    document.documentElement.lang = locale;
-    document.documentElement.dir = dir;
-  }, [locale, dir]);
 
   return (
     <div

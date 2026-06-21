@@ -46,6 +46,11 @@ export const UI_LABELS: LabelSet = {
   },
   locale: { en: "Language", ar: "اللغة" },
   viewAs: { en: "View as", ar: "العرض كـ" },
+  roleCae: { en: "CAE", ar: "الرئيس التنفيذي للتدقيق" },
+  roleAuditStaff: { en: "Audit Staff", ar: "فريق التدقيق" },
+  roleBoard: { en: "Board", ar: "المجلس" },
+  localeEnglish: { en: "English", ar: "الإنجليزية" },
+  localeArabic: { en: "Arabic", ar: "العربية" },
   demoNote: {
     en: "Synthetic demo data — switch language and role to preview RBAC views.",
     ar: "بيانات تجريبية — بدّل اللغة والدور لمعاينة صلاحيات العرض.",
@@ -380,6 +385,61 @@ export const UI_LABELS: LabelSet = {
     en: "Readiness journey steps",
     ar: "خطوات رحلة الجاهزية",
   },
+  assessmentTitle: {
+    en: "Scope & self-assessment",
+    ar: "النطاق والتقييم الذاتي",
+  },
+  assessmentSubtitle: {
+    en: "Rate each standard against the pinned content pack. Responses stay bound to that version.",
+    ar: "قيّم كل معيار مقابل حزمة المحتوى المثبتة. تبقى الاستجابات مرتبطة بتلك النسخة.",
+  },
+  assessmentLocation: {
+    en: "Questionnaire — scope & self-assess",
+    ar: "الاستبيان — النطاق والتقييم الذاتي",
+  },
+  assessmentProgress: { en: "Standards started", ar: "معايير بدأت" },
+  assessmentItems: { en: "Responses", ar: "الاستجابات" },
+  assessmentSearch: { en: "Search standards…", ar: "بحث في المعايير…" },
+  assessmentEmptyTitle: {
+    en: "No standards in scope",
+    ar: "لا معايير في النطاق",
+  },
+  assessmentEmptyDescription: {
+    en: "When an assessment scope is defined, standards appear here for self-rating.",
+    ar: "عند تحديد نطاق التقييم، تظهر المعايير هنا للتقييم الذاتي.",
+  },
+  assessmentErrorDemo: {
+    en: "Could not load assessment (demo error state).",
+    ar: "تعذر تحميل التقييم (حالة خطأ تجريبية).",
+  },
+  assessmentContentPack: {
+    en: "Pinned content pack",
+    ar: "حزمة المحتوى المثبتة",
+  },
+  assessmentPinNote: {
+    en: "Every response is stored against this pack version and content hash — not the live catalog.",
+    ar: "تُخزَّن كل استجابة مقابل نسخة الحزمة وهاش المحتوى — وليس الكتالوج المباشر.",
+  },
+  assessmentPinnedVersion: {
+    en: "Pinned version",
+    ar: "النسخة المثبتة",
+  },
+  assessmentDetailSubtitle: { en: "Assessment item", ar: "عنصر التقييم" },
+  assessmentQuestionTitle: { en: "Question", ar: "السؤال" },
+  assessmentCurrentResponse: { en: "Current response", ar: "الاستجابة الحالية" },
+  assessmentNoResponse: { en: "Not yet answered", ar: "لم تُجب بعد" },
+  assessmentRespondedBy: { en: "Responded by", ar: "أجاب" },
+  assessmentRubricTitle: { en: "Rubric levels", ar: "مستويات المعيار" },
+  assessmentHistoryTitle: { en: "Response history", ar: "سجل الاستجابات" },
+  assessmentAnswer: { en: "Answer", ar: "الإجابة" },
+  assessmentWhatsNextAction: {
+    en: "Complete self-assessment for remaining standards",
+    ar: "أكمل التقييم الذاتي للمعايير المتبقية",
+  },
+  assessmentBoardHint: {
+    en: "Board view — questionnaire responses are read-only.",
+    ar: "عرض المجلس — استجابات الاستبيان للقراءة فقط.",
+  },
   findingsTitle: { en: "Findings & human review", ar: "النتائج والمراجعة البشرية" },
   findingsSubtitle: {
     en: "AI draft findings await your decision before they become final conclusions.",
@@ -434,6 +494,121 @@ export const UI_LABELS: LabelSet = {
     en: "Board view is read-only — switch to an operational role to review drafts.",
     ar: "عرض المجلس للقراءة فقط — انتقل إلى دور تشغيلي لمراجعة المسودات.",
   },
+  evidenceTitle: {
+    en: "Evidence repository",
+    ar: "مستودع الأدلة",
+  },
+  evidenceSubtitle: {
+    en: "Uploaded files stay quarantined until malware scan clears them for download and pack export.",
+    ar: "تبقى الملفات المرفوعة في الحجر حتى يُزيل فحص البرمجيات الخبيثة الحجر للتنزيل وتصدير الحزمة.",
+  },
+  evidenceLocation: {
+    en: "Evidence repository — scan gate",
+    ar: "مستودع الأدلة — بوابة الفحص",
+  },
+  evidenceType: { en: "Type", ar: "النوع" },
+  evidenceRef: { en: "Evidence ref", ar: "مرجع الدليل" },
+  evidenceScanStatus: { en: "Scan status", ar: "حالة الفحص" },
+  evidenceSearch: { en: "Search evidence…", ar: "بحث في الأدلة…" },
+  evidenceEmptyTitle: { en: "No evidence uploaded", ar: "لا أدلة مرفوعة" },
+  evidenceEmptyDescription: {
+    en: "When auditors upload files against standards, they appear here with scan status.",
+    ar: "عندما يرفع المدققون ملفات مقابل المعايير، تظهر هنا مع حالة الفحص.",
+  },
+  evidenceErrorDemo: {
+    en: "Could not load evidence (demo error state).",
+    ar: "تعذر تحميل الأدلة (حالة خطأ تجريبية).",
+  },
+  evidenceQuarantineBanner: {
+    en: "Quarantine-until-cleared gate",
+    ar: "بوابة الحجر حتى الإزالة",
+  },
+  evidenceQuarantineBannerBody: {
+    en: "Files are not downloadable or linkable in working papers until the background scan marks them clean.",
+    ar: "لا يمكن تنزيل الملفات أو ربطها في أوراق العمل حتى يُعلِم الفحص الخلفي أنها نظيفة.",
+  },
+  evidenceScanSummary: { en: "Scan summary", ar: "ملخص الفحص" },
+  evidenceClearedLabel: { en: "cleared", ar: "مُزال الحجر" },
+  evidenceQuarantinedLabel: { en: "quarantined", ar: "في الحجر" },
+  evidenceDetailSubtitle: { en: "Evidence item", ar: "عنصر دليل" },
+  evidenceSize: { en: "File size", ar: "حجم الملف" },
+  evidenceUploaded: { en: "Uploaded", ar: "تاريخ الرفع" },
+  evidenceLinks: { en: "Linked items", ar: "العناصر المرتبطة" },
+  evidenceDownload: { en: "Download file", ar: "تنزيل الملف" },
+  evidenceDownloadBlocked: {
+    en: "Download blocked — file not cleared",
+    ar: "التنزيل محظور — الملف لم يُزَل الحجر عنه",
+  },
+  evidenceQuarantineGate: {
+    en: "Quarantine gate: download stays disabled until scan status is cleared.",
+    ar: "بوابة الحجر: يبقى التنزيل معطّلاً حتى تصبح حالة الفحص «مُزال الحجر».",
+  },
+  evidenceWhatsNextAction: {
+    en: "Wait for malware scan on quarantined uploads",
+    ar: "انتظر فحص البرمجيات الخبيثة للملفات في الحجر",
+  },
+  evidenceBoardHint: {
+    en: "Board view — evidence metadata is read-only; downloads require an operational role.",
+    ar: "عرض المجلس — بيانات الأدلة للقراءة فقط؛ التنزيل يتطلب دور تشغيلي.",
+  },
+  wpTitle: {
+    en: "Working-paper review",
+    ar: "مراجعة أوراق العمل",
+  },
+  wpSubtitle: {
+    en: "Test whether documented methodology was followed — each row is a pinned checklist item.",
+    ar: "اختبر ما إذا كانت المنهجية الموثَّقة قد اُتبعت — كل صف عنصر في قائمة فحص مثبتة.",
+  },
+  wpLocation: {
+    en: "Working-paper review — methodology test",
+    ar: "مراجعة أوراق العمل — اختبار المنهجية",
+  },
+  wpEngagement: { en: "Engagement / paper", ar: "المهمة / الورقة" },
+  wpChecklistItem: { en: "Checklist item", ar: "عنصر القائمة" },
+  wpSearch: { en: "Search checklist items…", ar: "بحث في عناصر القائمة…" },
+  wpEmptyTitle: { en: "No checklist items in sample", ar: "لا عناصر قائمة في العيّنة" },
+  wpEmptyDescription: {
+    en: "When a completed engagement is sampled, checklist items appear here for conformance review.",
+    ar: "عند أخذ عيّنة من مهمة مكتملة، تظهر عناصر القائمة هنا لمراجعة المطابقة.",
+  },
+  wpErrorDemo: {
+    en: "Could not load working papers (demo error state).",
+    ar: "تعذر تحميل أوراق العمل (حالة خطأ تجريبية).",
+  },
+  wpUnreviewedBanner: {
+    en: "Unreviewed checklist items",
+    ar: "عناصر القائمة غير المراجَعة",
+  },
+  wpUnreviewedRollup: {
+    en: "checklist items still unreviewed",
+    ar: "عنصر قائمة لم يُراجَع بعد",
+  },
+  wpReviewedRollup: { en: "items reviewed", ar: "عنصر روجِع" },
+  wpConformantLabel: { en: "conformant", ar: "مطابق" },
+  wpPartialLabel: { en: "partial", ar: "جزئي" },
+  wpNonConformantLabel: { en: "non-conformant", ar: "غير مطابق" },
+  wpDetailSubtitle: { en: "Checklist item", ar: "عنصر القائمة" },
+  wpWorkingPaper: { en: "Working paper", ar: "ورقة العمل" },
+  wpPinnedChecklist: { en: "Pinned checklist", ar: "قائمة الفحص المثبتة" },
+  wpRecorded: { en: "Recorded", ar: "تاريخ التسجيل" },
+  wpReviewerNote: { en: "Reviewer note", ar: "ملاحظة المراجع" },
+  wpRecordConformance: { en: "Record conformance", ar: "تسجيل المطابقة" },
+  wpRecordHint: {
+    en: "Conformance is recorded against the pinned Step 5 checklist version.",
+    ar: "يُسجَّل المطابقة مقابل نسخة قائمة الفحص المثبتة من الخطوة 5.",
+  },
+  wpUnreviewedGate: {
+    en: "Unreviewed items block methodology clearance and drive readiness penalties until reviewed.",
+    ar: "العناصر غير المراجَعة تمنع إغلاق المنهجية وتخفض الجاهزية حتى تُراجَع.",
+  },
+  wpWhatsNextAction: {
+    en: "Review unreviewed working-paper checklist items",
+    ar: "راجع عناصر قائمة أوراق العمل غير المراجَعة",
+  },
+  wpBoardHint: {
+    en: "Board view — working-paper conformance is read-only.",
+    ar: "عرض المجلس — مطابقة أوراق العمل للقراءة فقط.",
+  },
   closePanel: { en: "Close panel", ar: "إغلاق اللوحة" },
 };
 
@@ -441,6 +616,20 @@ export function uiLabel(key: keyof typeof UI_LABELS, locale: Locale): string {
   const entry = UI_LABELS[key];
   if (!entry) return key;
   return entry[locale] ?? entry.en;
+}
+
+export function roleDisplayLabel(
+  role: "cae" | "audit_staff" | "board",
+  locale: Locale,
+): string {
+  switch (role) {
+    case "cae":
+      return uiLabel("roleCae", locale);
+    case "audit_staff":
+      return uiLabel("roleAuditStaff", locale);
+    case "board":
+      return uiLabel("roleBoard", locale);
+  }
 }
 
 export function progressStartedLabel(

@@ -32,7 +32,10 @@ export interface JourneyCheckpoint {
   readonly labelAr: string;
   readonly href:
     | "/dashboard"
+    | "/assessment"
+    | "/evidence"
     | "/findings"
+    | "/working-papers"
     | "/remediation"
     | "/mock-eqa"
     | "/evidence-pack";
@@ -201,7 +204,7 @@ export function buildJourneyMapPresentation(
       step: 1,
       labelEn: "Scope & self-assess",
       labelAr: "النطاق والتقييم الذاتي",
-      href: "/dashboard",
+      href: "/assessment",
       percent: scopePercent,
       metricEn: `${progress.startedCount}/${progress.totalStandards} standards started`,
       metricAr: `${progress.startedCount}/${progress.totalStandards} معيار بدأ`,
@@ -212,7 +215,7 @@ export function buildJourneyMapPresentation(
       step: 2,
       labelEn: "Evidence collected",
       labelAr: "جمع الأدلة",
-      href: "/dashboard",
+      href: "/evidence",
       percent: evidencePercent,
       metricEn: `${evidenceCollected}/${totalQ} items with evidence`,
       metricAr: `${evidenceCollected}/${totalQ} عنصر مع أدلة`,
@@ -234,7 +237,7 @@ export function buildJourneyMapPresentation(
       step: 4,
       labelEn: "Methodology tested",
       labelAr: "اختبار المنهجية",
-      href: "/dashboard",
+      href: "/working-papers",
       percent: methodologyPercent,
       metricEn: `${methodology.reviewed}/${methodology.total} WP items reviewed`,
       metricAr: `${methodology.reviewed}/${methodology.total} عنصر ورقة عمل روجِع`,

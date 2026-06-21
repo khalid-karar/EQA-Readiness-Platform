@@ -13,7 +13,10 @@ import {
 
 export type AppRoute =
   | "/dashboard"
+  | "/assessment"
+  | "/evidence"
   | "/findings"
+  | "/working-papers"
   | "/remediation"
   | "/mock-eqa"
   | "/evidence-pack";
@@ -40,14 +43,14 @@ export const APP_NAV_ITEMS: readonly NavItem[] = [
     labelEn: "Assessment",
     labelAr: "التقييم",
     icon: ClipboardCheck,
-    disabled: true,
+    href: "/assessment",
   },
   {
     id: "evidence",
     labelEn: "Evidence",
     labelAr: "الأدلة",
     icon: FolderOpen,
-    disabled: true,
+    href: "/evidence",
   },
   {
     id: "findings",
@@ -61,7 +64,7 @@ export const APP_NAV_ITEMS: readonly NavItem[] = [
     labelEn: "Working Papers",
     labelAr: "أوراق العمل",
     icon: FileStack,
-    disabled: true,
+    href: "/working-papers",
   },
   {
     id: "remediation",

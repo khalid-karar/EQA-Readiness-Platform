@@ -6,6 +6,7 @@ import {
   SideSheetBody,
   SideSheetCloseButton,
   SideSheetContent,
+  detailPanelSide,
   SideSheetDescription,
   SideSheetHeader,
   SideSheetTitle,
@@ -26,13 +27,14 @@ export function MockEqaDetailSheet({
   onOpenChange,
   locale,
 }: MockEqaDetailSheetProps): React.ReactNode {
-  const sheetSide = locale === "ar" ? "start" : "end";
-
   if (!row) return null;
 
   return (
     <SideSheet open={open} onOpenChange={onOpenChange}>
-      <SideSheetContent side={sheetSide} aria-describedby="mock-eqa-sheet-desc">
+      <SideSheetContent
+        side={detailPanelSide(locale)}
+        aria-describedby="mock-eqa-sheet-desc"
+      >
         <SideSheetHeader>
           <div className="min-w-0 space-y-1 pe-2">
             <SideSheetTitle>

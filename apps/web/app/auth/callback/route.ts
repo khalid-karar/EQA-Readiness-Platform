@@ -7,6 +7,7 @@ import {
   OAUTH_STATE_COOKIE,
   RETURN_TO_COOKIE,
   SESSION_COOKIE,
+  sessionCookieOptions,
 } from "@/lib/auth/session-cookie";
 import { resolveIdentityProvider } from "@/lib/auth/resolve-provider";
 import { getTenantDirectory } from "@/lib/tenant-gate";
@@ -53,15 +54,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const returnTo =
       request.cookies.get(RETURN_TO_COOKIE)?.value ?? "/dashboard";
     const response = NextResponse.redirect(new URL(returnTo, config.appUrl));
-    const secure = process.env.NODE_ENV === "production";
 
-    response.cookies.set(SESSION_COOKIE, sealed, {
-      httpOnly: true,
-      secure,
-      sameSite: "lax",
-      path: "/",
-      maxAge: 60 * 60 * 8,
-    });
+    response.cookies.set(SESSION_COOKIE, sealed, sessionCookieOptions());
     response.cookies.delete(OAUTH_STATE_COOKIE);
     response.cookies.delete(RETURN_TO_COOKIE);
 

@@ -1,6 +1,5 @@
 import { AssessmentClient } from "@/components/assessment/assessment-client";
-import { requireServerSession } from "@/lib/auth/get-server-session";
-import { resolvePageLocaleAndRole } from "@/lib/auth/page-context";
+import { requireShellPageContext } from "@/lib/auth/page-context";
 import { metadataForShellPage } from "@/lib/page-metadata";
 import { loadAssessmentData } from "@/lib/load-screen-data";
 import { isRealWritesEnabled } from "@/lib/real-writes";
@@ -24,8 +23,7 @@ export default async function AssessmentPage({
   searchParams,
 }: AssessmentPageProps): Promise<React.ReactNode> {
   const params = await searchParams;
-  const { locale, role } = await resolvePageLocaleAndRole(params);
-  const session = await requireServerSession();
+  const { session, locale, role } = await requireShellPageContext(params);
   const data = await loadAssessmentData(session, locale, role);
   const presentation =
     data === "demo"

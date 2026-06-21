@@ -2,8 +2,8 @@ import { evaluateRequestGate } from "@eqa/auth";
 import { isPublicRoute } from "@eqa/tenant";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { readAccessTokenFromRequest } from "./lib/auth/read-request-session";
-import { SESSION_COOKIE } from "./lib/auth/session-cookie";
+import { resolveRequestSession } from "./lib/auth/read-request-session";
+import { SESSION_COOKIE, sessionCookieOptions } from "./lib/auth/session-cookie";
 import { LOCALE_COOKIE, LOCALE_HEADER } from "./lib/request-locale";
 import { resolveTenantGateDependencies } from "./lib/tenant-gate";
 
@@ -88,9 +88,9 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
   if (isPublicRoute(pathname)) {
     response = NextResponse.next(nextOpts);
   } else {
-    const accessToken = await readAccessTokenFromRequest(request);
-    if (accessToken) {
-      requestHeaders.set("authorization", `Bearer ${accessToken}`);
+    const session = await resolveRequestSession(request);
+    if (session?.accessToken) {
+      requestHeaders.set("authorization", `Bearer ${session.accessToken}`);
     }
 
     const { provider, directory } = await resolveTenantGateDependencies();
@@ -121,6 +121,13 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
     }
 
     response = NextResponse.next(nextOpts);
+    if (session?.refreshedSealed) {
+      response.cookies.set(
+        SESSION_COOKIE,
+        session.refreshedSealed,
+        sessionCookieOptions(),
+      );
+    }
   }
 
   return applyLocale(request, response);

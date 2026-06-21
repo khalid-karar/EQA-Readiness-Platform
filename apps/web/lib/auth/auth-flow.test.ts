@@ -1,6 +1,6 @@
 import type { KeyLike } from "jose";
 import { NextRequest } from "next/server";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   issueToken,
   TEST_AUDIENCE,
@@ -12,6 +12,13 @@ import {
 import type { OidcConfig } from "./config";
 import { encryptSession, SESSION_COOKIE } from "./session-cookie";
 import { resetE2eIdentityProviderForTests } from "./resolve-provider";
+
+const refreshAccessToken = vi.hoisted(() => vi.fn());
+
+vi.mock("./oidc", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("./oidc")>();
+  return { ...actual, refreshAccessToken };
+});
 
 const SESSION_SECRET = "test-session-secret-at-least-32-bytes-long";
 const TEST_CONFIG: OidcConfig = {
@@ -55,6 +62,7 @@ describe("middleware — OIDC session auth", () => {
   let testPrivateKey: KeyLike;
 
   beforeEach(async () => {
+    refreshAccessToken.mockReset();
     process.env.KEYCLOAK_ISSUER = TEST_ISSUER;
     process.env.KEYCLOAK_AUDIENCE = TEST_AUDIENCE;
     process.env.KEYCLOAK_CLIENT_SECRET = "test-client-secret";
@@ -170,6 +178,45 @@ describe("middleware — OIDC session auth", () => {
     expect(response.headers.get("location")).toContain("/auth/login");
   });
 
+  it("refreshes an expired access token when a refresh token is present", async () => {
+    const expiredToken = await issueToken(
+      testPrivateKey,
+      { tenant: "seera-pilot", role: "cae", amr: ["pwd", "otp"] },
+      { expired: true },
+    );
+    const freshToken = await issueToken(
+      testPrivateKey,
+      { tenant: "seera-pilot", role: "cae", amr: ["pwd", "otp"] },
+    );
+    const sealed = await encryptSession(
+      {
+        accessToken: expiredToken,
+        refreshToken: "refresh-token-abc",
+        expiresAt: Math.floor(Date.now() / 1000) - 60,
+      },
+      TEST_CONFIG,
+    );
+
+    refreshAccessToken.mockResolvedValue({
+      access_token: freshToken,
+      expires_in: 3600,
+      token_type: "Bearer",
+    });
+
+    const { middleware } = await import("@/middleware");
+    const request = new NextRequest(
+      new URL("http://localhost/api/actions/human-review"),
+      { method: "POST" },
+    );
+    request.cookies.set(SESSION_COOKIE, sealed);
+    const response = await middleware(request);
+
+    expect(response.status).toBe(200);
+    expect(refreshAccessToken).toHaveBeenCalled();
+    expect(response.cookies.get(SESSION_COOKIE)?.value).toBeTruthy();
+    expect(response.cookies.get(SESSION_COOKIE)?.value).not.toBe(sealed);
+  });
+
   it("returns 401 JSON for unauthenticated API routes", async () => {
     const { middleware } = await import("@/middleware");
     const response = await middleware(
@@ -178,5 +225,32 @@ describe("middleware — OIDC session auth", () => {
     expect(response.status).toBe(401);
     const body = await response.json();
     expect(body.error).toBe("authentication_required");
+  });
+
+  it("allows a valid session on /working-papers", async () => {
+    const sealed = await sealAccessToken({
+      tenant: "seera-pilot",
+      role: "cae",
+    });
+    const { middleware } = await import("@/middleware");
+    const request = new NextRequest(new URL("http://localhost/working-papers"));
+    request.cookies.set(SESSION_COOKIE, sealed);
+    const response = await middleware(request);
+    expect(response.status).toBe(200);
+  });
+
+  it("allows a valid session on record-conformance API", async () => {
+    const sealed = await sealAccessToken({
+      tenant: "seera-pilot",
+      role: "cae",
+    });
+    const { middleware } = await import("@/middleware");
+    const request = new NextRequest(
+      new URL("http://localhost/api/actions/record-conformance"),
+      { method: "POST" },
+    );
+    request.cookies.set(SESSION_COOKIE, sealed);
+    const response = await middleware(request);
+    expect(response.status).toBe(200);
   });
 });

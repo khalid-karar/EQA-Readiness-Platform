@@ -1,5 +1,5 @@
 import { authorize, ForbiddenError, PERMISSIONS, type AuthSession } from "@eqa/auth";
-import { getServerSession } from "@/lib/auth/get-server-session";
+import { getServerSessionFromRequest } from "@/lib/auth/get-server-session";
 import { enqueueUiActionJob } from "@/lib/jobs";
 import { isRealWritesEnabled } from "@/lib/real-writes";
 
@@ -11,9 +11,9 @@ export async function handleUiActionRoute(
     session: AuthSession,
   ) => Record<string, unknown>,
 ): Promise<Response> {
-  const session = await getServerSession();
-  if (!session) {
-    return Response.json({ error: "Unauthorized." }, { status: 401 });
+  const session = await getServerSessionFromRequest(request);
+  if (!session?.tenant?.schemaName) {
+    return Response.json({ error: "authentication_required" }, { status: 401 });
   }
 
   try {

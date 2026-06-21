@@ -53,6 +53,13 @@ export type { AuditEntry, VerifyResult } from "@eqa/audit-log";
 
 export { seedBetaCo, seedSeeraPilot, BETA_CO, SEERA_PILOT } from "./seed";
 export { seedBetaCoDemoData, seedSeeraPilotDemoData } from "./seed-demo-data";
+export {
+  assessmentContentPinKey,
+  assessmentNameKey,
+  EMPTY_DEMO_ASSESSMENT_ID,
+  EMPTY_DEMO_ASSESSMENT_NAME,
+  seedEmptyAssessment,
+} from "./seed-empty-assessment";
 
 export {
   assertUiSession,

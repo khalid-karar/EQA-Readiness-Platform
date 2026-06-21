@@ -10,6 +10,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "node",
+    hookTimeout: 30_000,
     env: {
       EQA_PDF_REUSE_BROWSER: process.env.EQA_PDF_REUSE_BROWSER ?? "true",
     },

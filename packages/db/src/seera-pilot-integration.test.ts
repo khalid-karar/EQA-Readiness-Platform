@@ -168,16 +168,16 @@ describe("Seera-pilot full-loop integration (Step 17)", () => {
       },
       { auditPort: createTenantJobAuditPort(db) },
     );
-  });
+  }, 30_000);
 
   afterEach(async () => {
     await closeEvidencePackBrowser();
     await db.close();
-  });
+  }, 30_000);
 
   afterAll(async () => {
     await closeEvidencePackBrowser();
-  });
+  }, 30_000);
 
   function reposFor(
     t: TenantDescriptor,

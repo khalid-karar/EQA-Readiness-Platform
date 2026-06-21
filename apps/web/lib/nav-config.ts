@@ -47,8 +47,8 @@ export const APP_NAV_ITEMS: readonly NavItem[] = [
   },
   {
     id: "evidence",
-    labelEn: "Evidence",
-    labelAr: "الأدلة",
+    labelEn: "Evidence library",
+    labelAr: "مكتبة الأدلة",
     icon: FolderOpen,
     href: "/evidence",
   },

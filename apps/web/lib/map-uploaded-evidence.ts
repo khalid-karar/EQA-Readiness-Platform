@@ -1,4 +1,8 @@
 import type { PresentedEvidenceItem, PresentedScanStatus } from "./present-evidence";
+import {
+  parseEvidenceLinks,
+  standardNumbersFromLinks,
+} from "./evidence-links";
 
 const STANDARD_TITLE: Record<string, { en: string; ar: string }> = {
   "1.1": {
@@ -86,8 +90,25 @@ export function mapUploadedEvidenceItem(input: {
   links: readonly string[];
   uploadedAt: string;
 }): PresentedEvidenceItem {
+  const parsed = parseEvidenceLinks(input.links);
+  const linkedStandards = parsed.map((group) => {
+    const titles = STANDARD_TITLE[group.standardNumber] ?? {
+      en: group.standardNumber,
+      ar: group.standardNumber,
+    };
+    return {
+      standardNumber: group.standardNumber,
+      standardTitleEn: titles.en,
+      standardTitleAr: titles.ar,
+      questionIds: group.questionIds,
+    };
+  });
+  const standardNumbers = standardNumbersFromLinks(input.links);
   const standardNumber =
-    input.links.find((l) => l in STANDARD_TITLE) ?? input.links[0] ?? "—";
+    standardNumbers[0] ??
+    input.links.find((l) => l in STANDARD_TITLE) ??
+    input.links[0] ??
+    "—";
   const titles = STANDARD_TITLE[standardNumber] ?? {
     en: standardNumber,
     ar: standardNumber,
@@ -105,6 +126,8 @@ export function mapUploadedEvidenceItem(input: {
     standardNumber,
     standardTitleEn: titles.en,
     standardTitleAr: titles.ar,
+    linkedStandards,
+    reusedAcrossStandards: linkedStandards.length > 1,
     evidenceRefEn: `${input.evidenceId} v${input.version}`,
     evidenceRefAr: `${input.evidenceId} (إصدار ${input.version})`,
     scanStatus,

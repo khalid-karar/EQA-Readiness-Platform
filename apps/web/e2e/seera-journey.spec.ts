@@ -162,19 +162,19 @@ async function runSeeraJourney(locale: Locale, page: Page): Promise<void> {
     ).toBeVisible();
   });
 
-  await test.step("Evidence — open evidence SideSheet", async () => {
+  await test.step("Evidence — open library detail panel", async () => {
     const row = page
       .locator("#main-content table tbody tr")
       .filter({ hasText: evidenceMarkers.cleanStandardNumber })
       .first();
     await expect(row).toBeVisible();
     await row.click();
-    const dialog = page.getByRole("dialog");
-    await expect(dialog).toBeVisible();
-    await expect(dialog).toContainText(evidenceMarkers.cleanFileName);
-    await expect(dialog).toContainText(evidenceMarkers.cleanStandardNumber);
-    await page.keyboard.press("Escape");
-    await expect(dialog).toBeHidden();
+    await expect(
+      page.getByText(evidenceMarkers.cleanFileName).first(),
+    ).toBeVisible();
+    await expect(
+      page.getByText(evidenceMarkers.cleanStandardNumber).first(),
+    ).toBeVisible();
   });
 
   await test.step(

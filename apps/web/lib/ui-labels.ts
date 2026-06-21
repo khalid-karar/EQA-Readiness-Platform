@@ -513,16 +513,68 @@ export const UI_LABELS: LabelSet = {
     ar: "عرض المجلس للقراءة فقط — انتقل إلى دور تشغيلي لمراجعة المسودات.",
   },
   evidenceTitle: {
-    en: "Evidence repository",
-    ar: "مستودع الأدلة",
+    en: "Evidence library",
+    ar: "مكتبة الأدلة",
   },
   evidenceSubtitle: {
     en: "Uploaded files stay quarantined until malware scan clears them for download and pack export.",
     ar: "تبقى الملفات المرفوعة في الحجر حتى يُزيل فحص البرمجيات الخبيثة الحجر للتنزيل وتصدير الحزمة.",
   },
+  evidenceLibrarySubtitle: {
+    en: "Manage and reuse tenant evidence — scan status and standard mappings across the assessment.",
+    ar: "إدارة وإعادة استخدام أدلة المستأجر — حالة الفحص وربط المعايير عبر التقييم.",
+  },
+  evidenceLibrarySecondaryBanner: {
+    en: "Secondary store — overview and reuse",
+    ar: "مخزن ثانوي — نظرة عامة وإعادة استخدام",
+  },
+  evidenceLibrarySecondaryBody: {
+    en: "Upload and attach evidence inline from Assessment (primary path). This library lists all tenant uploads for review and cross-standard reuse.",
+    ar: "ارفع واربط الأدلة مباشرة من التقييم (المسار الأساسي). تعرض هذه المكتبة جميع رفوعات المستأجر للمراجعة وإعادة الاستخدام عبر المعايير.",
+  },
+  evidenceLibraryAttachLink: {
+    en: "Go to Assessment — inline attach",
+    ar: "انتقل إلى التقييم — ربط مباشر",
+  },
+  evidenceLibraryPanelTitle: {
+    en: "Evidence detail",
+    ar: "تفاصيل الدليل",
+  },
+  evidenceLibrarySelectHint: {
+    en: "Select a row to view scan status, standard mappings, and download options.",
+    ar: "اختر صفاً لعرض حالة الفحص وربط المعايير وخيارات التنزيل.",
+  },
+  evidenceLibraryStandardsHeading: {
+    en: "Mapped standards",
+    ar: "المعايير المرتبطة",
+  },
+  evidenceLibraryStandardsColumn: {
+    en: "Standards",
+    ar: "المعايير",
+  },
+  evidenceLibraryFileColumn: {
+    en: "File",
+    ar: "الملف",
+  },
+  evidenceLibraryReusedBadge: {
+    en: "Reused",
+    ar: "مُعاد الاستخدام",
+  },
+  evidenceLibraryReusedSummary: {
+    en: "reused across standards",
+    ar: "مُعاد استخدامها عبر المعايير",
+  },
+  evidenceLibraryReuseHeading: {
+    en: "Reuse across standards",
+    ar: "إعادة الاستخدام عبر المعايير",
+  },
+  evidenceLibraryReuseBody: {
+    en: "Link this cleared file to another standard from Assessment inline attach. Mappings are stored on the evidence links array at upload time.",
+    ar: "اربط هذا الملف النظيف بمعيار آخر من الربط المباشر في التقييم. تُخزَّن الروابط في مصفوفة links عند الرفع.",
+  },
   evidenceLocation: {
-    en: "Evidence repository — scan gate",
-    ar: "مستودع الأدلة — بوابة الفحص",
+    en: "Evidence library — scan gate",
+    ar: "مكتبة الأدلة — بوابة الفحص",
   },
   evidenceType: { en: "Type", ar: "النوع" },
   evidenceRef: { en: "Evidence ref", ar: "مرجع الدليل" },

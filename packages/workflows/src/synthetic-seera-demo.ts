@@ -357,6 +357,21 @@ export function createSeeraDemoEvidenceMetadata(): EvidenceMetadataForPack[] {
       uploadedAt: "2026-03-15T09:00:00.000Z",
     },
     {
+      evidenceId: "ev-shared-coi-policy",
+      version: 1,
+      fileName: "conflicts-policy-master.pdf",
+      contentType: "application/pdf",
+      sizeBytes: 198_000,
+      scanStatus: "clean",
+      links: [
+        SEERA_DEMO_STANDARDS.ETHICS,
+        SEERA_DEMO_QUESTIONS.ETHICS_ACK,
+        SEERA_DEMO_STANDARDS.OBJECTIVITY,
+        SEERA_DEMO_QUESTIONS.COI_DECLARATIONS,
+      ],
+      uploadedAt: "2026-04-02T10:15:00.000Z",
+    },
+    {
       evidenceId: "ev-coi-process",
       version: 1,
       fileName: "coi-declaration-process.pdf",

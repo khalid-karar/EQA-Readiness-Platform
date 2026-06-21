@@ -1,3 +1,4 @@
+import type { AssessmentLoadResult } from "@eqa/db";
 import { loadBundledCatalog, type Locale } from "@eqa/content";
 import type { ItemStatus } from "@eqa/workflows";
 import {
@@ -172,6 +173,7 @@ function presentQuestion(
   pin: ResponsePin,
   locale: Locale,
   rubric: PresentedAssessmentQuestion["rubric"],
+  includeSyntheticHistory = true,
 ): PresentedAssessmentQuestion {
   const ux = UX_STATUS_LABELS[status];
   return {
@@ -189,8 +191,84 @@ function presentQuestion(
     pinHash: pin.contentHash,
     pinLabelEn: formatPinLabel(pin, "en"),
     pinLabelAr: formatPinLabel(pin, "ar"),
-    history: syntheticHistory(questionId, locale, pin),
+    history: includeSyntheticHistory
+      ? syntheticHistory(questionId, locale, pin)
+      : [],
     rubric,
+  };
+}
+
+export function buildAssessmentPresentationFromLoad(
+  data: AssessmentLoadResult,
+): AssessmentPresentation {
+  const catalog = loadBundledCatalog();
+  const pack = catalog.get(data.contentPackId, data.contentPackVersion);
+  const questionnaire = renderQuestionnaire(pack, data.locale);
+  const responseByQuestion = new Map(
+    data.responses.map((r) => [r.questionId, r]),
+  );
+  const pin = createSeeraDemoContentPin();
+  const isSummaryView = data.role === "board";
+
+  const standards: PresentedAssessmentStandard[] = [];
+
+  for (const domain of questionnaire.domains) {
+    for (const principle of domain.principles) {
+      for (const standard of principle.standards) {
+        const questions: PresentedAssessmentQuestion[] = standard.questions.map(
+          (q) =>
+            presentQuestion(
+              q.questionId,
+              q.text,
+              data.statusesByQuestion.get(q.questionId) ?? "not_assessed",
+              responseByQuestion.get(q.questionId),
+              pin,
+              data.locale,
+              standard.rubric.map((r) => ({
+                level: r.level,
+                label: r.label,
+                descriptor: r.descriptor,
+              })),
+              false,
+            ),
+        );
+
+        const questionStatuses = questions.map((q) => q.status);
+        const aggregate = worstStatus(questionStatuses);
+        const ux = UX_STATUS_LABELS[aggregate];
+
+        standards.push({
+          id: standard.number,
+          standardNumber: standard.number,
+          standardTitle: standard.title,
+          domainNumber: domain.number,
+          domainTitle: domain.title,
+          status: aggregate,
+          statusLabelEn: ux.en,
+          statusLabelAr: ux.ar,
+          pinLabelEn: formatPinLabel(pin, "en"),
+          pinLabelAr: formatPinLabel(pin, "ar"),
+          questions,
+        });
+      }
+    }
+  }
+
+  const startedCount = standards.filter((s) =>
+    s.questions.some((q) => q.status !== "not_assessed"),
+  ).length;
+
+  return {
+    assessmentName: data.assessmentName[data.locale],
+    locale: data.locale,
+    role: data.role,
+    roleLabel: ROLE_LABELS[data.role][data.locale],
+    isSummaryView,
+    contentPackLabelEn: `${pack.meta.contentPackId} v${pack.meta.version}`,
+    contentPackLabelAr: `${pack.meta.contentPackId} · ${pack.meta.version}`,
+    standards,
+    startedCount,
+    totalStandards: standards.length,
   };
 }
 

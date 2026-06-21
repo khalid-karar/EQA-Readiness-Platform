@@ -1,9 +1,12 @@
 import { RemediationClient } from "@/components/remediation/remediation-client";
+import { requireServerSession } from "@/lib/auth/get-server-session";
 import { resolvePageLocaleAndRole } from "@/lib/auth/page-context";
+import { metadataForShellPage } from "@/lib/page-metadata";
+import { loadRemediationTrackerView } from "@/lib/load-screen-data";
 import {
   buildRemediationPresentation,
+  buildRemediationPresentationFromView,
 } from "@/lib/present-remediation";
-import { metadataForShellPage } from "@/lib/page-metadata";
 import type { Metadata } from "next";
 
 interface RemediationPageProps {
@@ -21,7 +24,12 @@ export default async function RemediationPage({
 }: RemediationPageProps): Promise<React.ReactNode> {
   const params = await searchParams;
   const { locale, role } = await resolvePageLocaleAndRole(params);
-  const presentation = buildRemediationPresentation(locale, role);
+  const session = await requireServerSession();
+  const view = await loadRemediationTrackerView(session, locale, role);
+  const presentation =
+    view === "demo"
+      ? buildRemediationPresentation(locale, role)
+      : buildRemediationPresentationFromView(view);
 
   return <RemediationClient presentation={presentation} />;
 }

@@ -1,7 +1,12 @@
 import { FindingsClient } from "@/components/findings/findings-client";
-import { buildFindingsPresentation } from "@/lib/present-findings";
+import { requireServerSession } from "@/lib/auth/get-server-session";
 import { resolvePageLocaleAndRole } from "@/lib/auth/page-context";
 import { metadataForShellPage } from "@/lib/page-metadata";
+import { loadFindingsData } from "@/lib/load-screen-data";
+import {
+  buildFindingsPresentation,
+  buildFindingsPresentationFromLoad,
+} from "@/lib/present-findings";
 import type { Metadata } from "next";
 
 interface FindingsPageProps {
@@ -19,8 +24,12 @@ export default async function FindingsPage({
 }: FindingsPageProps): Promise<React.ReactNode> {
   const params = await searchParams;
   const { locale, role } = await resolvePageLocaleAndRole(params);
-
-  const presentation = buildFindingsPresentation(locale, role);
+  const session = await requireServerSession();
+  const data = await loadFindingsData(session, locale, role);
+  const presentation =
+    data === "demo"
+      ? buildFindingsPresentation(locale, role)
+      : buildFindingsPresentationFromLoad(data);
 
   return <FindingsClient presentation={presentation} />;
 }

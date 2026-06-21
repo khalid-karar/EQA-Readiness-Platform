@@ -59,6 +59,9 @@ importers:
       '@eqa/content':
         specifier: workspace:*
         version: link:../../packages/content
+      '@eqa/db':
+        specifier: workspace:*
+        version: link:../../packages/db
       '@eqa/tenant':
         specifier: workspace:*
         version: link:../../packages/tenant

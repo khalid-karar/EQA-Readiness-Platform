@@ -1,7 +1,12 @@
-import { buildMockEqaPresentation } from "@/lib/present-mock-eqa";
-import { resolvePageLocaleAndRole } from "@/lib/auth/page-context";
 import { MockEqaClient } from "@/components/mock-eqa/mock-eqa-client";
+import { requireServerSession } from "@/lib/auth/get-server-session";
+import { resolvePageLocaleAndRole } from "@/lib/auth/page-context";
 import { metadataForShellPage } from "@/lib/page-metadata";
+import { loadMockEqaData } from "@/lib/load-screen-data";
+import {
+  buildMockEqaPresentation,
+  buildMockEqaPresentationFromLoad,
+} from "@/lib/present-mock-eqa";
 import type { Metadata } from "next";
 
 interface MockEqaPageProps {
@@ -19,8 +24,12 @@ export default async function MockEqaPage({
 }: MockEqaPageProps): Promise<React.ReactNode> {
   const params = await searchParams;
   const { locale, role } = await resolvePageLocaleAndRole(params);
-
-  const presentation = buildMockEqaPresentation(locale, role);
+  const session = await requireServerSession();
+  const data = await loadMockEqaData(session, locale, role);
+  const presentation =
+    data === "demo"
+      ? buildMockEqaPresentation(locale, role)
+      : buildMockEqaPresentationFromLoad(data);
 
   return <MockEqaClient presentation={presentation} />;
 }

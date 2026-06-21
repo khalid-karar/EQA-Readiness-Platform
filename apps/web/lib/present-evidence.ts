@@ -1,3 +1,4 @@
+import type { EvidenceLoadResult } from "@eqa/db";
 import type { Locale } from "@eqa/content";
 import { loadBundledCatalog } from "@eqa/content";
 import {
@@ -209,6 +210,35 @@ function presentItem(
     links: meta.links,
     quarantineNoteEn: scan.noteEn,
     quarantineNoteAr: scan.noteAr,
+  };
+}
+
+export function buildEvidencePresentationFromLoad(
+  data: EvidenceLoadResult,
+): EvidencePresentation {
+  const catalog = loadBundledCatalog();
+  const pack = catalog.get(SEERA_DEMO_PACK_ID, SEERA_DEMO_PACK_VERSION);
+  const questionnaireEn = renderQuestionnaire(pack, "en");
+  const questionnaireAr = renderQuestionnaire(pack, "ar");
+
+  const items = data.items.map((meta) =>
+    presentItem(meta, questionnaireEn, questionnaireAr),
+  );
+
+  const quarantinedCount = items.filter(
+    (i) => i.scanStatus === "quarantined",
+  ).length;
+  const clearedCount = items.filter((i) => i.scanStatus === "clean").length;
+
+  return {
+    assessmentName: data.assessmentName[data.locale],
+    locale: data.locale,
+    role: data.role,
+    roleLabel: ROLE_LABELS[data.role][data.locale],
+    isSummaryView: data.role === "board",
+    items,
+    quarantinedCount,
+    clearedCount,
   };
 }
 

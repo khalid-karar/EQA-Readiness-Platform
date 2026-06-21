@@ -1,7 +1,12 @@
 import { WorkingPapersClient } from "@/components/working-papers/working-papers-client";
-import { buildWorkingPapersPresentation } from "@/lib/present-working-papers";
+import { requireServerSession } from "@/lib/auth/get-server-session";
 import { resolvePageLocaleAndRole } from "@/lib/auth/page-context";
 import { metadataForShellPage } from "@/lib/page-metadata";
+import { loadWorkingPapersData } from "@/lib/load-screen-data";
+import {
+  buildWorkingPapersPresentation,
+  buildWorkingPapersPresentationFromLoad,
+} from "@/lib/present-working-papers";
 import type { Metadata } from "next";
 
 interface WorkingPapersPageProps {
@@ -19,8 +24,12 @@ export default async function WorkingPapersPage({
 }: WorkingPapersPageProps): Promise<React.ReactNode> {
   const params = await searchParams;
   const { locale, role } = await resolvePageLocaleAndRole(params);
-
-  const presentation = buildWorkingPapersPresentation(locale, role);
+  const session = await requireServerSession();
+  const data = await loadWorkingPapersData(session, locale, role);
+  const presentation =
+    data === "demo"
+      ? buildWorkingPapersPresentation(locale, role)
+      : buildWorkingPapersPresentationFromLoad(data);
 
   return <WorkingPapersClient presentation={presentation} />;
 }

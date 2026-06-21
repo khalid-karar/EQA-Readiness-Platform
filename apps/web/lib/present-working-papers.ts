@@ -1,3 +1,4 @@
+import type { WorkingPapersLoadResult } from "@eqa/db";
 import type { Locale } from "@eqa/content";
 import { loadBundledCatalog, resolveChecklistItems } from "@eqa/content";
 import {
@@ -194,6 +195,90 @@ function presentItem(
     recordedAt: raw.recordedAt,
     pinLabelEn,
     pinLabelAr,
+  };
+}
+
+export function buildWorkingPapersPresentationFromLoad(
+  data: WorkingPapersLoadResult,
+): WorkingPapersPresentation {
+  const catalog = loadBundledCatalog();
+  const pack = catalog.get(SEERA_DEMO_PACK_ID, SEERA_DEMO_PACK_VERSION);
+  const questionnaireEn = renderQuestionnaire(pack, "en");
+  const questionnaireAr = renderQuestionnaire(pack, "ar");
+  const engagement = data.engagement;
+  const pin = createSeeraDemoContentPin();
+  const pinLabelEn = `${pin.contentPackId} v${pin.version}`;
+  const pinLabelAr = `${pin.contentPackId} (إصدار ${pin.version})`;
+
+  if (!engagement) {
+    return {
+      assessmentName: data.assessmentName[data.locale],
+      locale: data.locale,
+      role: data.role,
+      roleLabel: ROLE_LABELS[data.role][data.locale],
+      isSummaryView: data.role === "board",
+      engagementTitleEn: "—",
+      engagementTitleAr: "—",
+      periodLabelEn: "—",
+      periodLabelAr: "—",
+      sampleRationaleEn: "",
+      sampleRationaleAr: "",
+      items: [],
+      unreviewedCount: 0,
+      conformantCount: 0,
+      partialCount: 0,
+      nonConformantCount: 0,
+      reviewedCount: 0,
+      totalCount: 0,
+    };
+  }
+
+  const items = engagement.items.map((raw) =>
+    presentItem(
+      raw,
+      engagement.titleEn,
+      engagement.titleAr,
+      questionnaireEn,
+      questionnaireAr,
+      pinLabelEn,
+      pinLabelAr,
+    ),
+  );
+
+  const unreviewedCount = items.filter(
+    (i) => i.conformance === "unreviewed",
+  ).length;
+  const conformantCount = items.filter(
+    (i) => i.conformance === "conformant",
+  ).length;
+  const partialCount = items.filter((i) => i.conformance === "partial").length;
+  const nonConformantCount = items.filter(
+    (i) => i.conformance === "non_conformant",
+  ).length;
+  const reviewedCount = conformantCount + partialCount + nonConformantCount;
+
+  const periodLabelEn = `${engagement.periodStart} — ${engagement.periodEnd}`;
+  const periodLabelAr = `${engagement.periodStart} — ${engagement.periodEnd}`;
+
+  return {
+    assessmentName: data.assessmentName[data.locale],
+    locale: data.locale,
+    role: data.role,
+    roleLabel: ROLE_LABELS[data.role][data.locale],
+    isSummaryView: data.role === "board",
+    engagementTitleEn: engagement.titleEn,
+    engagementTitleAr: engagement.titleAr,
+    periodLabelEn,
+    periodLabelAr,
+    sampleRationaleEn: engagement.sampleRationaleEn,
+    sampleRationaleAr: engagement.sampleRationaleAr,
+    items,
+    unreviewedCount,
+    conformantCount,
+    partialCount,
+    nonConformantCount,
+    reviewedCount,
+    totalCount: items.length,
   };
 }
 

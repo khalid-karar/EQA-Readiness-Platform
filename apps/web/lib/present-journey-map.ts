@@ -6,9 +6,24 @@ import {
   type DashboardView,
   type HeatMapCell,
   type ItemStatus,
+  type RemediationTrackerView,
 } from "@eqa/workflows";
-import { buildEvidencePackPresentation } from "./present-evidence-pack";
-import { buildMockEqaPresentation } from "./present-mock-eqa";
+import {
+  buildEvidencePackPresentation,
+  type EvidencePackPresentation,
+} from "./present-evidence-pack";
+import {
+  buildMockEqaPresentation,
+  type MockEqaPresentation,
+} from "./present-mock-eqa";
+
+export interface JourneyMapOptions {
+  readonly remediationView?: RemediationTrackerView;
+  readonly mockEqaPresentation?: MockEqaPresentation;
+  readonly mockEqaStarted?: boolean;
+  readonly evidencePackPresentation?: EvidencePackPresentation;
+  readonly evidencePackStarted?: boolean;
+}
 
 export type JourneyCheckpointState =
   | "cleared"
@@ -140,6 +155,7 @@ function clampPercent(value: number): number {
 export function buildJourneyMapPresentation(
   view: DashboardView,
   role: DashboardRole,
+  options?: JourneyMapOptions,
 ): JourneyMapPresentation {
   const locale = view.locale;
   const { progress, statusCounts, overallReadiness, pendingActions } = view;
@@ -171,7 +187,9 @@ export function buildJourneyMapPresentation(
       ? clampPercent((methodology.reviewed / methodology.total) * 100)
       : 0;
 
-  const remediationView = createSyntheticRemediationView(locale, role);
+  const remediationView =
+    options?.remediationView ??
+    createSyntheticRemediationView(locale, role);
   const remediationTotal = remediationView.items.length;
   const remediationClosed = remediationView.items.filter((item) =>
     REMEDIATION_CLOSED.includes(item.itemStatus),
@@ -186,14 +204,17 @@ export function buildJourneyMapPresentation(
         ? 100
         : 0;
 
-  const mockEqa = buildMockEqaPresentation(locale, role);
-  const mockStarted = SEERA_DEMO_JOURNEY_MOCK_EQA_STARTED;
-  const mockPercent = mockStarted
-    ? clampPercent(mockEqa.overallScore)
-    : 0;
+  const mockEqa =
+    options?.mockEqaPresentation ?? buildMockEqaPresentation(locale, role);
+  const mockStarted =
+    options?.mockEqaStarted ?? SEERA_DEMO_JOURNEY_MOCK_EQA_STARTED;
+  const mockPercent = mockStarted ? clampPercent(mockEqa.overallScore) : 0;
 
-  const evidencePack = buildEvidencePackPresentation(locale, role);
-  const packStarted = SEERA_DEMO_JOURNEY_PACK_STARTED;
+  const evidencePack =
+    options?.evidencePackPresentation ??
+    buildEvidencePackPresentation(locale, role);
+  const packStarted =
+    options?.evidencePackStarted ?? SEERA_DEMO_JOURNEY_PACK_STARTED;
   const packPercent = packStarted
     ? clampPercent(evidencePack.readinessScore)
     : 0;

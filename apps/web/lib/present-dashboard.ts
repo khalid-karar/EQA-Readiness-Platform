@@ -4,13 +4,18 @@ import {
   createSyntheticDashboardInput,
   ROLE_LABELS,
   uxStatusLabel,
+  type DashboardInput,
   type DashboardRole,
   type DashboardView,
   type HeatMapCell,
   type ItemStatus,
 } from "@eqa/workflows";
 import { uiLabel } from "./ui-labels";
-import { buildJourneyMapPresentation, type JourneyMapPresentation } from "./present-journey-map";
+import {
+  buildJourneyMapPresentation,
+  type JourneyMapPresentation,
+  type JourneyMapOptions,
+} from "./present-journey-map";
 
 export interface PresentedHeatMapCell {
   readonly standardNumber: string;
@@ -34,12 +39,13 @@ export interface DashboardPresentation {
   readonly journeyMap: JourneyMapPresentation;
 }
 
-export function buildDashboardPresentation(
-  locale: Locale,
-  role: DashboardRole,
+export function buildDashboardPresentationFromInput(
+  input: DashboardInput,
+  journeyOptions?: JourneyMapOptions,
 ): DashboardPresentation {
-  const input = createSyntheticDashboardInput(locale, role);
   const view = buildDashboardView(input);
+  const locale = input.locale;
+  const role = input.role;
   const statusLabels = Object.fromEntries(
     (
       [
@@ -72,8 +78,17 @@ export function buildDashboardPresentation(
       heatMapCells.map((cell) => [cell.standardNumber, cell]),
     ),
     statusLabels,
-    journeyMap: buildJourneyMapPresentation(view, role),
+    journeyMap: buildJourneyMapPresentation(view, role, journeyOptions),
   };
+}
+
+export function buildDashboardPresentation(
+  locale: Locale,
+  role: DashboardRole,
+): DashboardPresentation {
+  return buildDashboardPresentationFromInput(
+    createSyntheticDashboardInput(locale, role),
+  );
 }
 
 function presentHeatMapCell(

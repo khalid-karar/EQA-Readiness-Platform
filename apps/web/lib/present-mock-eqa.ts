@@ -1,3 +1,4 @@
+import type { MockEqaLoadResult } from "@eqa/db";
 import type { Locale } from "@eqa/content";
 import {
   buildMockEqaSimulationView,
@@ -64,13 +65,29 @@ export interface MockEqaPresentation {
   readonly isProjectedPreview: boolean;
 }
 
-export function buildMockEqaPresentation(
+export function buildMockEqaPresentationFromLoad(
+  data: MockEqaLoadResult,
+): MockEqaPresentation {
+  const simulation =
+    data.persistedSimulation ??
+    computeMockEqaSimulation(data.scoringInput);
+  const view = buildMockEqaSimulationView({
+    ...data.scoringInput,
+    role: data.role,
+    simulation,
+  });
+  return presentMockEqaView(view, simulation, data.locale, data.role, {
+    isProjectedPreview: data.persistedSimulation === null,
+  });
+}
+
+function presentMockEqaView(
+  view: MockEqaSimulationView,
+  simulation: ReturnType<typeof computeMockEqaSimulation>,
   locale: Locale,
   role: DashboardRole,
+  options?: { isProjectedPreview?: boolean },
 ): MockEqaPresentation {
-  const input = createSyntheticMockEqaInput(locale, role);
-  const simulation = computeMockEqaSimulation(input);
-  const view = buildMockEqaSimulationView({ ...input, role, simulation });
 
   const domains: PresentedDomainRating[] = simulation.domains.map((domain) => ({
     domainNumber: domain.domainNumber,
@@ -130,8 +147,19 @@ export function buildMockEqaPresentation(
     overallScore: simulation.overall.score,
     overallLevel: simulation.overall.level,
     overallLabel: simulation.overall.label,
-    isProjectedPreview: !SEERA_DEMO_JOURNEY_MOCK_EQA_STARTED,
+    isProjectedPreview:
+      options?.isProjectedPreview ?? !SEERA_DEMO_JOURNEY_MOCK_EQA_STARTED,
   };
+}
+
+export function buildMockEqaPresentation(
+  locale: Locale,
+  role: DashboardRole,
+): MockEqaPresentation {
+  const input = createSyntheticMockEqaInput(locale, role);
+  const simulation = computeMockEqaSimulation(input);
+  const view = buildMockEqaSimulationView({ ...input, role, simulation });
+  return presentMockEqaView(view, simulation, locale, role);
 }
 
 export function mockEqaOutputIncludesDisclaimer(

@@ -12,6 +12,7 @@ export async function clickJourneyCheckpoint(
   });
   await expect(link).toBeVisible();
   await link.click();
+  await page.waitForURL((url) => url.pathname.includes(checkpoint.href));
 }
 
 export async function openMainTableRowSideSheet(page: Page): Promise<void> {
@@ -38,6 +39,8 @@ export async function assertRtlShellMirrors(page: Page): Promise<void> {
   await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
   const aside = page.locator("aside").first();
   const main = page.locator("#main-content");
+  await expect(aside).toBeVisible();
+  await expect(main).toBeVisible();
   const asideBox = await aside.boundingBox();
   const mainBox = await main.boundingBox();
   expect(asideBox).not.toBeNull();

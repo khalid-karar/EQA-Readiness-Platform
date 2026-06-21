@@ -1,3 +1,4 @@
+import type { FindingsLoadResult } from "@eqa/db";
 import type { Locale } from "@eqa/content";
 import type { DraftFinding } from "@eqa/workflows";
 import {
@@ -100,6 +101,50 @@ function presentDraft(
     ageLabelAr: ageLabel(ageDays, "ar"),
     draft,
     resolved: false,
+  };
+}
+
+export function buildFindingsPresentationFromLoad(
+  data: FindingsLoadResult,
+): FindingsPresentation {
+  const locale = data.locale;
+  const role = data.role;
+  const assessmentName = data.assessmentName[locale];
+  const isSummaryView = role === "board";
+  const canReview = !isSummaryView;
+
+  const pending = data.drafts.map((d) => presentDraft(d, locale));
+
+  const resolved: PresentedFinding[] = data.conclusions.map((fc) => {
+    const ageDays = ageDaysFrom("2026-06-15T10:00:00.000Z");
+    return {
+      id: `final-${fc.questionId}`,
+      findingId: `final-${fc.questionId}`,
+      standardNumber: fc.standardNumber,
+      standardTitle: standardTitleFor(fc.standardNumber, locale),
+      questionId: fc.questionId,
+      status: "gap_confirmed",
+      statusLabelEn: "Gap confirmed",
+      statusLabelAr: "فجوة مؤكدة",
+      source: "human",
+      sourceLabelEn: "Human review",
+      sourceLabelAr: "مراجعة بشرية",
+      ageDays,
+      ageLabelEn: ageLabel(ageDays, "en"),
+      ageLabelAr: ageLabel(ageDays, "ar"),
+      conclusionText: fc.conclusion,
+      resolved: true,
+    };
+  });
+
+  return {
+    assessmentName,
+    locale,
+    role,
+    roleLabel: ROLE_LABELS[role][locale],
+    isSummaryView,
+    canReview,
+    findings: [...pending, ...resolved],
   };
 }
 

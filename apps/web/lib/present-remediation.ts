@@ -62,6 +62,66 @@ function isClosedStatus(status: ItemStatus): boolean {
   return status === "closed_ready" || status === "not_applicable";
 }
 
+export function buildRemediationPresentationFromView(
+  view: import("@eqa/workflows").RemediationTrackerView,
+  itemsById?: ReadonlyMap<string, import("@eqa/workflows").RemediationItem>,
+): RemediationPresentation {
+  const locale = view.locale;
+  const role = view.role;
+
+  const rows: PresentedRemediationRow[] = view.items.map((row) => {
+    const item = itemsById?.get(row.remediationId);
+    const closed = isClosedStatus(row.itemStatus);
+    return {
+      id: row.remediationId,
+      remediationId: row.remediationId,
+      questionId: row.questionId,
+      standardNumber: row.standardNumber,
+      standardTitle: row.standardTitle,
+      action: row.action,
+      owner: row.owner,
+      targetDate: row.targetDate,
+      itemStatus: row.itemStatus,
+      statusLabel: row.statusLabel,
+      isOverdue: row.isOverdue,
+      daysOverdue: row.daysOverdue,
+      scheduleLabelEn: remediationScheduleLabel(
+        "en",
+        row.isOverdue,
+        closed,
+        row.daysOverdue,
+      ),
+      scheduleLabelAr: remediationScheduleLabel(
+        "ar",
+        row.isOverdue,
+        closed,
+        row.daysOverdue,
+      ),
+      retestNote: item?.retestNote ?? null,
+      closedAt: item?.closedAt ?? null,
+      hadRetestFailure: item?.retestNote != null,
+    };
+  });
+
+  const statusLabels = Object.fromEntries(
+    ALL_STATUSES.map((status) => [status, uxStatusLabel(status, locale)]),
+  ) as Record<ItemStatus, string>;
+
+  return {
+    assessmentName: view.assessmentName,
+    locale: view.locale,
+    role: view.role,
+    roleLabel: ROLE_LABELS[role][locale],
+    isSummaryView: view.isSummaryView,
+    canOperate: !view.isSummaryView,
+    openCount: view.openCount,
+    overdueCount: view.overdueCount,
+    pendingActions: view.pendingActions,
+    rows,
+    statusLabels,
+  };
+}
+
 export function buildRemediationPresentation(
   locale: Locale,
   role: DashboardRole,

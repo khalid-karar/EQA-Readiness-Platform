@@ -1,11 +1,19 @@
+import type { EvidencePackLoadResult } from "@eqa/db";
 import type { Locale } from "@eqa/content";
+import { loadBundledCatalog } from "@eqa/content";
 import {
   buildEvidencePackManifest,
   createSyntheticEvidencePackInput,
   EVIDENCE_PACK_CONFIDENTIALITY,
   MOCK_EQA_DISCLAIMER,
   ROLE_LABELS,
+  renderQuestionnaire,
   type DashboardRole,
+  type EvidencePackAssemblyInput,
+} from "@eqa/workflows";
+import {
+  SEERA_DEMO_PACK_ID,
+  SEERA_DEMO_PACK_VERSION,
 } from "@eqa/workflows";
 
 export interface PresentedPackPreviewRow {
@@ -41,12 +49,36 @@ export interface EvidencePackPresentation {
   readonly previewRows: readonly PresentedPackPreviewRow[];
 }
 
-export function buildEvidencePackPresentation(
+export function buildEvidencePackPresentationFromLoad(
+  data: EvidencePackLoadResult,
+): EvidencePackPresentation {
+  const catalog = loadBundledCatalog();
+  const pack = catalog.get(SEERA_DEMO_PACK_ID, SEERA_DEMO_PACK_VERSION);
+  const base = data.assemblyInput;
+  const inputEn: EvidencePackAssemblyInput = {
+    ...base,
+    locale: "en",
+    questionnaire: renderQuestionnaire(pack, "en"),
+  };
+  const inputAr: EvidencePackAssemblyInput = {
+    ...base,
+    locale: "ar",
+    questionnaire: renderQuestionnaire(pack, "ar"),
+  };
+  return buildEvidencePackPresentationFromAssembly(
+    inputEn,
+    inputAr,
+    data.locale,
+    data.role,
+  );
+}
+
+function buildEvidencePackPresentationFromAssembly(
+  inputEn: EvidencePackAssemblyInput,
+  inputAr: EvidencePackAssemblyInput,
   locale: Locale,
   role: DashboardRole,
 ): EvidencePackPresentation {
-  const inputEn = createSyntheticEvidencePackInput("en");
-  const inputAr = createSyntheticEvidencePackInput("ar");
   const manifestEn = buildEvidencePackManifest(inputEn);
   const manifestAr = buildEvidencePackManifest(inputAr);
   const isSummaryView = role === "board";
@@ -107,6 +139,15 @@ export function buildEvidencePackPresentation(
     sampleDownloadPath: `/api/evidence-pack/sample?locale=${locale}`,
     previewRows,
   };
+}
+
+export function buildEvidencePackPresentation(
+  locale: Locale,
+  role: DashboardRole,
+): EvidencePackPresentation {
+  const inputEn = createSyntheticEvidencePackInput("en");
+  const inputAr = createSyntheticEvidencePackInput("ar");
+  return buildEvidencePackPresentationFromAssembly(inputEn, inputAr, locale, role);
 }
 
 export function packOutputIncludesDisclaimer(

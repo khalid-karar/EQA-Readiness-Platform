@@ -44,3 +44,38 @@ export type { AuditEntry, VerifyResult } from "@eqa/audit-log";
 
 export { seedSeeraPilot, SEERA_PILOT } from "./seed";
 export { seedSeeraPilotDemoData } from "./seed-demo-data";
+
+export {
+  assertUiSession,
+  uiRepositories,
+  PILOT_ASSESSMENT_ID,
+  PILOT_ASSESSMENT_NAME,
+  PILOT_PACK_ID,
+  PILOT_PACK_VERSION,
+  loadMockEqaScoringInput,
+  loadFinalConclusions,
+  createDashboardLoader,
+  loadDashboardView,
+  createAssessmentLoader,
+  createFindingsLoader,
+  createEvidenceLoader,
+  createRemediationLoader,
+  createWorkingPapersLoader,
+  createMockEqaLoader,
+  createEvidencePackLoader,
+  type DashboardLoader,
+  type AssessmentLoader,
+  type AssessmentLoadResult,
+  type FindingsLoader,
+  type FindingsLoadResult,
+  type EvidenceLoader,
+  type EvidenceLoadResult,
+  type RemediationLoader,
+  type WorkingPapersLoader,
+  type WorkingPapersLoadResult,
+  type WorkingPapersEngagementLoad,
+  type MockEqaLoader,
+  type MockEqaLoadResult,
+  type EvidencePackLoader,
+  type EvidencePackLoadResult,
+} from "./ui-loaders";

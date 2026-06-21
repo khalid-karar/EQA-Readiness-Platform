@@ -215,6 +215,40 @@ describe("Mock-EQA readiness simulation composed end-to-end", () => {
     );
   });
 
+  it("allows repeated simulation runs and returns the latest result", async () => {
+    const acme = await tenant("acme-co");
+    const repos = reposFor(acme, "cae");
+    await seedStatuses(repos);
+
+    const request = {
+      assessmentId: ASSESSMENT,
+      contentPackId: PACK_ID,
+      contentVersion: PACK_VERSION,
+      locale: "en" as const,
+    };
+
+    await repos.mockEqa.requestSimulation(request);
+    await queue.onIdle();
+    const first = await repos.mockEqa.getLatest(ASSESSMENT);
+    expect(first).not.toBeNull();
+    expect(first?.kind).toBe(READINESS_SIMULATION_KIND);
+
+    await repos.itemStatus.transition({
+      assessmentId: ASSESSMENT,
+      questionId: "Q-2-1-1",
+      to: "evidence_requested",
+    });
+
+    await repos.mockEqa.requestSimulation(request);
+    await queue.onIdle();
+    const latest = await repos.mockEqa.getLatest(ASSESSMENT);
+
+    expect(latest).not.toBeNull();
+    expect(latest!.simulationId).not.toBe(first!.simulationId);
+    expect(latest!.runAt >= first!.runAt).toBe(true);
+    expect(latest?.kind).toBe(READINESS_SIMULATION_KIND);
+  });
+
   it("forbids Board from requesting a simulation run", async () => {
     const acme = await tenant("acme-co");
     const boardRepos = reposFor(acme, "board");

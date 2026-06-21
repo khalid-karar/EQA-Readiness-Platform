@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import type { Locale } from "@eqa/content";
 import { localize } from "@eqa/content";
 import type { FinalConclusion } from "./findings";
@@ -148,6 +149,11 @@ const PENDING_REVIEW_STATUSES: ReadonlySet<ItemStatus> = new Set([
   "ai_flagged",
   "under_human_review",
 ]);
+
+/** Unique id for a persisted mock-EQA run (distinct per simulation). */
+export function createMockEqaSimulationId(): string {
+  return `sim-${randomUUID()}`;
+}
 
 /** True when `value` is a {@link MockEqaSimulationResult}. */
 export function isReadinessSimulation(
@@ -418,7 +424,7 @@ export function computeMockEqaSimulation(
 
   return {
     kind: READINESS_SIMULATION_KIND,
-    simulationId: input.simulationId ?? `sim-${input.assessmentId}`,
+    simulationId: input.simulationId ?? createMockEqaSimulationId(),
     assessmentId: input.assessmentId,
     runAt: input.runAt ?? new Date().toISOString(),
     runBy: input.runBy ?? "system:mock-eqa",

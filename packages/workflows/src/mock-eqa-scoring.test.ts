@@ -94,6 +94,15 @@ describe("mock-EQA readiness simulation (Step 15)", () => {
     }
   });
 
+  it("assigns a unique simulation id per run when not provided", () => {
+    const { simulationId: _ignored, ...withoutId } = input;
+    const first = computeMockEqaSimulation(withoutId);
+    const second = computeMockEqaSimulation(withoutId);
+
+    expect(first.simulationId).toMatch(/^sim-/);
+    expect(first.simulationId).not.toBe(second.simulationId);
+  });
+
   it("types the result as readiness_simulation with disclaimer always present", () => {
     const result = computeMockEqaSimulation(input);
     expect(result.kind).toBe(READINESS_SIMULATION_KIND);

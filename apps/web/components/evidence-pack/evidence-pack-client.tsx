@@ -1,7 +1,8 @@
 "use client";
 
-import { Suspense, useMemo, type ReactNode } from "react";
+import { Suspense, useCallback, useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Download } from "lucide-react";
 import type { EvidencePackPresentation } from "@/lib/present-evidence-pack";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
@@ -10,21 +11,32 @@ import { WhatsNextPanel } from "@/components/orientation/whats-next-panel";
 import { useDemoTableState } from "@/components/shell/use-demo-table-state";
 import { useSyncShellMeta } from "@/components/shell/use-sync-shell-meta";
 import { DEFAULT_TENANT_NAME } from "@/lib/nav-config";
+import { generateEvidencePack } from "@/lib/report-api-client";
 import { uiLabel } from "@/lib/ui-labels";
+import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatusPill } from "@/components/ui/status-pill";
 
 interface EvidencePackClientProps {
   presentation: EvidencePackPresentation;
+  realWritesEnabled: boolean;
 }
 
 type PreviewRow = EvidencePackPresentation["previewRows"][number];
 
 function EvidencePackClientInner({
   presentation,
+  realWritesEnabled,
 }: EvidencePackClientProps): ReactNode {
+  const router = useRouter();
+  const { toast } = useToast();
   const { locale, isSummaryView, canGenerate } = presentation;
+  const [generating, setGenerating] = useState(false);
+  const [downloadPath, setDownloadPath] = useState(presentation.downloadPath);
+  const [hasGeneratedExport, setHasGeneratedExport] = useState(
+    presentation.hasGeneratedExport,
+  );
 
   const { rows, loading, error } = useDemoTableState(
     presentation.previewRows,
@@ -40,16 +52,57 @@ function EvidencePackClientInner({
     isSummaryView,
   });
 
-  const pendingActions = canGenerate
-    ? [
-        {
-          id: "generate-pack",
-          count: 1,
-          label: uiLabel("packGenerateAction", locale),
-          priority: "high" as const,
-        },
-      ]
-    : [];
+  const handleGenerate = useCallback(async () => {
+    if (!realWritesEnabled || !canGenerate) return;
+    setGenerating(true);
+    try {
+      await generateEvidencePack({
+        assessmentId: presentation.assessmentId,
+        contentPackId: presentation.contentPackId,
+        contentVersion: presentation.contentPackVersion,
+        locale,
+      });
+      const generatedPath = `/api/evidence-pack/download?assessmentId=${encodeURIComponent(presentation.assessmentId)}`;
+      setDownloadPath(generatedPath);
+      setHasGeneratedExport(true);
+      toast({
+        variant: "success",
+        title: uiLabel("packGenerateSuccess", locale),
+      });
+      router.refresh();
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : uiLabel("packErrorDemo", locale);
+      toast({
+        variant: "destructive",
+        title: uiLabel("packErrorDemo", locale),
+        description: message,
+      });
+    } finally {
+      setGenerating(false);
+    }
+  }, [
+    canGenerate,
+    locale,
+    presentation.assessmentId,
+    presentation.contentPackId,
+    presentation.contentPackVersion,
+    realWritesEnabled,
+    router,
+    toast,
+  ]);
+
+  const pendingActions =
+    canGenerate && !hasGeneratedExport
+      ? [
+          {
+            id: "generate-pack",
+            count: 1,
+            label: uiLabel("packGenerateAction", locale),
+            priority: "high" as const,
+          },
+        ]
+      : [];
 
   const columns: DataTableColumn<PreviewRow>[] = useMemo(
     () => [
@@ -106,6 +159,11 @@ function EvidencePackClientInner({
     ],
     [locale],
   );
+
+  const downloadHref =
+    realWritesEnabled && hasGeneratedExport
+      ? downloadPath
+      : presentation.sampleDownloadPath;
 
   return (
     <div className="space-y-6">
@@ -214,13 +272,18 @@ function EvidencePackClientInner({
               </p>
               <Button size="default" className="w-full" asChild>
                 <Link
-                  href={presentation.sampleDownloadPath}
+                  href={downloadHref}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   {uiLabel("packDownloadButton", locale)}
                 </Link>
               </Button>
+              {realWritesEnabled && !hasGeneratedExport ? (
+                <p className="text-xs text-muted-foreground">
+                  {uiLabel("demoDisabledHint", locale)}
+                </p>
+              ) : null}
             </CardContent>
           </Card>
 
@@ -232,8 +295,13 @@ function EvidencePackClientInner({
                 </p>
                 <Button
                   size="sm"
-                  disabled
-                  title={uiLabel("demoDisabledHint", locale)}
+                  disabled={!realWritesEnabled || generating}
+                  onClick={() => void handleGenerate()}
+                  title={
+                    !realWritesEnabled
+                      ? uiLabel("demoDisabledHint", locale)
+                      : undefined
+                  }
                 >
                   {uiLabel("packGenerateButton", locale)}
                 </Button>

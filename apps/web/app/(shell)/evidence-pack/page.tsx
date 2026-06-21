@@ -7,6 +7,7 @@ import {
   buildEvidencePackPresentation,
   buildEvidencePackPresentationFromLoad,
 } from "@/lib/present-evidence-pack";
+import { isRealWritesEnabled } from "@/lib/real-writes";
 import type { Metadata } from "next";
 
 interface EvidencePackPageProps {
@@ -31,5 +32,10 @@ export default async function EvidencePackPage({
       ? buildEvidencePackPresentation(locale, role)
       : buildEvidencePackPresentationFromLoad(data);
 
-  return <EvidencePackClient presentation={presentation} />;
+  return (
+    <EvidencePackClient
+      presentation={presentation}
+      realWritesEnabled={isRealWritesEnabled()}
+    />
+  );
 }

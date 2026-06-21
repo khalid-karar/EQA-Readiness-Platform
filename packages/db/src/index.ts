@@ -44,6 +44,8 @@ export {
   type EvidenceRuntimeDeps,
 } from "./evidence-wiring";
 
+export { createReportJobHandlers } from "./report-wiring";
+
 export { createGapFlagSink } from "./gap-flag-system";
 
 // Re-exported for ergonomics: the audit reader returns these types.

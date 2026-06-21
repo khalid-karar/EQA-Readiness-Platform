@@ -7,6 +7,7 @@ import {
   buildMockEqaPresentation,
   buildMockEqaPresentationFromLoad,
 } from "@/lib/present-mock-eqa";
+import { isRealWritesEnabled } from "@/lib/real-writes";
 import type { Metadata } from "next";
 
 interface MockEqaPageProps {
@@ -31,5 +32,10 @@ export default async function MockEqaPage({
       ? buildMockEqaPresentation(locale, role)
       : buildMockEqaPresentationFromLoad(data);
 
-  return <MockEqaClient presentation={presentation} />;
+  return (
+    <MockEqaClient
+      presentation={presentation}
+      realWritesEnabled={isRealWritesEnabled()}
+    />
+  );
 }

@@ -97,9 +97,37 @@ export const UI_LABELS: LabelSet = {
     ar: "ملخص إشرافي. أسماء المسؤولين والتواريخ المستهدفة متاحة للأدوار التشغيلية فقط.",
   },
   remediationSubtitle: {
-    en: "Track confirmed gaps through remediation, retest, and closure.",
-    ar: "تتبع الفجوات المؤكدة عبر المعالجة وإعادة الاختبار والإغلاق.",
+    en: "Workspace for gap closure — reassign owners, attach evidence, and drive retest.",
+    ar: "مساحة عمل لإغلاق الفجوات — إعادة تعيين المسؤولين، إرفاق الأدلة، وإدارة إعادة الاختبار.",
   },
+  remediationWorkspaceTitle: {
+    en: "Gap workspace",
+    ar: "مساحة عمل الفجوة",
+  },
+  remediationWorkspaceSelectHint: {
+    en: "Select a gap to manage remediation, evidence, and retest.",
+    ar: "اختر فجوة لإدارة المعالجة والأدلة وإعادة الاختبار.",
+  },
+  remediationWorkspaceEmpty: {
+    en: "Select a remediation item from the list.",
+    ar: "اختر بند معالجة من القائمة.",
+  },
+  remediationReassignOwner: { en: "Reassign owner", ar: "إعادة تعيين المسؤول" },
+  remediationSavePlan: { en: "Save plan", ar: "حفظ الخطة" },
+  remediationPlanUpdated: { en: "Remediation plan saved", ar: "تم حفظ خطة المعالجة" },
+  remediationClosureEvidenceTitle: {
+    en: "Closure evidence",
+    ar: "أدلة الإغلاق",
+  },
+  remediationClosureEvidenceHint: {
+    en: "Evidence linked to this assessment item (scan gate applies on upload).",
+    ar: "أدلة مرتبطة بعنصر التقييم هذا (بوابة الفحص تنطبق عند الرفع).",
+  },
+  remediationNoLinkedEvidence: {
+    en: "No evidence linked yet.",
+    ar: "لا أدلة مرتبطة بعد.",
+  },
+  remediationUploadEvidence: { en: "Upload evidence", ar: "رفع دليل" },
   remediationSearch: { en: "Search remediation items…", ar: "بحث في بنود المعالجة…" },
   remediationEmptyTitle: {
     en: "No remediation items",

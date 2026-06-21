@@ -16,6 +16,7 @@ import {
   HUMAN_REVIEW_JOB,
   RECORD_CONFORMANCE_JOB,
   REMEDIATION_TRANSITION_JOB,
+  UPDATE_REMEDIATION_PLAN_JOB,
   SUBMIT_RESPONSE_JOB,
   type GapFlaggingPayload,
   type ItemStatus,
@@ -411,6 +412,57 @@ describe("UI action job handlers (tenant-scoped mutations)", () => {
       expect(
         await reposFor(beta).remediation.listForAssessment(ASSESSMENT),
       ).toEqual([]);
+    });
+  });
+
+  describe("update remediation plan", () => {
+    it("persists owner reassignment while remediation_in_progress", async () => {
+      const acme = await tenant("acme-co");
+      const repos = reposFor(acme);
+      await seedGapConfirmed(repos);
+      const item = await repos.remediation.assign({
+        assessmentId: ASSESSMENT,
+        questionId: REM_QUESTION,
+        standardNumber: REM_STANDARD,
+        action: "Fix gap",
+        owner: "Owner",
+        targetDate: "2026-12-31",
+      });
+
+      const status = await enqueueAndRun(acme, UPDATE_REMEDIATION_PLAN_JOB, {
+        remediationId: item.remediationId,
+        owner: "New Owner",
+      });
+      expect(status?.status).toBe("completed");
+      expect(status?.result).toMatchObject({ owner: "New Owner" });
+
+      const updated = await repos.remediation.getById(item.remediationId);
+      expect(updated?.owner).toBe("New Owner");
+    });
+
+    it("rejects plan update outside remediation_in_progress", async () => {
+      const acme = await tenant("acme-co");
+      const repos = reposFor(acme);
+      await seedGapConfirmed(repos);
+      const item = await repos.remediation.assign({
+        assessmentId: ASSESSMENT,
+        questionId: REM_QUESTION,
+        standardNumber: REM_STANDARD,
+        action: "Fix",
+        owner: "Owner",
+        targetDate: "2026-12-31",
+      });
+      await enqueueAndRun(acme, REMEDIATION_TRANSITION_JOB, {
+        remediationId: item.remediationId,
+        transition: "ready",
+      });
+
+      const status = await enqueueAndRun(acme, UPDATE_REMEDIATION_PLAN_JOB, {
+        remediationId: item.remediationId,
+        owner: "Too late",
+      });
+      expect(status?.status).toBe("failed");
+      expect(status?.error).toMatch(/remediation_in_progress/i);
     });
   });
 });

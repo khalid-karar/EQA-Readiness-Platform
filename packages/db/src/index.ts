@@ -80,6 +80,7 @@ export {
   type EvidenceLoader,
   type EvidenceLoadResult,
   type RemediationLoader,
+  type RemediationWorkspaceLoadResult,
   type WorkingPapersLoader,
   type WorkingPapersLoadResult,
   type WorkingPapersEngagementLoad,

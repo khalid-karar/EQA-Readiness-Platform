@@ -65,3 +65,20 @@ export type {
   UploadInput,
   UploadResult,
 } from "./types";
+
+export {
+  createEvidenceServiceConfigFromEnv,
+  createMalwareScannerFromEnv,
+  createObjectStoreFromEnv,
+  createSignedUrlSignerFromEnv,
+  createEicarDetectingScanner,
+  EICAR_TEST_BYTES,
+} from "./factory";
+
+export {
+  ClamavScanner,
+  createClamavScannerFromEnv,
+  type ClamavScannerConfig,
+} from "./clamav-scanner";
+
+export { createS3BlobClient, type S3BlobClientConfig } from "./s3-blob-client";

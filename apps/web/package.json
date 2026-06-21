@@ -14,8 +14,10 @@
   "dependencies": {
     "@eqa/auth": "workspace:*",
     "@eqa/content": "workspace:*",
+    "@eqa/crypto": "workspace:*",
     "@eqa/db": "workspace:*",
     "@eqa/jobs": "workspace:*",
+    "@eqa/storage": "workspace:*",
     "@eqa/tenant": "workspace:*",
     "@eqa/workflows": "workspace:*",
     "@radix-ui/react-dialog": "^1.1.17",

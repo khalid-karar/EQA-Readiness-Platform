@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useCallback, useState, type ReactNode } from "react";
 import { AlertTriangle, Download } from "lucide-react";
 import {
   SideSheet,
@@ -15,7 +15,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { StatusPill } from "@/components/ui/status-pill";
 import type { PresentedEvidenceItem } from "@/lib/present-evidence";
+import { getEvidenceDownloadUrl } from "@/lib/evidence-api-client";
 import { uiLabel } from "@/lib/ui-labels";
+import { useToast } from "@/hooks/use-toast";
 
 interface EvidenceDetailSheetProps {
   item: PresentedEvidenceItem | null;
@@ -23,6 +25,7 @@ interface EvidenceDetailSheetProps {
   onOpenChange: (open: boolean) => void;
   locale: "en" | "ar";
   isSummaryView: boolean;
+  realWritesEnabled: boolean;
 }
 
 function scanPillVariant(
@@ -39,7 +42,34 @@ export function EvidenceDetailSheet({
   onOpenChange,
   locale,
   isSummaryView,
+  realWritesEnabled,
 }: EvidenceDetailSheetProps): ReactNode {
+  const { toast } = useToast();
+  const [downloading, setDownloading] = useState(false);
+
+  const handleDownload = useCallback(async () => {
+    if (!item?.downloadable || isSummaryView) return;
+    setDownloading(true);
+    try {
+      if (realWritesEnabled) {
+        const url = await getEvidenceDownloadUrl(item.evidenceId, item.version);
+        window.location.assign(url);
+      }
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : uiLabel("evidenceErrorDemo", locale);
+      toast({
+        variant: "destructive",
+        title: uiLabel("evidenceDownloadBlocked", locale),
+        description: message,
+      });
+    } finally {
+      setDownloading(false);
+    }
+  }, [item, isSummaryView, locale, realWritesEnabled, toast]);
+
   if (!item) return null;
 
   const scanLabel = locale === "ar" ? item.scanLabelAr : item.scanLabelEn;
@@ -134,12 +164,13 @@ export function EvidenceDetailSheet({
           <div className="space-y-2">
             <Button
               size="sm"
-              disabled={!item.downloadable || isSummaryView}
               className="gap-2"
+              disabled={!item.downloadable || isSummaryView || downloading}
+              onClick={() => void handleDownload()}
               title={
                 !item.downloadable
                   ? uiLabel("evidenceDownloadBlocked", locale)
-                  : uiLabel("demoDisabledHint", locale)
+                  : undefined
               }
             >
               <Download className="h-4 w-4" aria-hidden />
@@ -148,6 +179,10 @@ export function EvidenceDetailSheet({
             {!item.downloadable ? (
               <p className="text-xs text-muted-foreground">
                 {uiLabel("evidenceQuarantineGate", locale)}
+              </p>
+            ) : !realWritesEnabled ? (
+              <p className="text-xs text-muted-foreground">
+                {uiLabel("demoDisabledHint", locale)}
               </p>
             ) : null}
           </div>

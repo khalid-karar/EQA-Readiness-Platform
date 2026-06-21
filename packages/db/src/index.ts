@@ -37,6 +37,13 @@ export {
   createTenantJobAuditPort,
 } from "./evidence-system";
 
+export {
+  createEvidenceJobHandlers,
+  createEvidenceServiceForSession,
+  type EvidenceJobHandlerDeps,
+  type EvidenceRuntimeDeps,
+} from "./evidence-wiring";
+
 export { createGapFlagSink } from "./gap-flag-system";
 
 // Re-exported for ergonomics: the audit reader returns these types.

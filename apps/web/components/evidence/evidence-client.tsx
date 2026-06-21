@@ -11,6 +11,7 @@ import { ScreenAlertBanner } from "@/components/ui/screen-alert-banner";
 import { StatusPill } from "@/components/ui/status-pill";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EvidenceDetailSheet } from "@/components/evidence/evidence-detail-sheet";
+import { EvidenceUploadPanel } from "@/components/evidence/evidence-upload-panel";
 import { WhatsNextPanel } from "@/components/orientation/whats-next-panel";
 import { useDemoTableState } from "@/components/shell/use-demo-table-state";
 import { useSyncShellMeta } from "@/components/shell/use-sync-shell-meta";
@@ -19,6 +20,7 @@ import { uiLabel } from "@/lib/ui-labels";
 
 interface EvidenceClientProps {
   presentation: EvidencePresentation;
+  realWritesEnabled: boolean;
 }
 
 function scanPillVariant(
@@ -31,10 +33,11 @@ function scanPillVariant(
 
 function EvidenceClientInner({
   presentation,
+  realWritesEnabled,
 }: EvidenceClientProps): ReactNode {
   const searchParams = useSearchParams();
   const { locale, isSummaryView } = presentation;
-  const { rows, loading, error } = useDemoTableState(
+  const { rows, loading, error, setRows } = useDemoTableState(
     presentation.items,
     uiLabel("evidenceErrorDemo", locale),
   );
@@ -123,16 +126,28 @@ function EvidenceClientInner({
     setSheetOpen(true);
   }, []);
 
+  const handleUploaded = useCallback(
+    (item: PresentedEvidenceItem) => {
+      setRows((prev) => [item, ...prev]);
+      setSelectedId(item.id);
+      setSheetOpen(true);
+    },
+    [setRows],
+  );
+
   const quarantinedCount = rows.filter(
     (r) => r.scanStatus === "quarantined",
   ).length;
+  const clearedCount = rows.filter((r) => r.scanStatus === "clean").length;
+  const infectedCount = rows.filter((r) => r.scanStatus === "infected").length;
+  const pendingQuarantineCount = quarantinedCount + infectedCount;
 
   const pendingActions =
-    quarantinedCount > 0 && !isSummaryView
+    pendingQuarantineCount > 0 && !isSummaryView
       ? [
           {
             id: "quarantined-evidence",
-            count: quarantinedCount,
+            count: pendingQuarantineCount,
             label: uiLabel("evidenceWhatsNextAction", locale),
             priority: "high" as const,
           },
@@ -149,18 +164,25 @@ function EvidenceClientInner({
         <p className="mt-2 tabular-nums">
           {uiLabel("evidenceScanSummary", locale)}:{" "}
           <span className="font-semibold text-foreground">
-            {presentation.clearedCount}
+            {clearedCount}
           </span>{' '}
           {uiLabel("evidenceClearedLabel", locale)} ·{" "}
           <span className="font-semibold text-readiness-partial">
-            {presentation.quarantinedCount}
+            {pendingQuarantineCount}
           </span>{' '}
           {uiLabel("evidenceQuarantinedLabel", locale)}
         </p>
       </ScreenAlertBanner>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 space-y-4">
+          <EvidenceUploadPanel
+            locale={locale}
+            realWritesEnabled={realWritesEnabled}
+            isSummaryView={isSummaryView}
+            onUploaded={handleUploaded}
+          />
+
           <Card>
             <CardHeader className="pb-2">
               <CardTitle>{uiLabel("evidenceTitle", locale)}</CardTitle>
@@ -209,6 +231,7 @@ function EvidenceClientInner({
         onOpenChange={setSheetOpen}
         locale={locale}
         isSummaryView={isSummaryView}
+        realWritesEnabled={realWritesEnabled}
       />
     </div>
   );

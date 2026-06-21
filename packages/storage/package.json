@@ -12,6 +12,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.750.0",
     "@eqa/crypto": "workspace:*",
     "@eqa/jobs": "workspace:*",
     "@eqa/tenant": "workspace:*"

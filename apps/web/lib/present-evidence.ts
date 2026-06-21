@@ -213,6 +213,17 @@ function presentItem(
   };
 }
 
+/** Present a single evidence metadata row (e.g. after upload). */
+export function presentEvidenceMetadata(
+  meta: EvidenceMetadataForPack,
+): PresentedEvidenceItem {
+  const catalog = loadBundledCatalog();
+  const pack = catalog.get(SEERA_DEMO_PACK_ID, SEERA_DEMO_PACK_VERSION);
+  const questionnaireEn = renderQuestionnaire(pack, "en");
+  const questionnaireAr = renderQuestionnaire(pack, "ar");
+  return presentItem(meta, questionnaireEn, questionnaireAr);
+}
+
 export function buildEvidencePresentationFromLoad(
   data: EvidenceLoadResult,
 ): EvidencePresentation {

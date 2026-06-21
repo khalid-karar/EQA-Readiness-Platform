@@ -545,6 +545,22 @@ export const UI_LABELS: LabelSet = {
   evidenceUploaded: { en: "Uploaded", ar: "تاريخ الرفع" },
   evidenceLinks: { en: "Linked items", ar: "العناصر المرتبطة" },
   evidenceDownload: { en: "Download file", ar: "تنزيل الملف" },
+  evidenceUpload: { en: "Upload evidence", ar: "رفع دليل" },
+  evidenceUploadHint: {
+    en: "PDF or image files only. Files stay quarantined until malware scan clears them.",
+    ar: "ملفات PDF أو صور فقط. تبقى الملفات في الحجر حتى يُزيل فحص البرمجيات الخبيثة الحجر.",
+  },
+  evidenceUploadStandard: { en: "Standard", ar: "المعيار" },
+  evidenceUploadQuestion: { en: "Question ID", ar: "معرّف السؤال" },
+  evidenceUploadFile: { en: "File", ar: "الملف" },
+  evidenceUploadSuccess: {
+    en: "Evidence uploaded — scan complete",
+    ar: "تم رفع الدليل — اكتمل الفحص",
+  },
+  evidenceUploadInfected: {
+    en: "Upload blocked — malware detected",
+    ar: "تم حظر الرفع — اكتُشفت برمجيات خبيثة",
+  },
   evidenceDownloadBlocked: {
     en: "Download blocked — file not cleared",
     ar: "التنزيل محظور — الملف لم يُزَل الحجر عنه",

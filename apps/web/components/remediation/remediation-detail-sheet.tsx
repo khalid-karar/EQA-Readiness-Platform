@@ -14,6 +14,7 @@ import {
   SideSheetBody,
   SideSheetCloseButton,
   SideSheetContent,
+  detailPanelSide,
   SideSheetDescription,
   SideSheetHeader,
   SideSheetTitle,
@@ -110,7 +111,6 @@ export function RemediationDetailSheet({
 
   if (!row) return null;
 
-  const sheetSide = locale === "ar" ? "start" : "end";
   const closed = isClosedStatus(row.itemStatus);
   const scheduleLabel =
     locale === "ar" ? row.scheduleLabelAr : row.scheduleLabelEn;
@@ -119,7 +119,10 @@ export function RemediationDetailSheet({
 
   return (
     <SideSheet open={open} onOpenChange={onOpenChange}>
-      <SideSheetContent side={sheetSide} aria-describedby="remediation-sheet-desc">
+      <SideSheetContent
+        side={detailPanelSide(locale)}
+        aria-describedby="remediation-sheet-desc"
+      >
         <SideSheetHeader>
           <div className="min-w-0 space-y-1 pe-2">
             <SideSheetTitle>

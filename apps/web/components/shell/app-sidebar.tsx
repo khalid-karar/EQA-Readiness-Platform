@@ -12,6 +12,7 @@ import {
   navLabel,
   type AppRoute,
 } from "@/lib/nav-config";
+import { MAYA_AI_LOGO_SRC } from "@/lib/brand-assets";
 import { cn } from "@/lib/utils";
 import { uiLabel } from "@/lib/ui-labels";
 
@@ -55,14 +56,14 @@ export function AppSidebar({
         >
           {/* JPEG wordmark — icon crop when collapsed, full mark when expanded */}
           <img
-            src="/brand/maya-ai-logo.jpg"
+            src={MAYA_AI_LOGO_SRC}
             alt=""
             width={collapsed ? 32 : 140}
             height={32}
             className={cn(
               "h-8 shrink-0 object-contain",
               collapsed
-                ? "w-8 object-cover object-left"
+                ? "w-8 object-cover object-start"
                 : "w-auto max-w-[140px]",
             )}
             decoding="async"

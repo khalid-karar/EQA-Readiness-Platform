@@ -3,9 +3,17 @@ import {
   buildRemediationPresentation,
   parseRemediationParams,
 } from "@/lib/present-remediation";
+import { metadataForShellPage } from "@/lib/page-metadata";
+import type { Metadata } from "next";
 
 interface RemediationPageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
+}
+
+export async function generateMetadata({
+  searchParams,
+}: RemediationPageProps): Promise<Metadata> {
+  return metadataForShellPage("remediation", searchParams);
 }
 
 export default async function RemediationPage({

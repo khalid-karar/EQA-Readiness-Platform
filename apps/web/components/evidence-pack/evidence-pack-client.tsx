@@ -1,13 +1,13 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useState, type ReactNode } from "react";
+import { Suspense, useMemo, type ReactNode } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { Download } from "lucide-react";
 import type { EvidencePackPresentation } from "@/lib/present-evidence-pack";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { PackDisclaimerBanner } from "@/components/evidence-pack/pack-disclaimer";
 import { WhatsNextPanel } from "@/components/orientation/whats-next-panel";
+import { useDemoTableState } from "@/components/shell/use-demo-table-state";
 import { useSyncShellMeta } from "@/components/shell/use-sync-shell-meta";
 import { DEFAULT_TENANT_NAME } from "@/lib/nav-config";
 import { uiLabel } from "@/lib/ui-labels";
@@ -24,16 +24,12 @@ type PreviewRow = EvidencePackPresentation["previewRows"][number];
 function EvidencePackClientInner({
   presentation,
 }: EvidencePackClientProps): ReactNode {
-  const searchParams = useSearchParams();
   const { locale, isSummaryView, canGenerate } = presentation;
 
-  const [loading, setLoading] = useState(
-    searchParams.get("demo") === "loading",
+  const { rows, loading, error } = useDemoTableState(
+    presentation.previewRows,
+    uiLabel("packErrorDemo", locale),
   );
-  const error =
-    searchParams.get("demo") === "error"
-      ? uiLabel("packErrorDemo", locale)
-      : null;
 
   useSyncShellMeta({
     locale: presentation.locale,
@@ -43,14 +39,6 @@ function EvidencePackClientInner({
     roleLabel: presentation.roleLabel,
     isSummaryView,
   });
-
-  useEffect(() => {
-    if (searchParams.get("demo") === "loading") {
-      const t = setTimeout(() => setLoading(false), 800);
-      return () => clearTimeout(t);
-    }
-    return undefined;
-  }, [searchParams]);
 
   const pendingActions = canGenerate
     ? [
@@ -158,18 +146,23 @@ function EvidencePackClientInner({
             </CardHeader>
             <CardContent className="flex flex-wrap gap-2">
               <StatusPill variant="neutral">
-                {uiLabel("packStandards", locale)}: {presentation.standardCount}
+                {uiLabel("packStandards", locale)}:{" "}
+                <span className="tabular-nums">{presentation.standardCount}</span>
               </StatusPill>
               <StatusPill variant="neutral">
                 {uiLabel("packEvidenceRefs", locale)}:{" "}
-                {presentation.evidenceReferenceCount}
+                <span className="tabular-nums">
+                  {presentation.evidenceReferenceCount}
+                </span>
               </StatusPill>
               <StatusPill variant="partial">
-                {uiLabel("packReadiness", locale)}: {presentation.readinessScore}% —{" "}
+                {uiLabel("packReadiness", locale)}:{" "}
+                <span className="tabular-nums">{presentation.readinessScore}%</span> —{" "}
                 {presentation.readinessLabel}
               </StatusPill>
               <StatusPill variant="conformant">
-                {uiLabel("packRawBundled", locale)}: {presentation.bundledFileCount}
+                {uiLabel("packRawBundled", locale)}:{" "}
+                <span className="tabular-nums">{presentation.bundledFileCount}</span>
               </StatusPill>
               <p className="text-xs text-muted-foreground w-full pt-1">
                 {uiLabel("readinessLensNote", locale)}
@@ -187,10 +180,14 @@ function EvidencePackClientInner({
             <CardContent>
               <DataTable
                 columns={columns}
-                data={presentation.previewRows}
+                data={rows}
                 getRowId={(row) => row.id}
+                getRowAriaLabel={(row) =>
+                  `${row.standardNumber}, ${row.evidenceRefCount} ${uiLabel("packEvidenceRefs", locale)}`
+                }
                 searchable
                 searchPlaceholder={uiLabel("packPreviewSearch", locale)}
+                caption={uiLabel("packPreviewTitle", locale)}
                 loading={loading}
                 error={error}
                 emptyTitle={uiLabel("packEmptyTitle", locale)}

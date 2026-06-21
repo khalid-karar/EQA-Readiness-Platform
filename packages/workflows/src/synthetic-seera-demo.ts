@@ -1,4 +1,4 @@
-import { loadBundledCatalog, type ContentPin } from "@eqa/content";
+import { loadBundledCatalog, type ContentPin, type ChecklistConformance } from "@eqa/content";
 import type { DraftFinding } from "./findings";
 import type { AssessmentResponse } from "./types";
 import type { FinalConclusion } from "./findings";
@@ -167,7 +167,7 @@ export function createSeeraDemoFinalConclusions(): FinalConclusion[] {
 
 /**
  * Working-paper rollups with deliberate unreviewed items on every standard.
- * Principle 2.1 is entirely unreviewed; 1.1 has one recorded non-conformance.
+ * Principle 2.1 is entirely unreviewed; 1.1 and 1.2 each have one recorded conform.
  */
 export function createSeeraDemoConformanceByStandard(): Map<
   string,
@@ -383,8 +383,184 @@ export function createSeeraDemoEvidenceMetadata(): EvidenceMetadataForPack[] {
       ],
       uploadedAt: "2026-05-01T14:00:00.000Z",
     },
+    {
+      evidenceId: "ev-budget-memo",
+      version: 1,
+      fileName: "budget-independence-memo-draft.docx",
+      contentType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      sizeBytes: 89_000,
+      scanStatus: "quarantined",
+      links: [
+        SEERA_DEMO_STANDARDS.ORG_INDEPENDENCE,
+        SEERA_DEMO_QUESTIONS.BUDGET_INDEPENDENCE,
+      ],
+      uploadedAt: "2026-06-12T08:30:00.000Z",
+    },
+    {
+      evidenceId: "ev-coi-spreadsheet",
+      version: 1,
+      fileName: "coi-declarations-register.xlsx",
+      contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      sizeBytes: 156_000,
+      scanStatus: "quarantined",
+      links: [
+        SEERA_DEMO_STANDARDS.OBJECTIVITY,
+        SEERA_DEMO_QUESTIONS.COI_DECLARATIONS,
+      ],
+      uploadedAt: "2026-06-17T16:45:00.000Z",
+    },
   ];
 }
 
 /** Count of AI-flagged items awaiting human disposition (Q-1-2-2). */
 export const SEERA_DEMO_PENDING_REVIEW_COUNT = 1;
+
+/** One checklist item in the Seera working-paper review sample. */
+export interface SeeraDemoWorkingPaperItem {
+  readonly checklistId: string;
+  readonly itemId: string;
+  readonly standardNumber: string;
+  readonly workingPaperRef: string;
+  readonly workingPaperTitleEn: string;
+  readonly workingPaperTitleAr: string;
+  readonly conformance: ChecklistConformance | null;
+  readonly note: string | null;
+  readonly recordedBy: string | null;
+  readonly recordedAt: string | null;
+}
+
+/** Sampled engagement with per-item checklist conformance for UI fixtures. */
+export interface SeeraDemoWorkingPaperEngagement {
+  readonly engagementId: string;
+  readonly titleEn: string;
+  readonly titleAr: string;
+  readonly periodStart: string;
+  readonly periodEnd: string;
+  readonly sampleRationaleEn: string;
+  readonly sampleRationaleAr: string;
+  readonly items: readonly SeeraDemoWorkingPaperItem[];
+}
+
+export function createSeeraDemoWorkingPaperEngagement(): SeeraDemoWorkingPaperEngagement {
+  return {
+    engagementId: "eng-seera-fy2026",
+    titleEn: "Seera-pilot FY2026 Internal Audit",
+    titleAr: "التدقيق الداخلي التجريبي — سيرة FY2026",
+    periodStart: "2026-01-01",
+    periodEnd: "2026-12-31",
+    sampleRationaleEn:
+      "Annual methodology test — sample of completed engagements for working-paper review.",
+    sampleRationaleAr:
+      "اختبار المنهجية السنوي — عيّنة من المهام المكتملة لمراجعة أوراق العمل.",
+    items: [
+      {
+        checklistId: "chk-ethics",
+        itemId: "C-1-1-1",
+        standardNumber: SEERA_DEMO_STANDARDS.ETHICS,
+        workingPaperRef: "WP-1.1",
+        workingPaperTitleEn: "Code of Ethics Review",
+        workingPaperTitleAr: "مراجعة ميثاق الأخلاق",
+        conformance: "conforms",
+        note: null,
+        recordedBy: "cae",
+        recordedAt: "2026-06-10T10:00:00.000Z",
+      },
+      {
+        checklistId: "chk-ethics",
+        itemId: "C-1-1-2",
+        standardNumber: SEERA_DEMO_STANDARDS.ETHICS,
+        workingPaperRef: "WP-1.1",
+        workingPaperTitleEn: "Code of Ethics Review",
+        workingPaperTitleAr: "مراجعة ميثاق الأخلاق",
+        conformance: null,
+        note: null,
+        recordedBy: null,
+        recordedAt: null,
+      },
+      {
+        checklistId: "chk-ethics",
+        itemId: "C-1-1-3",
+        standardNumber: SEERA_DEMO_STANDARDS.ETHICS,
+        workingPaperRef: "WP-1.1",
+        workingPaperTitleEn: "Code of Ethics Review",
+        workingPaperTitleAr: "مراجعة ميثاق الأخلاق",
+        conformance: null,
+        note: null,
+        recordedBy: null,
+        recordedAt: null,
+      },
+      {
+        checklistId: "chk-objectivity",
+        itemId: "C-1-2-1",
+        standardNumber: SEERA_DEMO_STANDARDS.OBJECTIVITY,
+        workingPaperRef: "WP-1.2",
+        workingPaperTitleEn: "Objectivity Working Papers",
+        workingPaperTitleAr: "أوراق عمل الموضوعية",
+        conformance: "conforms",
+        note: null,
+        recordedBy: "audit-staff",
+        recordedAt: "2026-06-12T14:00:00.000Z",
+      },
+      {
+        checklistId: "chk-objectivity",
+        itemId: "C-1-2-2",
+        standardNumber: SEERA_DEMO_STANDARDS.OBJECTIVITY,
+        workingPaperRef: "WP-1.2",
+        workingPaperTitleEn: "Objectivity Working Papers",
+        workingPaperTitleAr: "أوراق عمل الموضوعية",
+        conformance: null,
+        note: null,
+        recordedBy: null,
+        recordedAt: null,
+      },
+      {
+        checklistId: "chk-objectivity",
+        itemId: "C-1-2-3",
+        standardNumber: SEERA_DEMO_STANDARDS.OBJECTIVITY,
+        workingPaperRef: "WP-1.2",
+        workingPaperTitleEn: "Objectivity Working Papers",
+        workingPaperTitleAr: "أوراق عمل الموضوعية",
+        conformance: null,
+        note: null,
+        recordedBy: null,
+        recordedAt: null,
+      },
+      {
+        checklistId: "chk-independence",
+        itemId: "C-2-1-1",
+        standardNumber: SEERA_DEMO_STANDARDS.ORG_INDEPENDENCE,
+        workingPaperRef: "WP-2.1",
+        workingPaperTitleEn: "Organizational Independence Review",
+        workingPaperTitleAr: "مراجعة الاستقلالية التنظيمية",
+        conformance: null,
+        note: null,
+        recordedBy: null,
+        recordedAt: null,
+      },
+      {
+        checklistId: "chk-independence",
+        itemId: "C-2-1-2",
+        standardNumber: SEERA_DEMO_STANDARDS.ORG_INDEPENDENCE,
+        workingPaperRef: "WP-2.1",
+        workingPaperTitleEn: "Organizational Independence Review",
+        workingPaperTitleAr: "مراجعة الاستقلالية التنظيمية",
+        conformance: null,
+        note: null,
+        recordedBy: null,
+        recordedAt: null,
+      },
+      {
+        checklistId: "chk-independence",
+        itemId: "C-2-1-3",
+        standardNumber: SEERA_DEMO_STANDARDS.ORG_INDEPENDENCE,
+        workingPaperRef: "WP-2.1",
+        workingPaperTitleEn: "Organizational Independence Review",
+        workingPaperTitleAr: "مراجعة الاستقلالية التنظيمية",
+        conformance: null,
+        note: null,
+        recordedBy: null,
+        recordedAt: null,
+      },
+    ],
+  };
+}

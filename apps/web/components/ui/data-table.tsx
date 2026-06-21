@@ -21,10 +21,12 @@ interface DataTableProps<T> {
   getRowId: (row: T) => string;
   selectedId?: string | null;
   onSelectRow?: (row: T) => void;
+  getRowAriaLabel?: (row: T) => string;
   searchable?: boolean;
   searchPlaceholder?: string;
   emptyTitle?: string;
   emptyDescription?: string;
+  caption?: string;
   loading?: boolean;
   error?: string | null;
   className?: string;
@@ -38,10 +40,12 @@ export function DataTable<T>({
   getRowId,
   selectedId,
   onSelectRow,
+  getRowAriaLabel,
   searchable = true,
   searchPlaceholder = "Search…",
   emptyTitle = "No results",
   emptyDescription = "Try adjusting your search or filters.",
+  caption,
   loading = false,
   error = null,
   className,
@@ -138,11 +142,21 @@ export function DataTable<T>({
       ) : (
         <div className="overflow-x-auto rounded-lg border bg-surface shadow-sm">
           <table className="w-full min-w-[480px] text-sm">
+            {caption ? (
+              <caption className="sr-only">{caption}</caption>
+            ) : null}
             <thead className="border-b bg-muted/40 text-start">
               <tr>
                 {columns.map((col) => {
                   const sortable = Boolean(col.sortValue);
                   const isActive = sortColumnId === col.id;
+                  const sortHint = sortable
+                    ? isActive
+                      ? sortDir === "asc"
+                        ? "sorted ascending"
+                        : "sorted descending"
+                      : "sortable"
+                    : undefined;
                   return (
                     <th
                       key={col.id}
@@ -169,6 +183,9 @@ export function DataTable<T>({
                             ? "ascending"
                             : "descending"
                           : undefined
+                      }
+                      aria-label={
+                        sortHint ? `${col.header}, ${sortHint}` : col.header
                       }
                     >
                       <span className="inline-flex items-center gap-1">
@@ -203,10 +220,16 @@ export function DataTable<T>({
                     }}
                     className={cn(
                       "border-b last:border-0 motion-safe transition-colors",
-                      onSelectRow && "cursor-pointer hover:bg-muted/40",
+                      onSelectRow &&
+                        "cursor-pointer hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
                       selected && "bg-brand-gold/10",
                     )}
                     aria-selected={onSelectRow ? selected : undefined}
+                    aria-label={
+                      onSelectRow && getRowAriaLabel
+                        ? getRowAriaLabel(row)
+                        : undefined
+                    }
                   >
                     {columns.map((col) => (
                       <td

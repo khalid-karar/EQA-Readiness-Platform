@@ -162,6 +162,7 @@ export {
   createSeeraDemoRemediationItems,
   createSeeraDemoResponses,
   createSeeraDemoStatusesByQuestion,
+  createSeeraDemoWorkingPaperEngagement,
   SEERA_DEMO_ASSESSMENT_ID,
   SEERA_DEMO_JOURNEY_MOCK_EQA_STARTED,
   SEERA_DEMO_JOURNEY_PACK_STARTED,
@@ -172,6 +173,8 @@ export {
   SEERA_DEMO_REFERENCE_DATE,
   SEERA_DEMO_RETEST_FAIL_NOTE,
   SEERA_DEMO_STANDARDS,
+  type SeeraDemoWorkingPaperEngagement,
+  type SeeraDemoWorkingPaperItem,
 } from "./synthetic-seera-demo";
 export {
   createMixedScriptTortureEvidencePackInput,

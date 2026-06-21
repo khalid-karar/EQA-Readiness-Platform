@@ -1,6 +1,7 @@
 import type { Locale } from "@eqa/content";
 import {
   buildDashboardView,
+  computeOverallReadiness,
   createSyntheticDashboardInput,
   ROLE_LABELS,
   uxStatusLabel,
@@ -9,13 +10,9 @@ import {
   type DashboardView,
   type HeatMapCell,
   type ItemStatus,
+  type ReadinessLevel,
 } from "@eqa/workflows";
 import { uiLabel } from "./ui-labels";
-import {
-  buildJourneyMapPresentation,
-  type JourneyMapPresentation,
-  type JourneyMapOptions,
-} from "./present-journey-map";
 
 export interface PresentedHeatMapCell {
   readonly standardNumber: string;
@@ -30,18 +27,26 @@ export interface PresentedHeatMapCell {
   readonly tooltipLines: readonly string[];
 }
 
+export interface PresentedDomainRollup {
+  readonly domainId: string;
+  readonly domainNumber: string;
+  readonly domainTitle: string;
+  readonly readinessScore: number;
+  readonly readinessLevel: ReadinessLevel;
+  readonly standardCount: number;
+}
+
 export interface DashboardPresentation {
   readonly view: DashboardView;
   readonly roleLabel: string;
   readonly heatMapCells: readonly PresentedHeatMapCell[];
   readonly cellPresentation: Readonly<Record<string, PresentedHeatMapCell>>;
+  readonly domainRollups: Readonly<Record<string, PresentedDomainRollup>>;
   readonly statusLabels: Readonly<Record<ItemStatus, string>>;
-  readonly journeyMap: JourneyMapPresentation;
 }
 
 export function buildDashboardPresentationFromInput(
   input: DashboardInput,
-  journeyOptions?: JourneyMapOptions,
 ): DashboardPresentation {
   const view = buildDashboardView(input);
   const locale = input.locale;
@@ -70,6 +75,26 @@ export function buildDashboardPresentationFromInput(
     ),
   );
 
+  const domainRollups = Object.fromEntries(
+    view.heatMap.map((domain) => {
+      const standards = domain.principles.flatMap((principle) =>
+        principle.standards.map((cell) => cell),
+      );
+      const rollup = computeOverallReadiness(standards, locale);
+      return [
+        domain.id,
+        {
+          domainId: domain.id,
+          domainNumber: domain.number,
+          domainTitle: domain.title,
+          readinessScore: rollup.score,
+          readinessLevel: rollup.level,
+          standardCount: standards.length,
+        } satisfies PresentedDomainRollup,
+      ];
+    }),
+  );
+
   return {
     view,
     roleLabel: ROLE_LABELS[role][locale],
@@ -77,8 +102,8 @@ export function buildDashboardPresentationFromInput(
     cellPresentation: Object.fromEntries(
       heatMapCells.map((cell) => [cell.standardNumber, cell]),
     ),
+    domainRollups,
     statusLabels,
-    journeyMap: buildJourneyMapPresentation(view, role, journeyOptions),
   };
 }
 

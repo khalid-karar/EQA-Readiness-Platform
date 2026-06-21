@@ -1,6 +1,9 @@
 import type { Locale } from "@eqa/content";
 import { buildDashboardPresentation } from "../../lib/present-dashboard";
-import type { JourneyCheckpointState } from "../../lib/present-journey-map";
+import {
+  buildJourneyMapPresentation,
+  type JourneyCheckpointState,
+} from "../../lib/present-journey-map";
 import { uiLabel } from "../../lib/ui-labels";
 
 export interface ExpectedCheckpoint {
@@ -28,7 +31,8 @@ function journeyStateLabelKey(state: JourneyCheckpointState): string {
 
 /** Expected journey checkpoints derived from the same synthetic fixture as the UI. */
 export function expectedJourneyCheckpoints(locale: Locale): ExpectedCheckpoint[] {
-  const { journeyMap } = buildDashboardPresentation(locale, "cae");
+  const view = buildDashboardPresentation(locale, "cae").view;
+  const journeyMap = buildJourneyMapPresentation(view, "cae");
   return journeyMap.checkpoints.map((cp) => ({
     id: cp.id,
     href: cp.href,

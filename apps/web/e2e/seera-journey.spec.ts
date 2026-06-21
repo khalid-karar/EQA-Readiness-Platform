@@ -2,15 +2,10 @@ import { test, expect, type Page } from "@playwright/test";
 import type { Locale } from "@eqa/content";
 import { MOCK_EQA_DISCLAIMER } from "@eqa/workflows";
 import { buildE2eSessionCookie } from "./helpers/auth-session";
-import {
-  expectedJourneyCheckpoints,
-  journeyQuery,
-  type ExpectedCheckpoint,
-} from "./helpers/journey-expectations";
+import { journeyQuery } from "./helpers/journey-expectations";
 import {
   assertRtlShellMirrors,
   assertSideSheetOnTrailingEdge,
-  clickJourneyCheckpoint,
   openMainTableRowSideSheet,
 } from "./helpers/journey-navigation";
 import {
@@ -30,73 +25,44 @@ async function assertNoRawBlanks(page: Page, locale: Locale): Promise<void> {
   await expect(page.getByText(uiLabel("comingSoon", locale))).toHaveCount(0);
 }
 
-function findCheckpoint(
-  checkpoints: ExpectedCheckpoint[],
-  id: string,
-): ExpectedCheckpoint {
-  const cp = checkpoints.find((c) => c.id === id);
-  expect(cp).toBeDefined();
-  return cp!;
-}
-
 async function runSeeraJourney(locale: Locale, page: Page): Promise<void> {
   const q = journeyQuery(locale);
-  const checkpoints = expectedJourneyCheckpoints(locale);
-  const stepperLabel = uiLabel("journeyStepperLabel", locale);
   const assessmentMarkers = assessmentScreenMarkers(locale);
   const evidenceMarkers = evidenceScreenMarkers(locale);
   const wpMarkers = workingPapersScreenMarkers(locale);
+  const cockpitTitle =
+    locale === "ar"
+      ? uiLabel("cockpitTitle", "ar")
+      : uiLabel("cockpitTitle", "en");
 
-  await test.step("Landing / dashboard", async () => {
+  await test.step("Landing / cockpit", async () => {
     await page.goto(`/dashboard${q}`);
     await expect(page).toHaveURL(`/dashboard${q}`);
     await assertNoRawBlanks(page, locale);
-  });
-
-  await test.step("Dashboard — journey map renders seven checkpoints", async () => {
     await expect(
-      page.getByRole("heading", { name: uiLabel("journeyMapTitle", locale) }),
+      page.getByRole("heading", { name: cockpitTitle, exact: true }),
     ).toBeVisible();
-
-    const stepper = page.locator(`nav[aria-label="${stepperLabel}"]`);
-    await expect(stepper).toBeVisible();
-
-    const checkpointLinks = stepper.locator("a[href]");
-    await expect(checkpointLinks).toHaveCount(7);
+    const disclaimer = page.getByTestId("cockpit-readiness-disclaimer");
+    await expect(disclaimer).toBeVisible();
+    await expect(disclaimer).toContainText(
+      locale === "ar" ? "حكماً بالتقييم" : "assessment verdict",
+    );
+    await expect(
+      page.getByRole("heading", {
+        name: uiLabel("cockpitHeatMapTitle", locale),
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: uiLabel("whatsNext", locale) }),
+    ).toBeVisible();
   });
-
-  await test.step("Dashboard — checkpoint states match synthetic readiness data", async () => {
-    const stepper = page.locator(`nav[aria-label="${stepperLabel}"]`);
-
-    for (const cp of checkpoints) {
-      const link = stepper.locator(`a[href*="${cp.href}"]`).filter({
-        hasText: cp.label,
-      });
-      await expect(link).toBeVisible();
-      await expect(link).toContainText(cp.stateLabel);
-      await expect(link).toContainText(`${cp.percent}%`);
-      await expect(link).toContainText(cp.metric);
-    }
-  });
-
-  await test.step(
-    "Dashboard — scope checkpoint (1) navigates to Assessment",
-    async () => {
-      await page.goto(`/dashboard${q}`);
-      await clickJourneyCheckpoint(
-        page,
-        stepperLabel,
-        findCheckpoint(checkpoints, "scope"),
-      );
-      await expect(page).toHaveURL(`/assessment${q}`);
-      await assertNoRawBlanks(page, locale);
-      await expect(
-        page.getByRole("heading", { name: uiLabel("assessmentTitle", locale) }),
-      ).toBeVisible();
-    },
-  );
 
   await test.step("Assessment — synthetic scope rows and content pack", async () => {
+    await page.goto(`/assessment${q}`);
+    await assertNoRawBlanks(page, locale);
+    await expect(
+      page.getByRole("heading", { name: uiLabel("assessmentTitle", locale) }),
+    ).toBeVisible();
     await expect(
       page.getByRole("heading", {
         name: uiLabel("assessmentContentPack", locale),
@@ -126,24 +92,12 @@ async function runSeeraJourney(locale: Locale, page: Page): Promise<void> {
     await expect(dialog).toBeHidden();
   });
 
-  await test.step(
-    "Dashboard — evidence checkpoint (2) navigates to Evidence",
-    async () => {
-      await page.goto(`/dashboard${q}`);
-      await clickJourneyCheckpoint(
-        page,
-        stepperLabel,
-        findCheckpoint(checkpoints, "evidence"),
-      );
-      await expect(page).toHaveURL(`/evidence${q}`);
-      await assertNoRawBlanks(page, locale);
-      await expect(
-        page.getByRole("heading", { name: uiLabel("evidenceTitle", locale) }),
-      ).toBeVisible();
-    },
-  );
-
   await test.step("Evidence — synthetic repository rows and quarantine banner", async () => {
+    await page.goto(`/evidence${q}`);
+    await assertNoRawBlanks(page, locale);
+    await expect(
+      page.getByRole("heading", { name: uiLabel("evidenceTitle", locale) }),
+    ).toBeVisible();
     await expect(
       page.getByRole("heading", {
         name: uiLabel("evidenceQuarantineBanner", locale),
@@ -177,24 +131,12 @@ async function runSeeraJourney(locale: Locale, page: Page): Promise<void> {
     await expect(dialog).toBeHidden();
   });
 
-  await test.step(
-    "Dashboard — methodology checkpoint (4) navigates to Working Papers",
-    async () => {
-      await page.goto(`/dashboard${q}`);
-      await clickJourneyCheckpoint(
-        page,
-        stepperLabel,
-        findCheckpoint(checkpoints, "methodology"),
-      );
-      await expect(page).toHaveURL(`/working-papers${q}`);
-      await assertNoRawBlanks(page, locale);
-      await expect(
-        page.getByRole("heading", { name: uiLabel("wpTitle", locale) }),
-      ).toBeVisible();
-    },
-  );
-
   await test.step("Working Papers — synthetic checklist rows and unreviewed rollup", async () => {
+    await page.goto(`/working-papers${q}`);
+    await assertNoRawBlanks(page, locale);
+    await expect(
+      page.getByRole("heading", { name: uiLabel("wpTitle", locale) }),
+    ).toBeVisible();
     await expect(
       page.getByRole("heading", {
         name: uiLabel("wpUnreviewedBanner", locale),
@@ -227,15 +169,9 @@ async function runSeeraJourney(locale: Locale, page: Page): Promise<void> {
     await expect(dialog).toBeHidden();
   });
 
-  await test.step("Dashboard — gaps checkpoint navigates to findings", async () => {
-    await page.goto(`/dashboard${q}`);
-    const gaps = findCheckpoint(checkpoints, "gaps-identified");
-    await clickJourneyCheckpoint(page, stepperLabel, gaps);
-    await expect(page).toHaveURL(`/findings${q}`);
-    await assertNoRawBlanks(page, locale);
-  });
-
   await test.step("Findings — open review SideSheet", async () => {
+    await page.goto(`/findings${q}`);
+    await assertNoRawBlanks(page, locale);
     await openMainTableRowSideSheet(page);
     const dialog = page.getByRole("dialog");
     await expect(
@@ -291,52 +227,22 @@ async function runSeeraJourney(locale: Locale, page: Page): Promise<void> {
   });
 
   if (locale === "ar") {
-    await test.step("AR — RTL shell and SideSheet mirroring on all list screens", async () => {
+    await test.step("AR — RTL shell and SideSheet mirroring on list screens", async () => {
       await page.goto(`/dashboard${q}`);
       await assertRtlShellMirrors(page);
 
-      await clickJourneyCheckpoint(
-        page,
-        stepperLabel,
-        findCheckpoint(checkpoints, "scope"),
-      );
-      await openMainTableRowSideSheet(page);
-      await assertSideSheetOnTrailingEdge(page);
-      await page.keyboard.press("Escape");
-      await expect(page.getByRole("dialog")).toBeHidden();
-
-      await page.goto(`/dashboard${q}`);
-      await clickJourneyCheckpoint(
-        page,
-        stepperLabel,
-        findCheckpoint(checkpoints, "evidence"),
-      );
-      await openMainTableRowSideSheet(page);
-      await assertSideSheetOnTrailingEdge(page);
-      await page.keyboard.press("Escape");
-      await expect(page.getByRole("dialog")).toBeHidden();
-
-      await page.goto(`/dashboard${q}`);
-      await clickJourneyCheckpoint(
-        page,
-        stepperLabel,
-        findCheckpoint(checkpoints, "methodology"),
-      );
-      await openMainTableRowSideSheet(page);
-      await assertSideSheetOnTrailingEdge(page);
-      await page.keyboard.press("Escape");
-      await expect(page.getByRole("dialog")).toBeHidden();
-
-      await page.goto(`/dashboard${q}`);
-      await clickJourneyCheckpoint(
-        page,
-        stepperLabel,
-        findCheckpoint(checkpoints, "gaps-identified"),
-      );
-      await openMainTableRowSideSheet(page);
-      await assertSideSheetOnTrailingEdge(page);
-      await page.keyboard.press("Escape");
-      await expect(page.getByRole("dialog")).toBeHidden();
+      for (const path of [
+        "/assessment",
+        "/evidence",
+        "/working-papers",
+        "/findings",
+      ]) {
+        await page.goto(`${path}${q}`);
+        await openMainTableRowSideSheet(page);
+        await assertSideSheetOnTrailingEdge(page);
+        await page.keyboard.press("Escape");
+        await expect(page.getByRole("dialog")).toBeHidden();
+      }
     });
   }
 }

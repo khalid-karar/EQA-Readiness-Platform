@@ -4,6 +4,7 @@ import { loadBundledCatalog } from "@eqa/content";
 import { renderQuestionnaire } from "@eqa/workflows";
 import {
   buildDashboardView,
+  countRemediationOverdue,
   type DashboardInput,
   type DashboardRole,
   type DashboardView,
@@ -69,6 +70,14 @@ export function createDashboardLoader(db: Database): DashboardLoader {
         );
       }
 
+      const remediationItems = await repos.remediation.listForAssessment(
+        PILOT_ASSESSMENT_ID,
+      );
+      const remediationOverdueCount = countRemediationOverdue(
+        remediationItems,
+        statusesByQuestion,
+      );
+
       return {
         assessmentId: PILOT_ASSESSMENT_ID,
         assessmentName: PILOT_ASSESSMENT_NAME,
@@ -78,6 +87,7 @@ export function createDashboardLoader(db: Database): DashboardLoader {
         statusesByQuestion,
         conformanceByStandard,
         pendingReviewCount,
+        remediationOverdueCount,
       };
     },
   };

@@ -193,6 +193,8 @@ export interface DashboardInput {
     StandardConformanceSummary
   >;
   readonly pendingReviewCount?: number;
+  /** Open remediation items past target date — from remediation store. */
+  readonly remediationOverdueCount?: number;
 }
 
 interface LocalizedAssessmentName {
@@ -414,99 +416,40 @@ export function computeOverallReadiness(
   };
 }
 
-/** Surfaces pending actions for the "what's next" panel. */
+const COCKPIT_QUEUE_ORDER = [
+  "remediation-overdue",
+  "ai-gaps-review",
+  "answered-no-evidence",
+  "not-started",
+  "working-papers-test",
+] as const;
+
+/** Lean cockpit queue — operational roles only; board sees metrics without a queue. */
 export function buildPendingActions(
   input: DashboardInput,
   progress: AssessmentProgress,
   conformanceByStandard: ReadonlyMap<string, StandardConformanceSummary>,
   locale: Locale,
 ): PendingAction[] {
-  const summary = isSummaryView(input.role);
+  if (isSummaryView(input.role)) {
+    return [];
+  }
+
   const statusCounts = countStatuses(
     input.questionnaire,
     input.statusesByQuestion,
   );
   const actions: PendingAction[] = [];
 
-  const awaitingReview =
-    (statusCounts.ai_flagged ?? 0) + (statusCounts.under_human_review ?? 0);
-  if (awaitingReview > 0) {
+  const overdueCount = input.remediationOverdueCount ?? 0;
+  if (overdueCount > 0) {
     actions.push({
-      id: "findings-review",
-      count: awaitingReview,
-      label: summary
-        ? localize(
-            {
-              en: `${awaitingReview} item(s) awaiting human review`,
-              ar: `${awaitingReview} عنصر(اً) بانتظار المراجعة البشرية`,
-            },
-            locale,
-          )
-        : localize(
-            {
-              en: `${awaitingReview} finding(s) awaiting your review`,
-              ar: `${awaitingReview} نتيجة بانتظار مراجعتك`,
-            },
-            locale,
-          ),
-      priority: "high",
-    });
-  }
-
-  const evidenceNeeded = statusCounts.evidence_requested ?? 0;
-  if (evidenceNeeded > 0) {
-    actions.push({
-      id: "evidence-needed",
-      count: evidenceNeeded,
+      id: "remediation-overdue",
+      count: overdueCount,
       label: localize(
         {
-          en: `${evidenceNeeded} standard(s) need evidence`,
-          ar: `${evidenceNeeded} معيار(اً) يحتاج أدلة`,
-        },
-        locale,
-      ),
-      priority: "medium",
-    });
-  }
-
-  let unreviewedWp = 0;
-  for (const conf of conformanceByStandard.values()) {
-    unreviewedWp += conf.unreviewed;
-  }
-  if (unreviewedWp > 0) {
-    actions.push({
-      id: "wp-unreviewed",
-      count: unreviewedWp,
-      label: summary
-        ? localize(
-            {
-              en: `${unreviewedWp} working-paper checklist item(s) not yet reviewed`,
-              ar: `${unreviewedWp} بند(اً) في قائمة مراجعة أوراق العمل لم تُراجع بعد`,
-            },
-            locale,
-          )
-        : localize(
-            {
-              en: `${unreviewedWp} checklist item(s) need conformance review`,
-              ar: `${unreviewedWp} بند(اً) يحتاج مراجعة مطابقة`,
-            },
-            locale,
-          ),
-      priority: "medium",
-    });
-  }
-
-  const gaps =
-    (statusCounts.gap_confirmed ?? 0) +
-    (statusCounts.remediation_in_progress ?? 0);
-  if (gaps > 0) {
-    actions.push({
-      id: "gaps-remediation",
-      count: gaps,
-      label: localize(
-        {
-          en: `${gaps} gap(s) being remediated`,
-          ar: `${gaps} فجوة(ات) قيد المعالجة`,
+          en: `${overdueCount} remediation item(s) overdue`,
+          ar: `${overdueCount} بند(اً) معالجة متأخر(اً)`,
         },
         locale,
       ),
@@ -514,7 +457,40 @@ export function buildPendingActions(
     });
   }
 
-  if (progress.notStartedCount > 0 && !summary) {
+  const aiGaps =
+    (input.pendingReviewCount ?? 0) + (statusCounts.ai_flagged ?? 0);
+  if (aiGaps > 0) {
+    actions.push({
+      id: "ai-gaps-review",
+      count: aiGaps,
+      label: localize(
+        {
+          en: `${aiGaps} AI gap(s) awaiting review`,
+          ar: `${aiGaps} فجوة(ات) من الذكاء الاصطناعي بانتظار المراجعة`,
+        },
+        locale,
+      ),
+      priority: "high",
+    });
+  }
+
+  const answeredNoEvidence = statusCounts.evidence_requested ?? 0;
+  if (answeredNoEvidence > 0) {
+    actions.push({
+      id: "answered-no-evidence",
+      count: answeredNoEvidence,
+      label: localize(
+        {
+          en: `${answeredNoEvidence} item(s) answered but no evidence yet`,
+          ar: `${answeredNoEvidence} عنصر(اً) أُجيب عنه دون أدلة بعد`,
+        },
+        locale,
+      ),
+      priority: "medium",
+    });
+  }
+
+  if (progress.notStartedCount > 0) {
     actions.push({
       id: "not-started",
       count: progress.notStartedCount,
@@ -529,25 +505,34 @@ export function buildPendingActions(
     });
   }
 
-  if (input.pendingReviewCount && input.pendingReviewCount > 0) {
+  let unreviewedWp = 0;
+  for (const conf of conformanceByStandard.values()) {
+    unreviewedWp += conf.unreviewed;
+  }
+  if (unreviewedWp > 0) {
     actions.push({
-      id: "draft-findings",
-      count: input.pendingReviewCount,
+      id: "working-papers-test",
+      count: unreviewedWp,
       label: localize(
         {
-          en: `${input.pendingReviewCount} AI draft finding(s) pending review`,
-          ar: `${input.pendingReviewCount} مسودة نتيجة من الذكاء الاصطناعي بانتظار المراجعة`,
+          en: `${unreviewedWp} working-paper item(s) to test`,
+          ar: `${unreviewedWp} بند(اً) في أوراق العمل للاختبار`,
         },
         locale,
       ),
-      priority: "high",
+      priority: "medium",
     });
   }
 
-  return actions.sort((a, b) => {
-    const order = { high: 0, medium: 1, low: 2 };
-    return order[a.priority] - order[b.priority];
-  });
+  return actions.sort(
+    (a, b) =>
+      COCKPIT_QUEUE_ORDER.indexOf(
+        a.id as (typeof COCKPIT_QUEUE_ORDER)[number],
+      ) -
+      COCKPIT_QUEUE_ORDER.indexOf(
+        b.id as (typeof COCKPIT_QUEUE_ORDER)[number],
+      ),
+  );
 }
 
 /** Assembles the full dashboard view for a role and locale. */

@@ -1,7 +1,7 @@
 "use client";
 
 import type { DashboardView } from "@eqa/workflows";
-import type { PresentedHeatMapCell } from "@/lib/present-dashboard";
+import type { PresentedDomainRollup, PresentedHeatMapCell } from "@/lib/present-dashboard";
 import {
   Tooltip,
   TooltipContent,
@@ -25,6 +25,7 @@ const CELL_BORDER = {
 interface ConformanceHeatMapProps {
   view: DashboardView;
   cellPresentation: Readonly<Record<string, PresentedHeatMapCell>>;
+  domainRollups: Readonly<Record<string, PresentedDomainRollup>>;
   selectedStandard: string | null;
   onSelect: (cell: PresentedHeatMapCell) => void;
 }
@@ -32,6 +33,7 @@ interface ConformanceHeatMapProps {
 export function ConformanceHeatMap({
   view,
   cellPresentation,
+  domainRollups,
   selectedStandard,
   onSelect,
 }: ConformanceHeatMapProps): React.ReactNode {
@@ -40,18 +42,44 @@ export function ConformanceHeatMap({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{uiLabel("heatMapTitle", locale)}</CardTitle>
+        <CardTitle>{uiLabel("cockpitHeatMapTitle", locale)}</CardTitle>
         <p className="text-sm text-muted-foreground">
-          {uiLabel("heatMapSubtitle", locale)}
+          {uiLabel("cockpitHeatMapSubtitle", locale)}
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
         <TooltipProvider>
-          {view.heatMap.map((domain) => (
+          {view.heatMap.map((domain) => {
+            const rollup = domainRollups[domain.id];
+            return (
             <section key={domain.id} className="space-y-3">
-              <h3 className="text-sm font-semibold">
-                {domain.number}. {domain.title}
-              </h3>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h3 className="text-sm font-semibold">
+                  {domain.number}. {domain.title}
+                </h3>
+                {rollup ? (
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <span
+                      className={cn(
+                        "size-2.5 rounded-full",
+                        rollup.readinessLevel === "green" &&
+                          "bg-readiness-conformant",
+                        rollup.readinessLevel === "amber" &&
+                          "bg-readiness-partial",
+                        rollup.readinessLevel === "red" && "bg-readiness-gap",
+                      )}
+                      aria-hidden
+                    />
+                    <span className="tabular-nums font-medium">
+                      {rollup.readinessScore}%
+                    </span>
+                    <span>
+                      ({rollup.standardCount}{" "}
+                      {uiLabel("cockpitDomainStandards", locale)})
+                    </span>
+                  </div>
+                ) : null}
+              </div>
               {domain.principles.map((principle) => (
                 <div key={principle.id} className="space-y-2">
                   <p className="text-xs font-medium text-muted-foreground">
@@ -74,7 +102,8 @@ export function ConformanceHeatMap({
                 </div>
               ))}
             </section>
-          ))}
+            );
+          })}
         </TooltipProvider>
       </CardContent>
     </Card>

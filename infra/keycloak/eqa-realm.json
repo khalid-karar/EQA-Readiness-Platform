@@ -1,0 +1,140 @@
+{
+  "realm": "eqa",
+  "enabled": true,
+  "displayName": "EQA Readiness Platform",
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": true,
+  "otpPolicyType": "totp",
+  "otpPolicyAlgorithm": "HmacSHA1",
+  "otpPolicyInitialCounter": 0,
+  "otpPolicyDigits": 6,
+  "otpPolicyLookAheadWindow": 1,
+  "otpPolicyPeriod": 30,
+  "otpSupportedApplications": ["totpAppGoogleName", "totpAppFreeOTPName"],
+  "roles": {
+    "realm": [
+      {
+        "name": "cae",
+        "description": "Chief Audit Executive — full tenant access",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "audit_staff",
+        "description": "Audit staff — operational read/write",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "board",
+        "description": "Board / Audit Committee — read-only",
+        "composite": false,
+        "clientRole": false
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "eqa-web",
+      "name": "EQA Web Application",
+      "description": "Confidential OIDC client for the EQA Next.js app",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "__EQA_WEB_CLIENT_SECRET__",
+      "protocol": "openid-connect",
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "authorizationServicesEnabled": false,
+      "fullScopeAllowed": true,
+      "redirectUris": [
+        "https://eqa-readiness-platform-production.up.railway.app/*",
+        "http://localhost:3000/*"
+      ],
+      "webOrigins": [
+        "https://eqa-readiness-platform-production.up.railway.app",
+        "http://localhost:3000",
+        "+"
+      ],
+      "protocolMappers": [
+        {
+          "name": "tenant-claim",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "userinfo.token.claim": "true",
+            "user.attribute": "tenant",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "tenant",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "role-claim",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "userinfo.token.claim": "true",
+            "user.attribute": "role",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "role",
+            "jsonType.label": "String"
+          }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "cae.demo",
+      "email": "cae.demo@seera-pilot.local",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Chief Audit",
+      "lastName": "Executive",
+      "attributes": {
+        "tenant": ["seera-pilot"],
+        "role": ["cae"]
+      },
+      "realmRoles": ["cae"]
+    },
+    {
+      "username": "audit.demo",
+      "email": "audit.demo@seera-pilot.local",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Audit",
+      "lastName": "Staff",
+      "attributes": {
+        "tenant": ["seera-pilot"],
+        "role": ["audit_staff"]
+      },
+      "realmRoles": ["audit_staff"]
+    },
+    {
+      "username": "board.demo",
+      "email": "board.demo@seera-pilot.local",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Board",
+      "lastName": "Member",
+      "attributes": {
+        "tenant": ["seera-pilot"],
+        "role": ["board"]
+      },
+      "realmRoles": ["board"]
+    }
+  ]
+}

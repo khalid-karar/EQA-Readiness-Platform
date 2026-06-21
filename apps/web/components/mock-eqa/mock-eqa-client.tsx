@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import type { MockEqaPresentation, PresentedStandardRow } from "@/lib/present-mock-eqa";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { SimulationDisclaimerBanner } from "@/components/mock-eqa/simulation-disclaimer";
@@ -10,8 +10,10 @@ import { WhatsNextPanel } from "@/components/orientation/whats-next-panel";
 import { useDemoTableState } from "@/components/shell/use-demo-table-state";
 import { useSyncShellMeta } from "@/components/shell/use-sync-shell-meta";
 import { DEFAULT_TENANT_NAME } from "@/lib/nav-config";
+import { runMockEqaSimulation } from "@/lib/report-api-client";
 import { readinessSemanticClasses } from "@/lib/readiness-display";
 import { uiLabel } from "@/lib/ui-labels";
+import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatusPill, readinessVariantFromLevel } from "@/components/ui/status-pill";
@@ -19,15 +21,20 @@ import { cn } from "@/lib/utils";
 
 interface MockEqaClientProps {
   presentation: MockEqaPresentation;
+  realWritesEnabled: boolean;
 }
 
 function MockEqaClientInner({
   presentation,
+  realWritesEnabled,
 }: MockEqaClientProps): ReactNode {
+  const router = useRouter();
+  const { toast } = useToast();
   const searchParams = useSearchParams();
   const { view, roleLabel, overallScore, overallLevel, overallLabel, isProjectedPreview } =
     presentation;
   const locale = view.locale;
+  const [running, setRunning] = useState(false);
 
   const { rows, loading, error } = useDemoTableState(
     presentation.standardRows,
@@ -60,16 +67,54 @@ function MockEqaClientInner({
     }
   }, [searchParams, rows]);
 
-  const pendingActions = view.isSummaryView
-    ? []
-    : [
-        {
-          id: "run-simulation",
-          count: 1,
-          label: uiLabel("mockEqaRunPending", locale),
-          priority: "medium" as const,
-        },
-      ];
+  const handleRun = useCallback(async () => {
+    if (!realWritesEnabled || !view.canRunSimulation) return;
+    setRunning(true);
+    try {
+      await runMockEqaSimulation({
+        assessmentId: view.assessmentId,
+        contentPackId: presentation.contentPackId,
+        contentVersion: presentation.contentPackVersion,
+        locale,
+      });
+      toast({
+        variant: "success",
+        title: uiLabel("mockEqaRunSuccess", locale),
+      });
+      router.refresh();
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : uiLabel("mockEqaErrorDemo", locale);
+      toast({
+        variant: "destructive",
+        title: uiLabel("mockEqaErrorDemo", locale),
+        description: message,
+      });
+    } finally {
+      setRunning(false);
+    }
+  }, [
+    locale,
+    presentation.contentPackId,
+    presentation.contentPackVersion,
+    realWritesEnabled,
+    router,
+    toast,
+    view.assessmentId,
+    view.canRunSimulation,
+  ]);
+
+  const pendingActions =
+    view.isSummaryView || !isProjectedPreview
+      ? []
+      : [
+          {
+            id: "run-simulation",
+            count: 1,
+            label: uiLabel("mockEqaRunPending", locale),
+            priority: "medium" as const,
+          },
+        ];
 
   const columns: DataTableColumn<PresentedStandardRow>[] = useMemo(
     () => [
@@ -136,6 +181,11 @@ function MockEqaClientInner({
     setSelectedId(row.id);
     setSheetOpen(true);
   }, []);
+
+  const canRun =
+    view.canRunSimulation &&
+    !view.isSummaryView &&
+    (realWritesEnabled || isProjectedPreview);
 
   return (
     <div className="space-y-6">
@@ -226,7 +276,7 @@ function MockEqaClientInner({
         </div>
 
         <aside className="space-y-6">
-          {view.canRunSimulation ? (
+          {canRun ? (
             <Card>
               <CardContent className="space-y-3 pt-6">
                 <p className="text-sm text-muted-foreground">
@@ -234,8 +284,13 @@ function MockEqaClientInner({
                 </p>
                 <Button
                   size="sm"
-                  disabled
-                  title={uiLabel("demoDisabledHint", view.locale)}
+                  disabled={!realWritesEnabled || running}
+                  onClick={() => void handleRun()}
+                  title={
+                    !realWritesEnabled
+                      ? uiLabel("demoDisabledHint", locale)
+                      : undefined
+                  }
                 >
                   {uiLabel("mockEqaRunButton", locale)}
                 </Button>

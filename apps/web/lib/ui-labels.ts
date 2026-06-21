@@ -193,6 +193,10 @@ export const UI_LABELS: LabelSet = {
     en: "Run readiness simulation",
     ar: "تشغيل محاكاة الجاهزية",
   },
+  mockEqaRunSuccess: {
+    en: "Simulation complete — results persisted",
+    ar: "اكتملت المحاكاة — تم حفظ النتائج",
+  },
   mockEqaBoardHint: {
     en: "Read-only oversight of the simulated score. Board cannot run simulations.",
     ar: "إشراف للقراءة فقط على الدرجة المحاكية. لا يمكن للمجلس تشغيل المحاكاة.",
@@ -276,6 +280,10 @@ export const UI_LABELS: LabelSet = {
   packGenerateButton: {
     en: "Generate evidence pack",
     ar: "توليد حزمة الأدلة",
+  },
+  packGenerateSuccess: {
+    en: "Evidence pack generated — ready to download",
+    ar: "تم إنشاء حزمة الأدلة — جاهزة للتنزيل",
   },
   packGenerateAction: {
     en: "Generate a new evidence pack (background job)",

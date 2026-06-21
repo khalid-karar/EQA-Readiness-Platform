@@ -2,6 +2,7 @@ import type { AuthSession } from "@eqa/auth";
 import { createTenantJobAuditPort, createUiActionHandlers } from "@eqa/db";
 import { createJobQueueFromEnv, type JobQueue } from "@eqa/jobs";
 import { getEvidenceJobHandlers } from "./evidence-runtime";
+import { getReportJobHandlers } from "./report-runtime";
 import { getAppDatabase } from "./db";
 
 let cachedQueue: JobQueue | undefined;
@@ -13,6 +14,7 @@ export function getAppJobQueue(): JobQueue {
       handlers: {
         ...createUiActionHandlers(db),
         ...getEvidenceJobHandlers(),
+        ...getReportJobHandlers(),
       },
       auditPort: createTenantJobAuditPort(db),
     });

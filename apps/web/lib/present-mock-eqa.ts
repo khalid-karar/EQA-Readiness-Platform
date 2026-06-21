@@ -7,6 +7,8 @@ import {
   MOCK_EQA_DISCLAIMER,
   ROLE_LABELS,
   SEERA_DEMO_JOURNEY_MOCK_EQA_STARTED,
+  SEERA_DEMO_PACK_ID,
+  SEERA_DEMO_PACK_VERSION,
   type DashboardRole,
   type MockEqaSimulationView,
 } from "@eqa/workflows";
@@ -63,6 +65,8 @@ export interface MockEqaPresentation {
   readonly overallLabel: string;
   /** True when journey checkpoint 6 (mock-EQA) has not formally started. */
   readonly isProjectedPreview: boolean;
+  readonly contentPackId: string;
+  readonly contentPackVersion: string;
 }
 
 export function buildMockEqaPresentationFromLoad(
@@ -149,6 +153,8 @@ function presentMockEqaView(
     overallLabel: simulation.overall.label,
     isProjectedPreview:
       options?.isProjectedPreview ?? !SEERA_DEMO_JOURNEY_MOCK_EQA_STARTED,
+    contentPackId: SEERA_DEMO_PACK_ID,
+    contentPackVersion: SEERA_DEMO_PACK_VERSION,
   };
 }
 

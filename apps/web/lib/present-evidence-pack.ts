@@ -46,6 +46,10 @@ export interface EvidencePackPresentation {
   readonly readinessLabel: string;
   readonly bundledFileCount: 0;
   readonly sampleDownloadPath: string;
+  readonly downloadPath: string;
+  readonly hasGeneratedExport: boolean;
+  readonly contentPackId: string;
+  readonly contentPackVersion: string;
   readonly previewRows: readonly PresentedPackPreviewRow[];
 }
 
@@ -70,6 +74,10 @@ export function buildEvidencePackPresentationFromLoad(
     inputAr,
     data.locale,
     data.role,
+    {
+      hasGeneratedExport: data.persistedManifest !== null,
+      assessmentId: base.assessmentId,
+    },
   );
 }
 
@@ -78,6 +86,10 @@ function buildEvidencePackPresentationFromAssembly(
   inputAr: EvidencePackAssemblyInput,
   locale: Locale,
   role: DashboardRole,
+  options?: {
+    hasGeneratedExport?: boolean;
+    assessmentId?: string;
+  },
 ): EvidencePackPresentation {
   const manifestEn = buildEvidencePackManifest(inputEn);
   const manifestAr = buildEvidencePackManifest(inputAr);
@@ -108,8 +120,12 @@ function buildEvidencePackPresentationFromAssembly(
     0,
   );
 
+  const assessmentId = options?.assessmentId ?? manifestEn.assessmentId;
+  const hasGeneratedExport = options?.hasGeneratedExport ?? false;
+  const generatedDownloadPath = `/api/evidence-pack/download?assessmentId=${encodeURIComponent(assessmentId)}`;
+
   return {
-    assessmentId: manifestEn.assessmentId,
+    assessmentId,
     assessmentName:
       locale === "ar"
         ? manifestEn.assessmentName.ar
@@ -137,6 +153,12 @@ function buildEvidencePackPresentationFromAssembly(
     readinessLabel: manifestEn.readinessSummary.label,
     bundledFileCount: 0,
     sampleDownloadPath: `/api/evidence-pack/sample?locale=${locale}`,
+    downloadPath: hasGeneratedExport
+      ? generatedDownloadPath
+      : `/api/evidence-pack/sample?locale=${locale}`,
+    hasGeneratedExport,
+    contentPackId: SEERA_DEMO_PACK_ID,
+    contentPackVersion: SEERA_DEMO_PACK_VERSION,
     previewRows,
   };
 }

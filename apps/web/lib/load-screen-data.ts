@@ -8,12 +8,14 @@ import {
   createFindingsLoader,
   createMockEqaLoader,
   createRemediationLoader,
+  createStandardDetailLoader,
   createWorkingPapersLoader,
   type AssessmentLoadResult,
   type EvidenceLoadResult,
   type EvidencePackLoadResult,
   type FindingsLoadResult,
   type MockEqaLoadResult,
+  type StandardDetailLoadResult,
   type WorkingPapersLoadResult,
 } from "@eqa/db";
 import type { DashboardInput, DashboardRole, RemediationTrackerView } from "@eqa/workflows";
@@ -115,4 +117,21 @@ export async function loadEvidencePackData(
     return "demo";
   }
   return createEvidencePackLoader(getAppDatabase()).load(session, locale, role);
+}
+
+export async function loadStandardDetailData(
+  session: AuthSession,
+  locale: Locale,
+  role: DashboardRole,
+  standardNumber: string,
+): Promise<StandardDetailLoadResult | null | "demo"> {
+  if (!useDatabaseReads()) {
+    return "demo";
+  }
+  return createStandardDetailLoader(getAppDatabase()).load(
+    session,
+    locale,
+    role,
+    standardNumber,
+  );
 }

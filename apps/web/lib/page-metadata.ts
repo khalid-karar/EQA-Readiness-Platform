@@ -14,7 +14,8 @@ export type AppPageId =
   | "working-papers"
   | "remediation"
   | "mock-eqa"
-  | "evidence-pack";
+  | "evidence-pack"
+  | "standard-detail";
 
 interface PageMetaEntry {
   readonly titleEn: string;
@@ -87,6 +88,14 @@ const PAGE_META: Record<AppPageId, PageMetaEntry> = {
       "Generate a metadata-only evidence pack PDF with confidentiality footer.",
     descriptionAr:
       "إنشاء حزمة أدلة PDF (بيانات فقط) مع تذييل السرية.",
+  },
+  "standard-detail": {
+    titleEn: "Standard detail",
+    titleAr: "تفاصيل المعيار",
+    descriptionEn:
+      "Read-only view of one standard — requirements, evidence, conformance, and decision trail.",
+    descriptionAr:
+      "عرض للقراءة فقط لمعيار واحد — المتطلبات والأدلة والمطابقة ومسار القرار.",
   },
 };
 

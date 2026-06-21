@@ -60,3 +60,19 @@ export async function decryptSession(
 export function isSessionExpired(payload: SessionPayload): boolean {
   return Date.now() >= payload.expiresAt * 1000 - 30_000;
 }
+
+export function sessionCookieOptions(): {
+  httpOnly: boolean;
+  secure: boolean;
+  sameSite: "lax";
+  path: string;
+  maxAge: number;
+} {
+  return {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 60 * 60 * 8,
+  };
+}

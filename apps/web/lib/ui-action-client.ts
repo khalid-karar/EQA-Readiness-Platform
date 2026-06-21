@@ -5,6 +5,7 @@ export async function postUiAction<T>(
   const res = await fetch(path, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    credentials: "same-origin",
     body: JSON.stringify(body),
   });
   const data = (await res.json()) as { error?: string; result?: T };

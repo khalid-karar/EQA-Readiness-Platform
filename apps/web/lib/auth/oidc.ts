@@ -46,6 +46,30 @@ export async function exchangeCodeForTokens(
   return response.json() as Promise<OidcTokenResponse>;
 }
 
+export async function refreshAccessToken(
+  config: OidcConfig,
+  refreshToken: string,
+): Promise<OidcTokenResponse> {
+  const body = new URLSearchParams({
+    grant_type: "refresh_token",
+    client_id: config.clientId,
+    client_secret: config.clientSecret,
+    refresh_token: refreshToken,
+  });
+
+  const response = await fetch(config.tokenEndpoint, {
+    method: "POST",
+    headers: { "content-type": "application/x-www-form-urlencoded" },
+    body,
+  });
+
+  if (!response.ok) {
+    throw new Error(`Token refresh failed (${response.status}).`);
+  }
+
+  return response.json() as Promise<OidcTokenResponse>;
+}
+
 export function buildLogoutUrl(
   config: OidcConfig,
   postLogoutRedirectUri?: string,

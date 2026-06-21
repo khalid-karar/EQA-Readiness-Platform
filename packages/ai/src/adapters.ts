@@ -1,4 +1,10 @@
 import { AiConfigError, ExternalAdapterNotAllowedError } from "./errors";
+import { LocalLlmModelAdapter } from "./local-llm-adapter";
+import {
+  createOllamaInferenceClient,
+  createOllamaInferenceClientFromEnv,
+  type OllamaClientConfig,
+} from "./ollama-client";
 import type {
   InferenceClient,
   InferenceRequest,
@@ -61,15 +67,17 @@ export function assertEvidenceSafeAdapter(adapter: ModelAdapter): void {
 
 /**
  * Config for selecting the model adapter. Drivers are deliberately limited to
- * the local stub and the in-Kingdom adapter — there is NO external-API driver,
- * so an out-of-Kingdom frontier API is not a selectable path by default.
+ * the local stub, local LLM (Ollama), and the in-Kingdom adapter — there is NO
+ * external-API driver, so an out-of-Kingdom frontier API is not a selectable path.
  */
-export type ModelAdapterDriver = "local-stub" | "in-kingdom";
+export type ModelAdapterDriver = "local-stub" | "local-llm" | "in-kingdom";
 
 export interface ModelAdapterConfig {
   readonly driver: ModelAdapterDriver;
-  /** Required for the "in-kingdom" driver: the injected model transport. */
+  /** Required for "local-llm" and "in-kingdom": the injected model transport. */
   readonly client?: InferenceClient;
+  /** Optional Ollama overrides when building the local-llm client from config. */
+  readonly ollama?: Omit<OllamaClientConfig, "fetchFn">;
 }
 
 /** Builds the configured model adapter (swappable by config, no hardcoded vendor). */
@@ -77,6 +85,19 @@ export function createModelAdapter(config: ModelAdapterConfig): ModelAdapter {
   switch (config.driver) {
     case "local-stub":
       return new LocalStubModelAdapter();
+    case "local-llm": {
+      const client =
+        config.client ??
+        (config.ollama
+          ? createOllamaInferenceClient(config.ollama)
+          : undefined);
+      if (!client) {
+        throw new AiConfigError(
+          "The 'local-llm' adapter requires an injected inference client or ollama config.",
+        );
+      }
+      return new LocalLlmModelAdapter(client);
+    }
     case "in-kingdom":
       if (!config.client) {
         throw new AiConfigError(
@@ -93,22 +114,28 @@ export function createModelAdapter(config: ModelAdapterConfig): ModelAdapter {
 
 /**
  * Builds the model adapter from environment configuration:
- * - AI_ADAPTER = "local-stub" (default) | "in-kingdom"
+ * - AI_ADAPTER = "local-stub" (default) | "local-llm" | "in-kingdom"
  *
- * The "in-kingdom" driver needs an injected client (a network transport cannot
- * come from an env var alone), so it is supplied via `deps`. There is no env
- * value that selects an external API.
+ * local-llm reads AI_BASE_URL (default http://localhost:11434) and AI_MODEL.
+ * The Ollama client enforces a localhost-only host allowlist (rule 2).
+ * There is no env value that selects an external API.
  */
 export function createModelAdapterFromEnv(
   deps: { readonly client?: InferenceClient } = {},
   env: NodeJS.ProcessEnv = process.env,
 ): ModelAdapter {
-  const driver: ModelAdapterDriver =
-    env.AI_ADAPTER === "in-kingdom" ? "in-kingdom" : "local-stub";
-  if (driver === "in-kingdom") {
+  const adapter = env.AI_ADAPTER ?? "local-stub";
+
+  if (adapter === "local-llm") {
+    const client = deps.client ?? createOllamaInferenceClientFromEnv(env);
+    return createModelAdapter({ driver: "local-llm", client });
+  }
+
+  if (adapter === "in-kingdom") {
     return createModelAdapter(
-      deps.client ? { driver, client: deps.client } : { driver },
+      deps.client ? { driver: "in-kingdom", client: deps.client } : { driver: "in-kingdom" },
     );
   }
+
   return createModelAdapter({ driver: "local-stub" });
 }

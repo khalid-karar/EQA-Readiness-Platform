@@ -2,12 +2,13 @@
  * @eqa/ai
  *
  * Provider-agnostic AI inference layer. The model is swappable by config (local
- * stub now; in-Kingdom self-hosted adapter; future HUMAIN adapter) behind one
- * port — the same port/adapter pattern as storage and jobs. No vendor is
- * hardcoded, and client data must not leave Saudi Arabia.
+ * stub now; local LLM via Ollama; in-Kingdom self-hosted adapter; future HUMAIN
+ * adapter) behind one port — the same port/adapter pattern as storage and jobs.
+ * No vendor is hardcoded, and client data must not leave Saudi Arabia.
  *
  * Hard rules enforced here:
  * - No external-API adapter is a usable path for client evidence (fails closed).
+ * - Local LLM (Ollama) is restricted to localhost hosts (rule 2).
  * - Redaction guard: personal identifiers become role tokens before any text
  *   reaches the model.
  * - Data-minimization guard: only extracted excerpts, structured metadata, and
@@ -38,6 +39,20 @@ export {
   type ModelAdapterConfig,
   type ModelAdapterDriver,
 } from "./adapters";
+
+export { LocalLlmModelAdapter } from "./local-llm-adapter";
+
+export {
+  LOCAL_LLM_ALLOWED_HOSTS,
+  assertLocalLlmBaseUrl,
+  isAllowedLocalLlmUrl,
+} from "./host-allowlist";
+
+export {
+  createOllamaInferenceClient,
+  createOllamaInferenceClientFromEnv,
+  type OllamaClientConfig,
+} from "./ollama-client";
 
 export { redactNames, assertNoNames, roleToken } from "./redaction";
 export type { RedactionResult } from "./redaction";

@@ -46,3 +46,8 @@ export {
   type EvidencePackLoader,
   type EvidencePackLoadResult,
 } from "./evidence-pack-loader";
+export {
+  createStandardsWorkspaceLoader,
+  type StandardsWorkspaceLoader,
+  type StandardsWorkspaceLoadResult,
+} from "./standards-workspace-loader";

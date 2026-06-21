@@ -397,6 +397,70 @@ export const UI_LABELS: LabelSet = {
     en: "Scope & self-assessment",
     ar: "النطاق والتقييم الذاتي",
   },
+  standardsWorkspaceTitle: {
+    en: "Standards workspace",
+    ar: "مساحة المعايير",
+  },
+  standardsWorkspaceSubtitle: {
+    en: "Domain → principle → standard navigator with readiness status. Open a standard for detail.",
+    ar: "متصفح المجال ← المبدأ ← المعيار مع حالة الجاهزية. افتح معياراً للتفاصيل.",
+  },
+  standardsWorkspaceLocation: {
+    en: "Standards navigator",
+    ar: "متصفح المعايير",
+  },
+  standardsWorkspaceNavigatorTitle: {
+    en: "Standards tree",
+    ar: "شجرة المعايير",
+  },
+  standardsWorkspaceFiltersLabel: {
+    en: "Filter standards",
+    ar: "تصفية المعايير",
+  },
+  standardsWorkspaceFilterGaps: {
+    en: "Gaps only",
+    ar: "الفجوات فقط",
+  },
+  standardsWorkspaceFilterAssigned: {
+    en: "Assigned to me",
+    ar: "مسند إليّ",
+  },
+  standardsWorkspaceFilterUnanswered: {
+    en: "Unanswered",
+    ar: "بدون إجابة",
+  },
+  standardsWorkspaceTotalCount: {
+    en: "{total} standards",
+    ar: "{total} معيار",
+  },
+  standardsWorkspaceFilteredCount: {
+    en: "{visible} of {total} standards",
+    ar: "{visible} من {total} معيار",
+  },
+  standardsWorkspaceEmptyFilters: {
+    en: "No standards match the active filters.",
+    ar: "لا معايير تطابق المرشحات النشطة.",
+  },
+  standardsWorkspaceResponses: {
+    en: "responses",
+    ar: "استجابات",
+  },
+  standardsWorkspaceOwner: {
+    en: "Owner",
+    ar: "المسؤول",
+  },
+  standardsWorkspaceOwnerUnset: {
+    en: "Not set",
+    ar: "غير محدد",
+  },
+  standardsWorkspaceAssignmentNote: {
+    en: "Standard-level owner assignment is read-only here. Remediation owners are shown when a gap plan exists. A dedicated standard-assignment data model is required for inline assignment.",
+    ar: "تعيين مسؤول على مستوى المعيار للقراءة فقط هنا. تُعرض مسؤوليات المعالجة عند وجود خطة فجوة. يلزم نموذج بيانات مخصص لتعيين المعيار مباشرة.",
+  },
+  standardsWorkspaceAssignmentNoteTitle: {
+    en: "Owner assignment",
+    ar: "تعيين المسؤول",
+  },
   assessmentSubtitle: {
     en: "Rate each standard against the pinned content pack. Responses stay bound to that version.",
     ar: "قيّم كل معيار مقابل حزمة المحتوى المثبتة. تبقى الاستجابات مرتبطة بتلك النسخة.",

@@ -9,7 +9,9 @@ import {
   createMockEqaLoader,
   createRemediationLoader,
   createWorkingPapersLoader,
+  createStandardsWorkspaceLoader,
   type AssessmentLoadResult,
+  type StandardsWorkspaceLoadResult,
   type EvidenceLoadResult,
   type EvidencePackLoadResult,
   type FindingsLoadResult,
@@ -115,4 +117,19 @@ export async function loadEvidencePackData(
     return "demo";
   }
   return createEvidencePackLoader(getAppDatabase()).load(session, locale, role);
+}
+
+export async function loadStandardsWorkspaceData(
+  session: AuthSession,
+  locale: Locale,
+  role: DashboardRole,
+): Promise<StandardsWorkspaceLoadResult | "demo"> {
+  if (!useDatabaseReads()) {
+    return "demo";
+  }
+  return createStandardsWorkspaceLoader(getAppDatabase()).load(
+    session,
+    locale,
+    role,
+  );
 }

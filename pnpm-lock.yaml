@@ -53,6 +53,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@eqa/ai':
+        specifier: workspace:*
+        version: link:../../packages/ai
       '@eqa/auth':
         specifier: workspace:*
         version: link:../../packages/auth

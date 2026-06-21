@@ -1,18 +1,30 @@
 "use client";
 
-import { Suspense, type ReactNode } from "react";
-import type { StandardDetailPresentation } from "@/lib/present-standard-detail";
+import { Suspense, useCallback, useState, type ReactNode } from "react";
+import type { ChecklistConformance } from "@eqa/content";
+import {
+  computeDerivedStandardPresentation,
+  type PresentedStandardRequirement,
+  type PresentedWpConformanceItem,
+  type StandardDetailPresentation,
+} from "@/lib/present-standard-detail";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusPill, readinessVariantFromLevel } from "@/components/ui/status-pill";
 import { ScreenAlertBanner } from "@/components/ui/screen-alert-banner";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Button } from "@/components/ui/button";
+import { StandardRequirementActions } from "@/components/standards/standard-requirement-actions";
 import { useSyncShellMeta } from "@/components/shell/use-sync-shell-meta";
 import { DEFAULT_TENANT_NAME } from "@/lib/nav-config";
 import { uxStatusLevel } from "@/lib/status-level";
 import { uiLabel } from "@/lib/ui-labels";
+import { postUiAction } from "@/lib/ui-action-client";
+import { uxStatusLabel } from "@eqa/workflows";
+import { useToast } from "@/hooks/use-toast";
 
 interface StandardDetailClientProps {
   presentation: StandardDetailPresentation;
+  realWritesEnabled: boolean;
 }
 
 function formatTimestamp(iso: string, locale: StandardDetailPresentation["locale"]): string {
@@ -26,26 +38,113 @@ function formatTimestamp(iso: string, locale: StandardDetailPresentation["locale
   }
 }
 
+function wpVariantFromRaw(
+  raw: PresentedWpConformanceItem["conformanceRaw"],
+): PresentedWpConformanceItem["conformanceVariant"] {
+  if (raw === "conforms") return "conformant";
+  if (raw === "does_not_conform") return "gap";
+  if (raw === "not_applicable") return "neutral";
+  return "partial";
+}
+
 function StandardDetailClientInner({
-  presentation,
+  presentation: initial,
+  realWritesEnabled,
 }: StandardDetailClientProps): ReactNode {
-  const { locale, isSummaryView, standardNumber, standardTitle } = presentation;
+  const { toast } = useToast();
+  const [requirements, setRequirements] = useState(initial.requirements);
+  const [wpConformance, setWpConformance] = useState(initial.wpConformance);
+  const [wpSubmittingId, setWpSubmittingId] = useState<string | null>(null);
+
+  const {
+    locale,
+    isSummaryView,
+    canOperate,
+    canReview,
+    standardNumber,
+    standardTitle,
+    assessmentId,
+  } = initial;
+
+  const derived = computeDerivedStandardPresentation(requirements, wpConformance, locale);
 
   useSyncShellMeta({
     locale,
     tenantName: DEFAULT_TENANT_NAME,
-    assessmentName: presentation.assessmentName,
+    assessmentName: initial.assessmentName,
     location: `${standardNumber} — ${standardTitle}`,
-    roleLabel: presentation.roleLabel,
+    roleLabel: initial.roleLabel,
     isSummaryView,
   });
 
+  const handleRequirementChange = useCallback(
+    (questionId: string, updated: PresentedStandardRequirement) => {
+      setRequirements((prev) =>
+        prev.map((r) => {
+          if (r.questionId !== questionId) return r;
+          return {
+            ...updated,
+            statusLabel: uxStatusLabel(updated.status, locale),
+          };
+        }),
+      );
+    },
+    [locale],
+  );
+
+  const handleRecordWp = useCallback(
+    async (item: PresentedWpConformanceItem, conformance: ChecklistConformance) => {
+      setWpSubmittingId(item.id);
+      try {
+        if (realWritesEnabled) {
+          await postUiAction("/api/actions/record-conformance", {
+            checklistId: item.checklistId,
+            checklistItemId: item.itemId,
+            conformance,
+          });
+        }
+        const label =
+          conformance === "conforms"
+            ? locale === "ar"
+              ? "مطابق"
+              : "Conforms"
+            : conformance === "does_not_conform"
+              ? locale === "ar"
+                ? "لا يطابق"
+                : "Does not conform"
+              : locale === "ar"
+                ? "غير قابل للتطبيق"
+                : "Not applicable";
+        setWpConformance((prev) =>
+          prev.map((row) =>
+            row.id === item.id
+              ? {
+                  ...row,
+                  conformanceRaw: conformance,
+                  conformanceLabel: label,
+                  conformanceVariant: wpVariantFromRaw(conformance),
+                }
+              : row,
+          ),
+        );
+        toast({ variant: "success", title: uiLabel("wpRecordSuccess", locale) });
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : uiLabel("wpErrorDemo", locale);
+        toast({
+          variant: "destructive",
+          title: uiLabel("wpErrorDemo", locale),
+          description: message,
+        });
+      } finally {
+        setWpSubmittingId(null);
+      }
+    },
+    [locale, realWritesEnabled, toast],
+  );
+
   return (
     <div className="space-y-6">
-      <ScreenAlertBanner variant="brand" title={uiLabel("standardDetailReadOnlyTitle", locale)}>
-        {uiLabel("standardDetailReadOnlyBody", locale)}
-      </ScreenAlertBanner>
-
       <Card>
         <CardHeader className="space-y-3 pb-2">
           <div className="flex flex-wrap items-start justify-between gap-3">
@@ -58,18 +157,18 @@ function StandardDetailClientInner({
                 <span className="mx-2 text-muted-foreground">·</span>
                 {standardTitle}
               </CardTitle>
-              <p className="text-sm text-muted-foreground">{presentation.domainLabel}</p>
-              <p className="text-sm text-muted-foreground">{presentation.principleLabel}</p>
+              <p className="text-sm text-muted-foreground">{initial.domainLabel}</p>
+              <p className="text-sm text-muted-foreground">{initial.principleLabel}</p>
               <p className="text-xs text-muted-foreground/80">
-                {uiLabel("contentPin", locale)}: {presentation.contentPinLabel}
+                {uiLabel("contentPin", locale)}: {initial.contentPinLabel}
               </p>
             </div>
             <div className="flex flex-col items-end gap-2">
               <span className="text-xs text-muted-foreground">
                 {uiLabel("standardDetailDerivedStatus", locale)}
               </span>
-              <StatusPill variant={presentation.derivedStatusVariant} size="sm">
-                {presentation.derivedStatusLabel}
+              <StatusPill variant={derived.derivedStatusVariant} size="sm">
+                {derived.derivedStatusLabel}
               </StatusPill>
             </div>
           </div>
@@ -84,7 +183,7 @@ function StandardDetailClientInner({
           </p>
         </div>
 
-        {presentation.requirements.map((req) => (
+        {requirements.map((req) => (
           <Card key={req.questionId}>
             <CardHeader className="pb-3">
               <div className="flex flex-wrap items-start justify-between gap-3">
@@ -140,9 +239,7 @@ function StandardDetailClientInner({
                             {locale === "ar" ? ev.sizeLabelAr : ev.sizeLabelEn}
                           </span>
                           <StatusPill
-                            variant={
-                              ev.scanStatus === "clean" ? "conformant" : "gap"
-                            }
+                            variant={ev.scanStatus === "clean" ? "conformant" : "gap"}
                             size="sm"
                           >
                             {locale === "ar" ? ev.scanLabelAr : ev.scanLabelEn}
@@ -174,12 +271,25 @@ function StandardDetailClientInner({
                   {req.finalConclusion}
                 </ScreenAlertBanner>
               ) : null}
+
+              <StandardRequirementActions
+                assessmentId={assessmentId}
+                standardNumber={standardNumber}
+                requirement={req}
+                locale={locale}
+                canOperate={canOperate}
+                canReview={canReview}
+                realWritesEnabled={realWritesEnabled}
+                onRequirementChange={(updated) =>
+                  handleRequirementChange(req.questionId, updated)
+                }
+              />
             </CardContent>
           </Card>
         ))}
       </section>
 
-      {presentation.wpConformance.length > 0 ? (
+      {wpConformance.length > 0 ? (
         <section className="space-y-4">
           <div>
             <h2 className="text-lg font-semibold">{uiLabel("wpConformance", locale)}</h2>
@@ -189,7 +299,7 @@ function StandardDetailClientInner({
           </div>
           <Card>
             <CardContent className="divide-y p-0">
-              {presentation.wpConformance.map((item) => (
+              {wpConformance.map((item) => (
                 <div key={item.id} className="space-y-2 p-4">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0">
@@ -202,6 +312,36 @@ function StandardDetailClientInner({
                       {item.conformanceLabel}
                     </StatusPill>
                   </div>
+                  {canOperate && item.conformanceRaw === null ? (
+                    <div className="flex flex-wrap gap-2">
+                      <Button
+                        type="button"
+                        size="sm"
+                        disabled={wpSubmittingId === item.id}
+                        onClick={() => void handleRecordWp(item, "conforms")}
+                      >
+                        {uiLabel("wpConformantLabel", locale)}
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        disabled={wpSubmittingId === item.id}
+                        onClick={() => void handleRecordWp(item, "does_not_conform")}
+                      >
+                        {uiLabel("wpNonConformantLabel", locale)}
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        disabled={wpSubmittingId === item.id}
+                        onClick={() => void handleRecordWp(item, "not_applicable")}
+                      >
+                        {uiLabel("wpPartialLabel", locale)}
+                      </Button>
+                    </div>
+                  ) : null}
                   {item.note ? (
                     <p className="text-sm text-muted-foreground">{item.note}</p>
                   ) : null}
@@ -230,18 +370,18 @@ function StandardDetailClientInner({
           </p>
         </div>
 
-        {presentation.decisionTrail.length === 0 ? (
+        {initial.decisionTrail.length === 0 ? (
           <EmptyState
             title={uiLabel("standardDetailDecisionTrailEmpty", locale)}
-            {...(presentation.decisionTrailEmptyNote
-              ? { description: presentation.decisionTrailEmptyNote }
+            {...(initial.decisionTrailEmptyNote
+              ? { description: initial.decisionTrailEmptyNote }
               : {})}
           />
         ) : (
           <Card>
             <CardContent className="p-0">
               <ol className="divide-y">
-                {presentation.decisionTrail.map((entry) => (
+                {initial.decisionTrail.map((entry) => (
                   <li key={entry.id} className="space-y-1 p-4">
                     <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
                       <span>{formatTimestamp(entry.occurredAt, locale)}</span>
@@ -271,10 +411,14 @@ function StandardDetailClientInner({
 
 export function StandardDetailClient({
   presentation,
+  realWritesEnabled,
 }: StandardDetailClientProps): ReactNode {
   return (
     <Suspense fallback={null}>
-      <StandardDetailClientInner presentation={presentation} />
+      <StandardDetailClientInner
+        presentation={presentation}
+        realWritesEnabled={realWritesEnabled}
+      />
     </Suspense>
   );
 }

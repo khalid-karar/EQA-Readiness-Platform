@@ -16,6 +16,7 @@ import {
   HUMAN_REVIEW_JOB,
   RECORD_CONFORMANCE_JOB,
   REMEDIATION_TRANSITION_JOB,
+  ASSIGN_REMEDIATION_JOB,
   SUBMIT_RESPONSE_JOB,
   type GapFlaggingPayload,
   type ItemStatus,
@@ -388,6 +389,32 @@ describe("UI action job handlers (tenant-scoped mutations)", () => {
       });
       expect(status?.status).toBe("failed");
       expect(status?.error).toMatch(/illegal|transition|ready_for_retest/i);
+    });
+
+    it("assigns remediation via job handler and writes audit", async () => {
+      const acme = await tenant("acme-co");
+      const repos = reposFor(acme);
+      await seedGapConfirmed(repos);
+      const beforeAudit = await repos.audit.list();
+
+      const status = await enqueueAndRun(acme, ASSIGN_REMEDIATION_JOB, {
+        assessmentId: ASSESSMENT,
+        questionId: REM_QUESTION,
+        standardNumber: REM_STANDARD,
+        action: "Fix COI process",
+        owner: "audit-staff",
+        targetDate: "2026-12-31",
+      });
+      expect(status?.status).toBe("completed");
+      expect(status?.result).toMatchObject({
+        itemStatus: "remediation_in_progress",
+      });
+
+      const items = await repos.remediation.listForAssessment(ASSESSMENT);
+      expect(items.some((i) => i.questionId === REM_QUESTION)).toBe(true);
+
+      const afterAudit = await repos.audit.list();
+      expect(afterAudit.length).toBeGreaterThan(beforeAudit.length);
     });
 
     it("isolates remediation mutations per tenant", async () => {

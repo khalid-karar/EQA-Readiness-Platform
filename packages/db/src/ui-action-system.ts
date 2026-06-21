@@ -5,10 +5,12 @@ import {
   HUMAN_REVIEW_JOB,
   RECORD_CONFORMANCE_JOB,
   REMEDIATION_TRANSITION_JOB,
+  ASSIGN_REMEDIATION_JOB,
   SUBMIT_RESPONSE_JOB,
   type ActingUserRef,
   type HumanReviewJobPayload,
   type RecordConformanceJobPayload,
+  type AssignRemediationJobPayload,
   type RemediationTransitionJobPayload,
   type SubmitResponseJobPayload,
   WorkingPaperReviewEngine,
@@ -103,6 +105,30 @@ export function createUiActionHandlers(db: Database): JobHandlerMap {
         checklistId: payload.checklistId,
         checklistItemId: payload.checklistItemId,
         conformance: payload.conformance,
+      };
+    },
+
+    [ASSIGN_REMEDIATION_JOB]: async (ctx) => {
+      const payload = ctx.payload as AssignRemediationJobPayload;
+      const repos = createTenantRepositories(
+        db,
+        sessionFromUser(ctx.tenant, payload),
+      );
+      const item = await repos.remediation.assign({
+        assessmentId: payload.assessmentId,
+        questionId: payload.questionId,
+        standardNumber: payload.standardNumber,
+        action: payload.action,
+        owner: payload.owner,
+        targetDate: payload.targetDate,
+      });
+      const current = await repos.itemStatus.getStatus(
+        item.assessmentId,
+        item.questionId,
+      );
+      return {
+        remediationId: item.remediationId,
+        itemStatus: current?.status ?? "not_assessed",
       };
     },
 

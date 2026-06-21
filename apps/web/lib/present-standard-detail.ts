@@ -48,16 +48,32 @@ export interface PresentedStandardRequirement {
   readonly note: string | null;
   readonly evidence: readonly PresentedStandardEvidence[];
   readonly draftSummary: string | null;
+  readonly findingId: string | null;
   readonly finalConclusion: string | null;
+  readonly rubric: readonly {
+    readonly level: number;
+    readonly label: string;
+    readonly descriptor: string;
+  }[];
+  readonly pinPackId: string;
+  readonly pinVersion: string;
+  readonly pinHash: string;
+  readonly remediationId: string | null;
+  readonly remediationAction: string | null;
+  readonly remediationOwner: string | null;
+  readonly remediationTargetDate: string | null;
 }
 
 export interface PresentedWpConformanceItem {
   readonly id: string;
+  readonly checklistId: string;
+  readonly itemId: string;
   readonly itemText: string;
   readonly workingPaperRef: string;
   readonly workingPaperTitle: string;
   readonly conformanceLabel: string;
   readonly conformanceVariant: "conformant" | "partial" | "gap" | "neutral";
+  readonly conformanceRaw: "conforms" | "does_not_conform" | "not_applicable" | null;
   readonly note: string | null;
   readonly recordedBy: string | null;
   readonly recordedAt: string | null;
@@ -78,6 +94,8 @@ export interface StandardDetailPresentation {
   readonly role: DashboardRole;
   readonly roleLabel: string;
   readonly isSummaryView: boolean;
+  readonly canOperate: boolean;
+  readonly canReview: boolean;
   readonly standardNumber: string;
   readonly standardTitle: string;
   readonly domainLabel: string;
@@ -222,11 +240,14 @@ function wpConformancePresentation(
   }
   return {
     id: `${raw.checklistId}:${raw.itemId}`,
+    checklistId: raw.checklistId,
+    itemId: raw.itemId,
     itemText: locale === "ar" ? raw.itemTextAr : raw.itemTextEn,
     workingPaperRef: raw.workingPaperRef,
     workingPaperTitle: raw.workingPaperTitle,
     conformanceLabel,
     conformanceVariant: variant,
+    conformanceRaw: raw.conformance,
     note: raw.note,
     recordedBy: raw.recordedBy,
     recordedAt: raw.recordedAt,
@@ -276,27 +297,37 @@ function presentAuditEntry(
   };
 }
 
+export function computeDerivedStandardPresentation(
+  requirements: readonly PresentedStandardRequirement[],
+  wpConformance: readonly PresentedWpConformanceItem[],
+  locale: Locale,
+): Pick<
+  StandardDetailPresentation,
+  "derivedStatus" | "derivedStatusLabel" | "derivedStatusVariant"
+> {
+  const derivedStatus = deriveStandardStatus({
+    questionStatuses: requirements.map((r) => r.status),
+    hasOpenDraft: requirements.some(
+      (r) => r.draftSummary && !r.finalConclusion && r.status === "ai_flagged",
+    ),
+    wpNonConformant: wpConformance.some((w) => w.conformanceRaw === "does_not_conform"),
+    wpUnreviewed: wpConformance.some((w) => w.conformanceRaw === null),
+  });
+  return {
+    derivedStatus,
+    derivedStatusLabel: derivedStatusLabel(derivedStatus, locale),
+    derivedStatusVariant: derivedStatusVariant(derivedStatus),
+  };
+}
+
 export function buildStandardDetailPresentationFromLoad(
   data: StandardDetailLoadResult,
 ): StandardDetailPresentation {
   const locale = data.locale;
   const role = data.role;
-  const questionStatuses = data.requirements.map((r) => r.status);
-  const hasOpenDraft = data.requirements.some(
-    (r) => r.draftFinding && !r.finalConclusion,
-  );
-  const wpNonConformant = data.wpConformance.some(
-    (w) => w.conformance === "does_not_conform",
-  );
-  const wpUnreviewed = data.wpConformance.some((w) => w.conformance === null);
-
-  const derivedStatus = deriveStandardStatus({
-    questionStatuses,
-    hasOpenDraft,
-    wpNonConformant,
-    wpUnreviewed,
-  });
-
+  const isSummaryView = role === "board";
+  const canOperate = !isSummaryView;
+  const canReview = canOperate;
   const requirements: PresentedStandardRequirement[] = data.requirements.map(
     (req) => ({
       questionId: req.questionId,
@@ -325,8 +356,27 @@ export function buildStandardDetailPresentationFromLoad(
         };
       }),
       draftSummary: req.draftFinding?.draftSummary ?? null,
+      findingId: req.draftFinding?.findingId ?? null,
       finalConclusion: req.finalConclusion?.conclusion ?? null,
+      rubric: locale === "ar" ? req.rubricAr : req.rubricEn,
+      pinPackId: req.pinContentPackId,
+      pinVersion: req.pinVersion,
+      pinHash: req.pinHash,
+      remediationId: req.remediationId,
+      remediationAction: req.remediationAction,
+      remediationOwner: req.remediationOwner,
+      remediationTargetDate: req.remediationTargetDate,
     }),
+  );
+
+  const wpConformance = data.wpConformance.map((w) =>
+    wpConformancePresentation(w, locale),
+  );
+
+  const derived = computeDerivedStandardPresentation(
+    requirements,
+    wpConformance,
+    locale,
   );
 
   const decisionTrail = data.decisionTrail.map((e) =>
@@ -339,20 +389,18 @@ export function buildStandardDetailPresentationFromLoad(
     locale,
     role,
     roleLabel: ROLE_LABELS[role][locale],
-    isSummaryView: role === "board",
+    isSummaryView,
+    canOperate,
+    canReview,
     standardNumber: data.standardNumber,
     standardTitle:
       locale === "ar" ? data.standardTitleAr : data.standardTitleEn,
     domainLabel: `${data.domainNumber} · ${locale === "ar" ? data.domainTitleAr : data.domainTitleEn}`,
     principleLabel: `${data.principleNumber} · ${locale === "ar" ? data.principleTitleAr : data.principleTitleEn}`,
     contentPinLabel: `${data.contentPackId} v${data.contentPackVersion} · ${data.contentHash.slice(0, 8)}…`,
-    derivedStatus,
-    derivedStatusLabel: derivedStatusLabel(derivedStatus, locale),
-    derivedStatusVariant: derivedStatusVariant(derivedStatus),
+    ...derived,
     requirements,
-    wpConformance: data.wpConformance.map((w) =>
-      wpConformancePresentation(w, locale),
-    ),
+    wpConformance,
     decisionTrail,
     decisionTrailEmptyNote:
       decisionTrail.length === 0
@@ -374,6 +422,7 @@ function standardFromQuestionnaire(
   principleTitle: string;
   questionIds: string[];
   questionText: Map<string, string>;
+  rubric: { level: number; label: string; descriptor: string }[];
 } | null {
   const catalog = loadBundledCatalog();
   const pack = catalog.get(SEERA_DEMO_PACK_ID, SEERA_DEMO_PACK_VERSION);
@@ -392,6 +441,11 @@ function standardFromQuestionnaire(
           questionText: new Map(
             standard.questions.map((q) => [q.questionId, q.text]),
           ),
+          rubric: standard.rubric.map((r) => ({
+            level: r.level,
+            label: r.label,
+            descriptor: r.descriptor,
+          })),
         };
       }
     }
@@ -414,6 +468,8 @@ export function buildStandardDetailPresentation(
   const evidence = createSeeraDemoEvidenceMetadata();
   const wpEngagement = createSeeraDemoWorkingPaperEngagement();
   const catalog = loadBundledCatalog();
+  const pin = createSeeraDemoContentPin();
+  const isSummaryView = role === "board";
 
   const requirements: PresentedStandardRequirement[] = meta.questionIds.map(
     (questionId) => {
@@ -451,7 +507,26 @@ export function buildStandardDetailPresentation(
           };
         }),
         draftSummary: draft?.draftSummary ?? null,
+        findingId: draft?.findingId ?? null,
         finalConclusion: conclusion?.conclusion ?? null,
+        rubric: meta.rubric,
+        pinPackId: pin.contentPackId,
+        pinVersion: pin.version,
+        pinHash: pin.contentHash,
+        remediationId:
+          status === "gap_confirmed" || status === "remediation_in_progress"
+            ? `demo-rem-${questionId}`
+            : null,
+        remediationAction:
+          status === "gap_confirmed" || status === "remediation_in_progress"
+            ? "Demo remediation action"
+            : null,
+        remediationOwner:
+          status === "remediation_in_progress" ? "audit-staff" : null,
+        remediationTargetDate:
+          status === "gap_confirmed" || status === "remediation_in_progress"
+            ? "2026-12-31"
+            : null,
       };
     },
   );
@@ -488,15 +563,11 @@ export function buildStandardDetailPresentation(
       return wpConformancePresentation(raw, locale);
     });
 
-  const questionStatuses = requirements.map((r) => r.status);
-  const derivedStatus = deriveStandardStatus({
-    questionStatuses,
-    hasOpenDraft: requirements.some((r) => r.draftSummary && !r.finalConclusion),
-    wpNonConformant: wpConformance.some((w) => w.conformanceVariant === "gap"),
-    wpUnreviewed: wpConformance.some((w) => w.conformanceVariant === "partial"),
-  });
-
-  const pin = createSeeraDemoContentPin();
+  const derived = computeDerivedStandardPresentation(
+    requirements,
+    wpConformance,
+    locale,
+  );
 
   return {
     assessmentId: SEERA_DEMO_ASSESSMENT_ID,
@@ -504,15 +575,15 @@ export function buildStandardDetailPresentation(
     locale,
     role,
     roleLabel: ROLE_LABELS[role][locale],
-    isSummaryView: role === "board",
+    isSummaryView,
+    canOperate: !isSummaryView,
+    canReview: !isSummaryView,
     standardNumber,
     standardTitle: meta.standardTitle,
     domainLabel: `${meta.domainNumber} · ${meta.domainTitle}`,
     principleLabel: `${meta.principleNumber} · ${meta.principleTitle}`,
     contentPinLabel: `${pin.contentPackId} v${pin.version} · ${pin.contentHash.slice(0, 8)}…`,
-    derivedStatus,
-    derivedStatusLabel: derivedStatusLabel(derivedStatus, locale),
-    derivedStatusVariant: derivedStatusVariant(derivedStatus),
+    ...derived,
     requirements,
     wpConformance,
     decisionTrail: [],

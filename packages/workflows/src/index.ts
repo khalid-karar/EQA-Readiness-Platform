@@ -227,6 +227,7 @@ export {
   HUMAN_REVIEW_JOB,
   RECORD_CONFORMANCE_JOB,
   REMEDIATION_TRANSITION_JOB,
+  ASSIGN_REMEDIATION_JOB,
   createSubmitResponseHandler,
   createHumanReviewHandler,
   createRecordConformanceHandler,
@@ -237,6 +238,7 @@ export {
   type RecordConformanceJobPayload,
   type RemediationTransitionJobPayload,
   type RemediationTransitionKind,
+  type AssignRemediationJobPayload,
 } from "./ui-action-jobs";
 export {
   allowedTransitions,

@@ -21,6 +21,12 @@ import {
   PILOT_PACK_VERSION,
 } from "./pilot-assessment";
 
+export interface StandardRequirementRubricLevel {
+  readonly level: number;
+  readonly label: string;
+  readonly descriptor: string;
+}
+
 export interface StandardRequirementLoad {
   readonly questionId: string;
   readonly questionTextEn: string;
@@ -32,6 +38,15 @@ export interface StandardRequirementLoad {
   readonly draftFinding: DraftFinding | null;
   readonly finalConclusion: FinalConclusion | null;
   readonly evidence: readonly EvidenceMetadataForPack[];
+  readonly rubricEn: readonly StandardRequirementRubricLevel[];
+  readonly rubricAr: readonly StandardRequirementRubricLevel[];
+  readonly pinContentPackId: string;
+  readonly pinVersion: string;
+  readonly pinHash: string;
+  readonly remediationId: string | null;
+  readonly remediationAction: string | null;
+  readonly remediationOwner: string | null;
+  readonly remediationTargetDate: string | null;
 }
 
 export interface StandardWpConformanceLoad {
@@ -148,6 +163,8 @@ export function createStandardDetailLoader(db: Database): StandardDetailLoader {
             standardTitleEn: string;
             standardTitleAr: string;
             questionIds: string[];
+            rubricEn: StandardRequirementRubricLevel[];
+            rubricAr: StandardRequirementRubricLevel[];
           }
         | undefined;
 
@@ -172,6 +189,16 @@ export function createStandardDetailLoader(db: Database): StandardDetailLoader {
               standardTitleEn: standard.title,
               standardTitleAr: standardAr?.title ?? standard.title,
               questionIds: standard.questions.map((q) => q.questionId),
+              rubricEn: standard.rubric.map((r) => ({
+                level: r.level,
+                label: r.label,
+                descriptor: r.descriptor,
+              })),
+              rubricAr: (standardAr?.rubric ?? standard.rubric).map((r) => ({
+                level: r.level,
+                label: r.label,
+                descriptor: r.descriptor,
+              })),
             };
             break;
           }
@@ -190,6 +217,7 @@ export function createStandardDetailLoader(db: Database): StandardDetailLoader {
         evidenceRows,
         auditEntries,
         engagements,
+        remediationItems,
       ] = await Promise.all([
         repos.itemStatus.getForAssessment(PILOT_ASSESSMENT_ID),
         repos.responses.getForAssessment(PILOT_ASSESSMENT_ID),
@@ -198,6 +226,7 @@ export function createStandardDetailLoader(db: Database): StandardDetailLoader {
         repos.evidence.list(),
         repos.audit.list(),
         repos.workingPaperReview.listCompletedEngagements(),
+        repos.remediation.listForAssessment(PILOT_ASSESSMENT_ID),
       ]);
 
       const statusesByQuestion = new Map(
@@ -211,6 +240,14 @@ export function createStandardDetailLoader(db: Database): StandardDetailLoader {
       );
       const conclusionsByQuestion = new Map(
         conclusions.map((c) => [c.questionId, c]),
+      );
+      const remediationByQuestion = new Map(
+        remediationItems.map((item) => [item.questionId, item]),
+      );
+      const contentPin = catalog.pinForAssessment(
+        PILOT_ASSESSMENT_ID,
+        PILOT_PACK_ID,
+        PILOT_PACK_VERSION,
       );
       const evidenceForPack = evidenceRows.map((meta) => ({
         evidenceId: meta.evidenceId,
@@ -236,6 +273,7 @@ export function createStandardDetailLoader(db: Database): StandardDetailLoader {
             .flatMap((s) => s.questions)
             .find((q) => q.questionId === questionId);
           const response = responsesByQuestion.get(questionId);
+          const remediation = remediationByQuestion.get(questionId);
           return {
             questionId,
             questionTextEn: qEn?.text ?? questionId,
@@ -253,6 +291,15 @@ export function createStandardDetailLoader(db: Database): StandardDetailLoader {
                 questionId,
               ),
             ),
+            rubricEn: matched.rubricEn,
+            rubricAr: matched.rubricAr,
+            pinContentPackId: contentPin.contentPackId,
+            pinVersion: contentPin.version,
+            pinHash: contentPin.contentHash,
+            remediationId: remediation?.remediationId ?? null,
+            remediationAction: remediation?.action ?? null,
+            remediationOwner: remediation?.owner ?? null,
+            remediationTargetDate: remediation?.targetDate ?? null,
           };
         },
       );

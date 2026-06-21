@@ -49,6 +49,18 @@ describe("KeycloakIdentityProvider", () => {
     );
   });
 
+  it("allows dev password-only tokens when amr is absent (local Keycloak)", async () => {
+    const { provider, privateKey } = await createTestProvider({
+      allowPasswordOnlyWithoutAmr: true,
+    });
+    const token = await issueToken(privateKey, {
+      tenant: "seera-pilot",
+      role: "cae",
+    });
+    const identity = await provider.verify(token);
+    expect(identity.mfa).toBe(true);
+  });
+
   it("accepts a configured acr step-up as MFA", async () => {
     const { provider, privateKey } = await createTestProvider({
       acceptedAcr: ["urn:mace:eqa:mfa"],

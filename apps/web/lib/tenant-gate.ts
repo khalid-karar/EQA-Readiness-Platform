@@ -22,6 +22,20 @@ function parseTenantAllowlist(raw: string | undefined): readonly string[] {
   return slugs.length > 0 ? slugs : DEFAULT_TENANT_ALLOWLIST;
 }
 
+/**
+ * Whether local Keycloak password-only tokens (no `amr`) may pass MFA checks.
+ * Production always returns false — production enforces MFA.
+ */
+export function resolveAllowPasswordOnlyWithoutAmr(
+  issuer: string,
+  nodeEnv: string | undefined = process.env.NODE_ENV,
+): boolean {
+  if (nodeEnv === "production") {
+    return false;
+  }
+  return issuer.includes("localhost") || issuer.includes("127.0.0.1");
+}
+
 function createMiddlewareIdentityProvider(): IdentityProvider {
   const issuer = process.env.KEYCLOAK_ISSUER;
   const audience = process.env.KEYCLOAK_AUDIENCE;
@@ -35,6 +49,7 @@ function createMiddlewareIdentityProvider(): IdentityProvider {
     audience,
     tenantClaim: process.env.KEYCLOAK_TENANT_CLAIM ?? "tenant",
     roleClaim: process.env.KEYCLOAK_ROLE_CLAIM ?? "role",
+    allowPasswordOnlyWithoutAmr: resolveAllowPasswordOnlyWithoutAmr(issuer),
   });
 }
 

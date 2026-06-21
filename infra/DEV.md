@@ -20,7 +20,7 @@ This starts:
 
 | Service | Purpose | URL / port |
 | --- | --- | --- |
-| **postgres** | App DB (`eqa`) + Keycloak DB (`keycloak`) | `localhost:5432` |
+| **postgres** | App DB (`eqa`) + Keycloak DB (`keycloak`) | `localhost:5433` (host; container stays 5432) |
 | **keycloak** | OIDC (`eqa` realm, client `eqa-web`) | http://localhost:8080 |
 | **clamav** | `clamd` malware scanning | `localhost:3310` |
 | **minio** | S3-compatible evidence object store | API http://localhost:9000, console http://localhost:9001 |
@@ -44,13 +44,18 @@ Keycloak admin console: http://localhost:8080 — user `admin`, password `admin`
 
 Demo realm users (password `demo` after bootstrap): `cae.demo`, `audit.demo`, `board.demo` — tenant `seera-pilot`, roles `cae` / `audit_staff` / `board`.
 
+**Dev MFA:** `keycloak-bootstrap` disables the Browser Conditional OTP step so demo users sign in with password only. Production enforces MFA. The realm stores a `devMfaNote` attribute documenting this.
+
 ## 2. Configure the app
 
 ```bash
 cp .env.local.example .env.local
+cp .env.local.example apps/web/.env.local
 ```
 
-Adjust only if you changed Compose ports or credentials.
+Adjust only if you changed Compose ports or credentials. Next.js reads `apps/web/.env.local`; the root copy is for `pnpm --filter @eqa/db seed` (export vars or use a dotenv loader).
+
+If you previously set Railway `KEYCLOAK_*` variables in your shell profile, they override `.env.local` — unset them or export the localhost values before `pnpm dev`.
 
 ## 3. Ollama (host — not in Compose)
 
@@ -107,4 +112,4 @@ docker compose -f docker-compose.dev.yml down -v
 - **Keycloak not ready** — `docker compose -f docker-compose.dev.yml logs -f keycloak` until you see `started`.
 - **Demo login fails** — re-run bootstrap: `docker compose -f docker-compose.dev.yml up keycloak-bootstrap`.
 - **ClamAV slow** — first signature download is normal; wait for `docker compose -f docker-compose.dev.yml logs clamav` to show `clamd` ready.
-- **Port conflicts** — stop other local Postgres/Keycloak/MinIO or edit port mappings in `docker-compose.dev.yml`.
+- **Port conflicts** — Compose Postgres is mapped to host **5433** so it does not clash with a native Postgres on 5432. Stop other local Keycloak/MinIO or edit port mappings in `docker-compose.dev.yml`.

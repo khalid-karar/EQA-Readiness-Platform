@@ -9,6 +9,9 @@
   "resetPasswordAllowed": true,
   "editUsernameAllowed": false,
   "bruteForceProtected": true,
+  "attributes": {
+    "devMfaNote": "DEV ONLY (docker-compose.dev.yml): OTP/MFA not required — demo users sign in with password only. Production enforces MFA."
+  },
   "otpPolicyType": "totp",
   "otpPolicyAlgorithm": "HmacSHA1",
   "otpPolicyInitialCounter": 0,

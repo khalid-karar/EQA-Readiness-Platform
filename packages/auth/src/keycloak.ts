@@ -25,6 +25,11 @@ export interface KeycloakConfig {
   readonly acceptedAmr?: readonly string[];
   /** `acr` values that count as MFA (e.g. a step-up level). Default: none. */
   readonly acceptedAcr?: readonly string[];
+  /**
+   * Dev-only escape hatch: accept tokens with no `amr` claim (local Keycloak
+   * password login). Never enable in production — production enforces MFA.
+   */
+  readonly allowPasswordOnlyWithoutAmr?: boolean;
 }
 
 const DEFAULT_MFA_AMR = ["otp", "totp", "mfa", "hwk", "webauthn", "sms", "pop"];
@@ -112,10 +117,17 @@ function audienceMatches(payload: JWTPayload, expected: string): boolean {
 }
 
 function isMfaSatisfied(payload: JWTPayload, config: KeycloakConfig): boolean {
+  const amr = payload["amr"];
+  if (
+    config.allowPasswordOnlyWithoutAmr &&
+    (amr === undefined || (Array.isArray(amr) && amr.length === 0))
+  ) {
+    return true;
+  }
+
   const accepted = new Set(
     (config.acceptedAmr ?? DEFAULT_MFA_AMR).map((m) => m.toLowerCase()),
   );
-  const amr = payload["amr"];
   if (
     Array.isArray(amr) &&
     amr.some((m) => typeof m === "string" && accepted.has(m.toLowerCase()))

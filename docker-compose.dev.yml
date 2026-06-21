@@ -13,7 +13,8 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: eqa
     ports:
-      - "5432:5432"
+      # Host 5433 avoids conflict with a native Windows Postgres on 5432.
+      - "5433:5432"
     volumes:
       - eqa_postgres_data:/var/lib/postgresql/data
       - ./infra/postgres/init-dev.sql:/docker-entrypoint-initdb.d/01-init-dev.sql:ro
@@ -58,6 +59,8 @@ services:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
       KEYCLOAK_DEMO_USER_PASSWORD: demo
+    volumes:
+      - ./infra/keycloak/bootstrap-dev-realm.sh:/bootstrap-dev-realm.sh:ro
     entrypoint: ["/bin/bash", "-c"]
     command:
       - |
@@ -73,11 +76,9 @@ services:
           fi
           sleep 5
         done
-        for username in cae.demo audit.demo board.demo; do
-          /opt/keycloak/bin/kcadm.sh set-password -r eqa --username "$$username" \
-            --new-password "$${KEYCLOAK_DEMO_USER_PASSWORD}"
-          echo "Password set for $$username"
-        done
+        cp /bootstrap-dev-realm.sh /tmp/bootstrap-dev-realm.sh
+        sed -i 's/\r$//' /tmp/bootstrap-dev-realm.sh
+        bash /tmp/bootstrap-dev-realm.sh
     restart: "no"
 
   clamav:

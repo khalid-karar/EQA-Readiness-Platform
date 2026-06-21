@@ -5,6 +5,9 @@ const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${PORT}`;
 
 export default defineConfig({
   testDir: "./e2e",
+  // The tenant-isolation spec requires real Postgres (no demo fixtures) and runs
+  // ONLY under playwright.realdb.config.ts. Keep it out of the fixture suite.
+  testIgnore: ["**/tenant-isolation.spec.ts"],
   fullyParallel: false,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
@@ -36,6 +39,8 @@ export default defineConfig({
       KEYCLOAK_CLIENT_SECRET: "e2e-test-client-secret",
       AUTH_SESSION_SECRET: "e2e-test-session-secret-32-bytes-min",
       EQA_E2E_TEST_AUTH: "true",
+      EQA_UI_DEMO_FIXTURES: "true",
+      TENANT_ALLOWLIST: "seera-pilot,beta-co",
       PORT: String(PORT),
       NODE_ENV: "production",
     },

@@ -24,6 +24,7 @@ const E2E_CONFIG: OidcConfig = {
 /** Builds an encrypted session cookie for Playwright (EQA_E2E_TEST_AUTH mode). */
 export async function buildE2eSessionCookie(
   role: Role = "cae",
+  tenant = "seera-pilot",
 ): Promise<{
   name: string;
   value: string;
@@ -33,7 +34,7 @@ export async function buildE2eSessionCookie(
   const { getStaticTestProvider } = await import("@eqa/auth/testing/tokens");
   const { privateKey } = await getStaticTestProvider();
   const accessToken = await issueToken(privateKey, {
-    tenant: "seera-pilot",
+    tenant,
     role,
     amr: ["pwd", "otp"],
   });

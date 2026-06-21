@@ -13,6 +13,7 @@ out/
 coverage/
 .vitest/
 apps/web/test-results/
+apps/web/test-results-realdb/
 apps/web/playwright-report/
 
 # Pinned Chromium cache (provisioned at install/image-build — see packages/workflows/CHROMIUM.md)

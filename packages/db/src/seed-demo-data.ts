@@ -48,6 +48,7 @@ import { createTenantRepositories } from "./repositories";
 import { contextOf, sessionFor } from "./testing/fixtures";
 
 const SEED_MARKER = "seera-pilot-demo-data-v2";
+const BETA_CO_SEED_MARKER = "beta-co-demo-data-v1";
 const PDF_BYTES = Buffer.from("%PDF-1.7 synthetic seera demo seed");
 const SIGNER_SECRET = "synthetic-seed-url-signer";
 const EVIDENCE_CONFIG = {
@@ -347,4 +348,30 @@ export async function seedSeeraPilotDemoData(
 
   await cae.kv.set(SEED_MARKER, "done");
   void createSeeraDemoAssessmentName();
+}
+
+/**
+ * Idempotently seeds the smallest distinguishable synthetic beta-co dashboard
+ * data. The only seeded workflow row is a single item moved to
+ * `evidence_requested`, which the dashboard surfaces in "What's Next" as a
+ * "standard(s) need evidence" action. The Seera-pilot seed never leaves any
+ * item in `evidence_requested`, so this action is a beta-co-only marker that
+ * exists solely in beta-co's Postgres schema (synthetic data only — rule 5).
+ */
+export async function seedBetaCoDemoData(
+  db: Database,
+  tenant: TenantDescriptor,
+): Promise<void> {
+  const cae = createTenantRepositories(db, sessionFor(contextOf(tenant), "cae"));
+  if ((await cae.kv.get(BETA_CO_SEED_MARKER)) === "done") {
+    return;
+  }
+
+  await cae.itemStatus.transition({
+    assessmentId: SEERA_DEMO_ASSESSMENT_ID,
+    questionId: SEERA_DEMO_QUESTIONS.ETHICS_CHARTER,
+    to: "evidence_requested",
+  });
+
+  await cae.kv.set(BETA_CO_SEED_MARKER, "done");
 }

@@ -10,6 +10,12 @@ export const SEERA_PILOT = {
   name: "Seera-pilot",
 } as const;
 
+/** Synthetic beta tenant used for tenant-isolation checks. */
+export const BETA_CO = {
+  slug: "beta-co",
+  name: "Beta Co",
+} as const;
+
 /**
  * Idempotently seeds the synthetic "Seera-pilot" tenant: runs shared
  * migrations, then creates the tenant (registry row + tenant schema + wrapped
@@ -29,5 +35,27 @@ export async function seedSeeraPilot(
   return registry.createTenant({
     slug: SEERA_PILOT.slug,
     name: SEERA_PILOT.name,
+  });
+}
+
+/**
+ * Idempotently seeds the synthetic "Beta Co" tenant: runs shared migrations,
+ * then creates the tenant (registry row + tenant schema + wrapped data key) if
+ * it does not already exist.
+ */
+export async function seedBetaCo(
+  db: Database,
+  kms: Kms,
+): Promise<TenantDescriptor> {
+  await migrateShared(db);
+  const registry = new TenantRegistry(db, kms);
+
+  const existing = await registry.findBySlug(BETA_CO.slug);
+  if (existing) {
+    return existing;
+  }
+  return registry.createTenant({
+    slug: BETA_CO.slug,
+    name: BETA_CO.name,
   });
 }

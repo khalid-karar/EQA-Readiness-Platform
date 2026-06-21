@@ -51,8 +51,8 @@ export { createGapFlagSink } from "./gap-flag-system";
 // Re-exported for ergonomics: the audit reader returns these types.
 export type { AuditEntry, VerifyResult } from "@eqa/audit-log";
 
-export { seedSeeraPilot, SEERA_PILOT } from "./seed";
-export { seedSeeraPilotDemoData } from "./seed-demo-data";
+export { seedBetaCo, seedSeeraPilot, BETA_CO, SEERA_PILOT } from "./seed";
+export { seedBetaCoDemoData, seedSeeraPilotDemoData } from "./seed-demo-data";
 
 export {
   assertUiSession,

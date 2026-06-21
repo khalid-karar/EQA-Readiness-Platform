@@ -11,6 +11,7 @@ export type AppPageId =
   | "assessment"
   | "evidence"
   | "findings"
+  | "engagements"
   | "working-papers"
   | "remediation"
   | "mock-eqa"
@@ -55,6 +56,14 @@ const PAGE_META: Record<AppPageId, PageMetaEntry> = {
       "AI draft findings awaiting human disposition before final conclusions.",
     descriptionAr:
       "مسودات النتائج من الذكاء الاصطناعي بانتظار المراجعة البشرية.",
+  },
+  engagements: {
+    titleEn: "Engagements & admin actions",
+    titleAr: "المهام والإجراءات الإدارية",
+    descriptionEn:
+      "Staff entry for sampled engagements, working-paper tests, and admin simulation/export actions.",
+    descriptionAr:
+      "مدخل الموظفين للمهام المختارة واختبارات أوراق العمل وإجراءات المحاكاة/التصدير.",
   },
   "working-papers": {
     titleEn: "Working-paper review",

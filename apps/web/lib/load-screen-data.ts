@@ -9,7 +9,9 @@ import {
   createMockEqaLoader,
   createRemediationLoader,
   createWorkingPapersLoader,
+  createEngagementsLoader,
   type AssessmentLoadResult,
+  type EngagementsLoadResult,
   type EvidenceLoadResult,
   type EvidencePackLoadResult,
   type FindingsLoadResult,
@@ -93,6 +95,17 @@ export async function loadWorkingPapersData(
     return "demo";
   }
   return createWorkingPapersLoader(getAppDatabase()).load(session, locale, role);
+}
+
+export async function loadEngagementsData(
+  session: AuthSession,
+  locale: Locale,
+  role: DashboardRole,
+): Promise<EngagementsLoadResult | "demo"> {
+  if (!useDatabaseReads()) {
+    return "demo";
+  }
+  return createEngagementsLoader(getAppDatabase()).load(session, locale, role);
 }
 
 export async function loadMockEqaData(

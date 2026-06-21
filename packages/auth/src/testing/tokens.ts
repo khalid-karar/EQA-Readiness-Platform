@@ -17,6 +17,7 @@ export interface TestProvider {
 export async function createTestProvider(opts?: {
   acceptedAmr?: readonly string[];
   acceptedAcr?: readonly string[];
+  allowPasswordOnlyWithoutAmr?: boolean;
 }): Promise<TestProvider> {
   const { publicKey, privateKey } = await generateKeyPair("RS256");
   const config: KeycloakConfig = {
@@ -24,6 +25,9 @@ export async function createTestProvider(opts?: {
     audience: TEST_AUDIENCE,
     ...(opts?.acceptedAmr ? { acceptedAmr: opts.acceptedAmr } : {}),
     ...(opts?.acceptedAcr ? { acceptedAcr: opts.acceptedAcr } : {}),
+    ...(opts?.allowPasswordOnlyWithoutAmr
+      ? { allowPasswordOnlyWithoutAmr: opts.allowPasswordOnlyWithoutAmr }
+      : {}),
   };
   return {
     provider: new KeycloakIdentityProvider(publicKey, config),

@@ -26,6 +26,8 @@ export default tseslint.config(
       "packages/workflows/.chromium-cache/**",
       // Violation fixture for standing-rules-conformance.test.ts (linted ad hoc).
       "apps/web/__conformance-fixtures__/**",
+      // Browser service worker script (runs in SW global scope, not Node).
+      "apps/web/public/sw.js",
     ],
   },
 

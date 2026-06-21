@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Noto_Sans_Arabic } from "next/font/google";
 import type { ReactNode } from "react";
+import { ServiceWorkerRegister } from "@/components/service-worker-register";
 import { MAYA_AI_MARK_SRC } from "@/lib/brand-assets";
 import { SITE_NAME_EN } from "@/lib/page-metadata";
 import { readRequestLocale } from "@/lib/request-locale";
@@ -51,7 +52,10 @@ export default async function RootLayout({
       suppressHydrationWarning
       className={`${inter.variable} ${notoArabic.variable}`}
     >
-      <body className="min-h-screen font-sans">{children}</body>
+      <body className="min-h-screen font-sans">
+        <ServiceWorkerRegister />
+        {children}
+      </body>
     </html>
   );
 }

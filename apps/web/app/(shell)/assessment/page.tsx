@@ -3,6 +3,7 @@ import { requireServerSession } from "@/lib/auth/get-server-session";
 import { resolvePageLocaleAndRole } from "@/lib/auth/page-context";
 import { metadataForShellPage } from "@/lib/page-metadata";
 import { loadAssessmentData } from "@/lib/load-screen-data";
+import { isRealWritesEnabled } from "@/lib/real-writes";
 import {
   buildAssessmentPresentation,
   buildAssessmentPresentationFromLoad,
@@ -31,5 +32,10 @@ export default async function AssessmentPage({
       ? buildAssessmentPresentation(locale, role)
       : buildAssessmentPresentationFromLoad(data);
 
-  return <AssessmentClient presentation={presentation} />;
+  return (
+    <AssessmentClient
+      presentation={presentation}
+      realWritesEnabled={isRealWritesEnabled()}
+    />
+  );
 }

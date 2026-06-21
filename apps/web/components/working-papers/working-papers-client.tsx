@@ -19,6 +19,7 @@ import { uiLabel } from "@/lib/ui-labels";
 
 interface WorkingPapersClientProps {
   presentation: WorkingPapersPresentation;
+  realWritesEnabled: boolean;
 }
 
 function conformancePillVariant(
@@ -32,10 +33,11 @@ function conformancePillVariant(
 
 function WorkingPapersClientInner({
   presentation,
+  realWritesEnabled,
 }: WorkingPapersClientProps): ReactNode {
   const searchParams = useSearchParams();
   const { locale, isSummaryView } = presentation;
-  const { rows, loading, error } = useDemoTableState(
+  const { rows, loading, error, setRows } = useDemoTableState(
     presentation.items,
     uiLabel("wpErrorDemo", locale),
   );
@@ -150,6 +152,41 @@ function WorkingPapersClientInner({
         ]
       : [];
 
+  const handleRecorded = useCallback(
+    (
+      itemId: string,
+      conformance: PresentedWorkingPaperItem["conformance"],
+      note: string | null,
+    ) => {
+      setRows((prev) =>
+        prev.map((row) => {
+          if (row.id !== itemId) return row;
+          const labelEn =
+            conformance === "conformant"
+              ? uiLabel("wpConformantLabel", "en")
+              : conformance === "non_conformant"
+                ? uiLabel("wpNonConformantLabel", "en")
+                : uiLabel("wpPartialLabel", "en");
+          const labelAr =
+            conformance === "conformant"
+              ? uiLabel("wpConformantLabel", "ar")
+              : conformance === "non_conformant"
+                ? uiLabel("wpNonConformantLabel", "ar")
+                : uiLabel("wpPartialLabel", "ar");
+          return {
+            ...row,
+            conformance,
+            conformanceLabelEn: labelEn,
+            conformanceLabelAr: labelAr,
+            note,
+            recordedAt: new Date().toISOString(),
+          };
+        }),
+      );
+    },
+    [setRows],
+  );
+
   const engagementTitle =
     locale === "ar"
       ? presentation.engagementTitleAr
@@ -248,6 +285,8 @@ function WorkingPapersClientInner({
         onOpenChange={setSheetOpen}
         locale={locale}
         isSummaryView={isSummaryView}
+        realWritesEnabled={realWritesEnabled}
+        onRecorded={handleRecorded}
       />
     </div>
   );

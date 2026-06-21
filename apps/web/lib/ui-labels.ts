@@ -437,8 +437,18 @@ export const UI_LABELS: LabelSet = {
     ar: "أكمل التقييم الذاتي للمعايير المتبقية",
   },
   assessmentBoardHint: {
-    en: "Board view — questionnaire responses are read-only.",
-    ar: "عرض المجلس — استجابات الاستبيان للقراءة فقط.",
+    en: "Board view — self-assessment responses are read-only.",
+    ar: "عرض المجلس — استجابات التقييم الذاتي للقراءة فقط.",
+  },
+  assessmentSubmit: { en: "Submit response", ar: "إرسال الاستجابة" },
+  assessmentSubmitSuccess: {
+    en: "Response recorded",
+    ar: "تم تسجيل الاستجابة",
+  },
+  assessmentNoteLabel: { en: "Note (optional)", ar: "ملاحظة (اختياري)" },
+  assessmentSelectLevel: {
+    en: "Select rubric level",
+    ar: "اختر مستوى المعيار",
   },
   findingsTitle: { en: "Findings & human review", ar: "النتائج والمراجعة البشرية" },
   findingsSubtitle: {
@@ -597,6 +607,11 @@ export const UI_LABELS: LabelSet = {
     en: "Conformance is recorded against the pinned Step 5 checklist version.",
     ar: "يُسجَّل المطابقة مقابل نسخة قائمة الفحص المثبتة من الخطوة 5.",
   },
+  wpRecordSuccess: {
+    en: "Conformance recorded",
+    ar: "تم تسجيل المطابقة",
+  },
+  wpConformanceSelect: { en: "Conformance", ar: "المطابقة" },
   wpUnreviewedGate: {
     en: "Unreviewed items block methodology clearance and drive readiness penalties until reviewed.",
     ar: "العناصر غير المراجَعة تمنع إغلاق المنهجية وتخفض الجاهزية حتى تُراجَع.",

@@ -79,3 +79,5 @@ export {
   type EvidencePackLoader,
   type EvidencePackLoadResult,
 } from "./ui-loaders";
+
+export { createUiActionHandlers } from "./ui-action-system";

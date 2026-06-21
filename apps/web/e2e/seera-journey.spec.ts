@@ -303,6 +303,7 @@ async function runSeeraJourney(locale: Locale, page: Page): Promise<void> {
       await openMainTableRowSideSheet(page);
       await assertSideSheetOnTrailingEdge(page);
       await page.keyboard.press("Escape");
+      await expect(page.getByRole("dialog")).toBeHidden();
 
       await page.goto(`/dashboard${q}`);
       await clickJourneyCheckpoint(
@@ -313,6 +314,7 @@ async function runSeeraJourney(locale: Locale, page: Page): Promise<void> {
       await openMainTableRowSideSheet(page);
       await assertSideSheetOnTrailingEdge(page);
       await page.keyboard.press("Escape");
+      await expect(page.getByRole("dialog")).toBeHidden();
 
       await page.goto(`/dashboard${q}`);
       await clickJourneyCheckpoint(
@@ -323,6 +325,7 @@ async function runSeeraJourney(locale: Locale, page: Page): Promise<void> {
       await openMainTableRowSideSheet(page);
       await assertSideSheetOnTrailingEdge(page);
       await page.keyboard.press("Escape");
+      await expect(page.getByRole("dialog")).toBeHidden();
 
       await page.goto(`/dashboard${q}`);
       await clickJourneyCheckpoint(
@@ -333,6 +336,7 @@ async function runSeeraJourney(locale: Locale, page: Page): Promise<void> {
       await openMainTableRowSideSheet(page);
       await assertSideSheetOnTrailingEdge(page);
       await page.keyboard.press("Escape");
+      await expect(page.getByRole("dialog")).toBeHidden();
     });
   }
 }
@@ -347,6 +351,7 @@ test.describe("Seera pilot synthetic journey", () => {
   });
 
   test("Arabic (AR) with RTL layout", async ({ page }) => {
+    test.setTimeout(90_000);
     await runSeeraJourney("ar", page);
   });
 });

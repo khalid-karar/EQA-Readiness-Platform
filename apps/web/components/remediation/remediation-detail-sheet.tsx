@@ -24,6 +24,7 @@ import { StatusPill, readinessVariantFromLevel } from "@/components/ui/status-pi
 import { RemediationLifecycle } from "@/components/remediation/remediation-lifecycle";
 import { overdueDaysLabel } from "@/lib/remediation-display";
 import type { PresentedRemediationRow } from "@/lib/present-remediation";
+import { postUiAction } from "@/lib/ui-action-client";
 import { uiLabel } from "@/lib/ui-labels";
 import { uxStatusLevel } from "@/lib/status-level";
 import { useToast } from "@/hooks/use-toast";
@@ -35,6 +36,7 @@ interface RemediationDetailSheetProps {
   locale: "en" | "ar";
   isSummaryView: boolean;
   canOperate: boolean;
+  realWritesEnabled: boolean;
   statusLabel: string;
   onStatusChange: (remediationId: string, status: ItemStatus) => void;
 }
@@ -50,11 +52,14 @@ export function RemediationDetailSheet({
   locale,
   isSummaryView,
   canOperate,
+  realWritesEnabled,
   statusLabel,
   onStatusChange,
 }: RemediationDetailSheetProps): ReactNode {
   const { toast } = useToast();
   const [actionError, setActionError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [retestNote, setRetestNote] = useState("");
 
   const applyTransition = useCallback(
     (nextStatus: ItemStatus) => {
@@ -73,26 +78,41 @@ export function RemediationDetailSheet({
   );
 
   const runAction = useCallback(
-    (action: "start" | "ready" | "pass" | "fail") => {
+    async (action: "start" | "ready" | "pass" | "fail") => {
       if (!row) return;
       setActionError(null);
+      setSubmitting(true);
       try {
-        let transition;
-        switch (action) {
-          case "start":
-            transition = resolveAssignRemediation(row.itemStatus);
-            break;
-          case "ready":
-            transition = resolveReadyForRetest(row.itemStatus);
-            break;
-          case "pass":
-            transition = resolveRetestPass(row.itemStatus);
-            break;
-          case "fail":
-            transition = resolveRetestFail(row.itemStatus);
-            break;
+        if (realWritesEnabled) {
+          const result = await postUiAction<{ itemStatus: ItemStatus }>(
+            "/api/actions/remediation",
+            {
+              remediationId: row.remediationId,
+              transition: action,
+              ...(action === "fail" && retestNote
+                ? { retestNote }
+                : {}),
+            },
+          );
+          applyTransition(result.itemStatus);
+        } else {
+          let transition;
+          switch (action) {
+            case "start":
+              transition = resolveAssignRemediation(row.itemStatus);
+              break;
+            case "ready":
+              transition = resolveReadyForRetest(row.itemStatus);
+              break;
+            case "pass":
+              transition = resolveRetestPass(row.itemStatus);
+              break;
+            case "fail":
+              transition = resolveRetestFail(row.itemStatus);
+              break;
+          }
+          applyTransition(transition.to);
         }
-        applyTransition(transition.to);
       } catch (error) {
         const message =
           error instanceof Error
@@ -104,9 +124,11 @@ export function RemediationDetailSheet({
           title: uiLabel("remediationActionError", locale),
           description: message,
         });
+      } finally {
+        setSubmitting(false);
       }
     },
-    [row, locale, applyTransition, toast],
+    [row, locale, applyTransition, realWritesEnabled, retestNote, toast],
   );
 
   if (!row) return null;
@@ -229,32 +251,60 @@ export function RemediationDetailSheet({
           ) : null}
 
           {canOperate && !closed ? (
-            <div className="flex flex-wrap gap-2 border-t pt-4">
-              {row.itemStatus === "gap_confirmed" ? (
-                <Button type="button" size="sm" onClick={() => runAction("start")}>
-                  {uiLabel("remediationStart", locale)}
-                </Button>
-              ) : null}
-              {row.itemStatus === "remediation_in_progress" ? (
-                <Button type="button" size="sm" onClick={() => runAction("ready")}>
-                  {uiLabel("remediationMarkReady", locale)}
-                </Button>
-              ) : null}
+            <div className="space-y-3 border-t pt-4">
               {row.itemStatus === "ready_for_retest" ? (
-                <>
-                  <Button type="button" size="sm" onClick={() => runAction("pass")}>
-                    {uiLabel("remediationRetestPass", locale)}
-                  </Button>
+                <textarea
+                  value={retestNote}
+                  onChange={(e) => setRetestNote(e.target.value)}
+                  rows={2}
+                  className="w-full rounded-md border border-input bg-surface px-3 py-2 text-sm"
+                  placeholder={uiLabel("remediationRetestNoteTitle", locale)}
+                  aria-label={uiLabel("remediationRetestNoteTitle", locale)}
+                />
+              ) : null}
+              <div className="flex flex-wrap gap-2">
+                {row.itemStatus === "gap_confirmed" ? (
                   <Button
                     type="button"
                     size="sm"
-                    variant="outline"
-                    onClick={() => runAction("fail")}
+                    disabled={submitting}
+                    onClick={() => runAction("start")}
                   >
-                    {uiLabel("remediationRetestFail", locale)}
+                    {uiLabel("remediationStart", locale)}
                   </Button>
-                </>
-              ) : null}
+                ) : null}
+                {row.itemStatus === "remediation_in_progress" ? (
+                  <Button
+                    type="button"
+                    size="sm"
+                    disabled={submitting}
+                    onClick={() => runAction("ready")}
+                  >
+                    {uiLabel("remediationMarkReady", locale)}
+                  </Button>
+                ) : null}
+                {row.itemStatus === "ready_for_retest" ? (
+                  <>
+                    <Button
+                      type="button"
+                      size="sm"
+                      disabled={submitting}
+                      onClick={() => runAction("pass")}
+                    >
+                      {uiLabel("remediationRetestPass", locale)}
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      disabled={submitting}
+                      onClick={() => runAction("fail")}
+                    >
+                      {uiLabel("remediationRetestFail", locale)}
+                    </Button>
+                  </>
+                ) : null}
+              </div>
             </div>
           ) : null}
         </SideSheetBody>

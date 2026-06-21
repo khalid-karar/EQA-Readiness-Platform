@@ -16,6 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { StatusPill } from "@/components/ui/status-pill";
 import type { PresentedFinding, PresentedFindingStatus } from "@/lib/present-findings";
+import { postUiAction } from "@/lib/ui-action-client";
 import { uiLabel } from "@/lib/ui-labels";
 import { useToast } from "@/hooks/use-toast";
 
@@ -25,6 +26,7 @@ interface FindingDetailSheetProps {
   onOpenChange: (open: boolean) => void;
   locale: "en" | "ar";
   canReview: boolean;
+  realWritesEnabled: boolean;
   onResolved: (findingId: string, status: PresentedFindingStatus, conclusion: string | null) => void;
 }
 
@@ -42,12 +44,14 @@ export function FindingDetailSheet({
   onOpenChange,
   locale,
   canReview,
+  realWritesEnabled,
   onResolved,
 }: FindingDetailSheetProps): ReactNode {
   const { toast } = useToast();
   const [editText, setEditText] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (finding?.draft) {
@@ -58,22 +62,37 @@ export function FindingDetailSheet({
   }, [finding]);
 
   const applyAction = useCallback(
-    (action: ReviewAction) => {
+    async (action: ReviewAction) => {
       if (!finding?.draft) return;
       setActionError(null);
+      setSubmitting(true);
       try {
-        const outcome = resolveHumanReview(
-          finding.draft,
-          action,
-          action === "edit_accept" ? editText : undefined,
-        );
-        const newStatus: PresentedFindingStatus =
-          outcome.finalConclusion ? "gap_confirmed" : "no_gap";
-        onResolved(
-          finding.findingId,
-          newStatus,
-          outcome.finalConclusion?.conclusion ?? null,
-        );
+        let newStatus: PresentedFindingStatus;
+        let conclusion: string | null;
+
+        if (realWritesEnabled) {
+          const result = await postUiAction<{
+            finalConclusion: string | null;
+            itemStatus: string;
+          }>("/api/actions/human-review", {
+            findingId: finding.findingId,
+            action,
+            ...(action === "edit_accept" ? { editedConclusion: editText } : {}),
+          });
+          newStatus =
+            result.itemStatus === "gap_confirmed" ? "gap_confirmed" : "no_gap";
+          conclusion = result.finalConclusion;
+        } else {
+          const outcome = resolveHumanReview(
+            finding.draft,
+            action,
+            action === "edit_accept" ? editText : undefined,
+          );
+          newStatus = outcome.finalConclusion ? "gap_confirmed" : "no_gap";
+          conclusion = outcome.finalConclusion?.conclusion ?? null;
+        }
+
+        onResolved(finding.findingId, newStatus, conclusion);
         toast({
           variant: newStatus === "gap_confirmed" ? "warning" : "success",
           title: uiLabel("findingActionSuccess", locale),
@@ -92,9 +111,19 @@ export function FindingDetailSheet({
           title: uiLabel("findingActionError", locale),
           description: message,
         });
+      } finally {
+        setSubmitting(false);
       }
     },
-    [finding, editText, locale, onOpenChange, onResolved, toast],
+    [
+      finding,
+      editText,
+      locale,
+      onOpenChange,
+      onResolved,
+      realWritesEnabled,
+      toast,
+    ],
   );
 
   if (!finding) return null;
@@ -206,6 +235,7 @@ export function FindingDetailSheet({
               <Button
                 type="button"
                 size="sm"
+                disabled={submitting}
                 onClick={() => applyAction("accept")}
               >
                 {uiLabel("findingAccept", locale)}
@@ -214,6 +244,7 @@ export function FindingDetailSheet({
                 type="button"
                 size="sm"
                 variant="outline"
+                disabled={submitting}
                 onClick={() => {
                   if (isEditing) {
                     applyAction("edit_accept");
@@ -230,6 +261,7 @@ export function FindingDetailSheet({
                 type="button"
                 size="sm"
                 variant="ghost"
+                disabled={submitting}
                 onClick={() => applyAction("reject")}
               >
                 {uiLabel("findingReject", locale)}

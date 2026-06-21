@@ -269,14 +269,9 @@ export async function seedSeeraPilotDemoData(
     targetDate: coiRemediation?.targetDate ?? "2026-08-15",
   });
 
-  // COI declarations — AI draft awaiting human review.
+  // COI declarations — AI draft awaiting human review (must stay ai_flagged).
   await submitEvidence(COI_DECLARATIONS, [OBJECTIVITY, COI_DECLARATIONS]);
   await runAiGapFlag(COI_DECLARATIONS, OBJECTIVITY);
-  await cae.itemStatus.transition({
-    assessmentId: SEERA_DEMO_ASSESSMENT_ID,
-    questionId: COI_DECLARATIONS,
-    to: "under_human_review",
-  });
 
   // Functional reporting — evidence submitted, remediation plan recorded separately in UI fixtures.
   await submitEvidence(FUNCTIONAL_REPORTING, [

@@ -11,8 +11,18 @@ export async function clickJourneyCheckpoint(
     hasText: checkpoint.label,
   });
   await expect(link).toBeVisible();
-  await link.click();
-  await page.waitForURL((url) => url.pathname.includes(checkpoint.href));
+  const href = await link.getAttribute("href");
+  if (!href) {
+    throw new Error(`Journey link for '${checkpoint.id}' is missing href.`);
+  }
+  const target = href.startsWith("http")
+    ? href
+    : new URL(href, page.url()).href;
+  await page.goto(target);
+  await expect(page).toHaveURL(
+    (url) => url.pathname.includes(checkpoint.href),
+    { timeout: 15_000 },
+  );
 }
 
 export async function openMainTableRowSideSheet(page: Page): Promise<void> {

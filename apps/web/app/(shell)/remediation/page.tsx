@@ -3,6 +3,7 @@ import { requireServerSession } from "@/lib/auth/get-server-session";
 import { resolvePageLocaleAndRole } from "@/lib/auth/page-context";
 import { metadataForShellPage } from "@/lib/page-metadata";
 import { loadRemediationTrackerView } from "@/lib/load-screen-data";
+import { isRealWritesEnabled } from "@/lib/real-writes";
 import {
   buildRemediationPresentation,
   buildRemediationPresentationFromView,
@@ -31,5 +32,10 @@ export default async function RemediationPage({
       ? buildRemediationPresentation(locale, role)
       : buildRemediationPresentationFromView(view);
 
-  return <RemediationClient presentation={presentation} />;
+  return (
+    <RemediationClient
+      presentation={presentation}
+      realWritesEnabled={isRealWritesEnabled()}
+    />
+  );
 }

@@ -223,6 +223,22 @@ export {
 } from "./readiness-dashboard";
 export { createSyntheticDashboardInput } from "./synthetic-dashboard";
 export {
+  SUBMIT_RESPONSE_JOB,
+  HUMAN_REVIEW_JOB,
+  RECORD_CONFORMANCE_JOB,
+  REMEDIATION_TRANSITION_JOB,
+  createSubmitResponseHandler,
+  createHumanReviewHandler,
+  createRecordConformanceHandler,
+  createRemediationTransitionHandler,
+  type ActingUserRef,
+  type SubmitResponseJobPayload,
+  type HumanReviewJobPayload,
+  type RecordConformanceJobPayload,
+  type RemediationTransitionJobPayload,
+  type RemediationTransitionKind,
+} from "./ui-action-jobs";
+export {
   allowedTransitions,
   assertItemStatus,
   assertTransition,

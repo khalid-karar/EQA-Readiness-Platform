@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@eqa/ai": "workspace:*",
+    "@eqa/auth": "workspace:*",
     "@eqa/content": "workspace:*",
     "@eqa/jobs": "workspace:*",
     "@eqa/tenant": "workspace:*",

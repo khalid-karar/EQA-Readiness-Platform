@@ -3,6 +3,7 @@ import { requireServerSession } from "@/lib/auth/get-server-session";
 import { resolvePageLocaleAndRole } from "@/lib/auth/page-context";
 import { metadataForShellPage } from "@/lib/page-metadata";
 import { loadFindingsData } from "@/lib/load-screen-data";
+import { isRealWritesEnabled } from "@/lib/real-writes";
 import {
   buildFindingsPresentation,
   buildFindingsPresentationFromLoad,
@@ -31,5 +32,10 @@ export default async function FindingsPage({
       ? buildFindingsPresentation(locale, role)
       : buildFindingsPresentationFromLoad(data);
 
-  return <FindingsClient presentation={presentation} />;
+  return (
+    <FindingsClient
+      presentation={presentation}
+      realWritesEnabled={isRealWritesEnabled()}
+    />
+  );
 }

@@ -30,6 +30,7 @@ const DEMO_REFERENCE_DATE = "2026-06-19T12:00:00.000Z";
 
 interface RemediationClientProps {
   presentation: RemediationPresentation;
+  realWritesEnabled: boolean;
 }
 
 function isClosedStatus(status: ItemStatus): boolean {
@@ -38,6 +39,7 @@ function isClosedStatus(status: ItemStatus): boolean {
 
 function RemediationClientInner({
   presentation,
+  realWritesEnabled,
 }: RemediationClientProps): ReactNode {
   const searchParams = useSearchParams();
   const {
@@ -332,6 +334,7 @@ function RemediationClientInner({
         locale={locale}
         isSummaryView={isSummaryView}
         canOperate={canOperate}
+        realWritesEnabled={realWritesEnabled}
         statusLabel={
           selected ? statusLabels[selected.itemStatus] : ""
         }

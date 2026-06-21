@@ -3,6 +3,7 @@ import { requireServerSession } from "@/lib/auth/get-server-session";
 import { resolvePageLocaleAndRole } from "@/lib/auth/page-context";
 import { metadataForShellPage } from "@/lib/page-metadata";
 import { loadWorkingPapersData } from "@/lib/load-screen-data";
+import { isRealWritesEnabled } from "@/lib/real-writes";
 import {
   buildWorkingPapersPresentation,
   buildWorkingPapersPresentationFromLoad,
@@ -31,5 +32,10 @@ export default async function WorkingPapersPage({
       ? buildWorkingPapersPresentation(locale, role)
       : buildWorkingPapersPresentationFromLoad(data);
 
-  return <WorkingPapersClient presentation={presentation} />;
+  return (
+    <WorkingPapersClient
+      presentation={presentation}
+      realWritesEnabled={isRealWritesEnabled()}
+    />
+  );
 }

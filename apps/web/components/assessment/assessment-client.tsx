@@ -20,14 +20,16 @@ import { uiLabel } from "@/lib/ui-labels";
 
 interface AssessmentClientProps {
   presentation: AssessmentPresentation;
+  realWritesEnabled: boolean;
 }
 
 function AssessmentClientInner({
   presentation,
+  realWritesEnabled,
 }: AssessmentClientProps): ReactNode {
   const searchParams = useSearchParams();
   const { locale, isSummaryView } = presentation;
-  const { rows, loading, error } = useDemoTableState(
+  const { rows, loading, error, setRows } = useDemoTableState(
     presentation.standards,
     uiLabel("assessmentErrorDemo", locale),
   );
@@ -134,6 +136,22 @@ function AssessmentClientInner({
     setSheetOpen(true);
   }, []);
 
+  const handleResponseSubmitted = useCallback(
+    (questionId: string, answer: string, note: string | null) => {
+      setRows((prev) =>
+        prev.map((standard) => ({
+          ...standard,
+          questions: standard.questions.map((q) =>
+            q.questionId === questionId
+              ? { ...q, answer, note, respondedAt: new Date().toISOString() }
+              : q,
+          ),
+        })),
+      );
+    },
+    [setRows],
+  );
+
   const notStartedCount = rows.filter((s) =>
     s.questions.every((q) => q.status === "not_assessed"),
   ).length;
@@ -218,6 +236,7 @@ function AssessmentClientInner({
       </div>
 
       <QuestionDetailSheet
+        assessmentId={presentation.assessmentId}
         standard={selected}
         selectedQuestionId={selectedQuestionId}
         onQuestionSelect={setSelectedQuestionId}
@@ -225,6 +244,8 @@ function AssessmentClientInner({
         onOpenChange={setSheetOpen}
         locale={locale}
         isSummaryView={isSummaryView}
+        realWritesEnabled={realWritesEnabled}
+        onResponseSubmitted={handleResponseSubmitted}
       />
     </div>
   );

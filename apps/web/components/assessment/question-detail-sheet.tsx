@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useCallback, useState, type ReactNode } from "react";
 import {
   SideSheet,
   SideSheetBody,
@@ -14,11 +14,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { StatusPill, readinessVariantFromLevel } from "@/components/ui/status-pill";
 import type { PresentedAssessmentStandard } from "@/lib/present-assessment";
+import { postUiAction } from "@/lib/ui-action-client";
 import { uxStatusLevel } from "@/lib/status-level";
 import { uiLabel } from "@/lib/ui-labels";
+import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
 interface QuestionDetailSheetProps {
+  assessmentId: string;
   standard: PresentedAssessmentStandard | null;
   selectedQuestionId: string | null;
   onQuestionSelect: (questionId: string) => void;
@@ -26,9 +29,16 @@ interface QuestionDetailSheetProps {
   onOpenChange: (open: boolean) => void;
   locale: "en" | "ar";
   isSummaryView: boolean;
+  realWritesEnabled: boolean;
+  onResponseSubmitted: (
+    questionId: string,
+    answer: string,
+    note: string | null,
+  ) => void;
 }
 
 export function QuestionDetailSheet({
+  assessmentId,
   standard,
   selectedQuestionId,
   onQuestionSelect,
@@ -36,19 +46,77 @@ export function QuestionDetailSheet({
   onOpenChange,
   locale,
   isSummaryView,
+  realWritesEnabled,
+  onResponseSubmitted,
 }: QuestionDetailSheetProps): ReactNode {
-  if (!standard) return null;
+  const { toast } = useToast();
+  const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
+  const [note, setNote] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const question =
-    standard.questions.find((q) => q.questionId === selectedQuestionId) ??
-    standard.questions[0] ??
+    standard?.questions.find((q) => q.questionId === selectedQuestionId) ??
+    standard?.questions[0] ??
     null;
 
-  if (!question) return null;
+  const handleSubmit = useCallback(async () => {
+    if (!question || !selectedLevel) return;
+    setActionError(null);
+    setSubmitting(true);
+    try {
+      if (realWritesEnabled) {
+        await postUiAction("/api/actions/submit-response", {
+          assessmentId,
+          questionId: question.questionId,
+          answer: selectedLevel,
+          ...(note ? { note } : {}),
+          pin: {
+            contentPackId: question.pinPackId,
+            version: question.pinVersion,
+            contentHash: question.pinHash,
+          },
+        });
+      }
+      onResponseSubmitted(question.questionId, selectedLevel, note || null);
+      toast({
+        variant: "success",
+        title: uiLabel("assessmentSubmitSuccess", locale),
+      });
+      setNote("");
+      setSelectedLevel(null);
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : uiLabel("assessmentErrorDemo", locale);
+      setActionError(message);
+      toast({
+        variant: "destructive",
+        title: uiLabel("assessmentErrorDemo", locale),
+        description: message,
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  }, [
+    assessmentId,
+    locale,
+    note,
+    onResponseSubmitted,
+    question,
+    realWritesEnabled,
+    selectedLevel,
+    toast,
+  ]);
+
+  if (!standard || !question) return null;
 
   const statusLabel =
     locale === "ar" ? question.statusLabelAr : question.statusLabelEn;
   const pinLabel = locale === "ar" ? question.pinLabelAr : question.pinLabelEn;
+  const canSubmit =
+    !isSummaryView && question.rubric.length > 0 && (realWritesEnabled || !question.answer);
 
   return (
     <SideSheet open={open} onOpenChange={onOpenChange}>
@@ -70,7 +138,11 @@ export function QuestionDetailSheet({
 
         <SideSheetBody className="space-y-6">
           {standard.questions.length > 1 ? (
-            <div className="flex flex-wrap gap-2" role="tablist" aria-label={uiLabel("questionItems", locale)}>
+            <div
+              className="flex flex-wrap gap-2"
+              role="tablist"
+              aria-label={uiLabel("questionItems", locale)}
+            >
               {standard.questions.map((q) => {
                 const active = q.questionId === question.questionId;
                 const label =
@@ -146,20 +218,27 @@ export function QuestionDetailSheet({
               </p>
               <ul className="space-y-2">
                 {question.rubric.map((level) => (
-                  <li
-                    key={level.level}
-                    className={cn(
-                      "rounded-md border px-3 py-2 text-sm",
-                      question.answer === String(level.level) &&
-                        "border-brand-gold/50 bg-brand-gold/5",
-                    )}
-                  >
-                    <p className="font-medium tabular-nums">
-                      {level.level} — {level.label}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {level.descriptor}
-                    </p>
+                  <li key={level.level}>
+                    <button
+                      type="button"
+                      disabled={!canSubmit || submitting}
+                      onClick={() => setSelectedLevel(String(level.level))}
+                      className={cn(
+                        "w-full rounded-md border px-3 py-2 text-sm text-start transition-colors",
+                        selectedLevel === String(level.level) &&
+                          "border-brand-gold/50 bg-brand-gold/5",
+                        question.answer === String(level.level) &&
+                          "border-brand-gold/30",
+                        canSubmit && "hover:bg-muted/50",
+                      )}
+                    >
+                      <p className="font-medium tabular-nums">
+                        {level.level} — {level.label}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {level.descriptor}
+                      </p>
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -196,15 +275,48 @@ export function QuestionDetailSheet({
             </div>
           ) : null}
 
-          {!isSummaryView ? (
-            <p className="text-xs text-muted-foreground">
-              {uiLabel("demoDisabledHint", locale)}
-            </p>
-          ) : (
+          {canSubmit ? (
+            <div className="space-y-3 border-t pt-4">
+              <div className="space-y-2">
+                <label
+                  className="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+                  htmlFor="assessment-note"
+                >
+                  {uiLabel("assessmentNoteLabel", locale)}
+                </label>
+                <textarea
+                  id="assessment-note"
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  rows={2}
+                  className="w-full rounded-md border border-input bg-surface px-3 py-2 text-sm"
+                />
+              </div>
+              <Button
+                type="button"
+                size="sm"
+                disabled={!selectedLevel || submitting}
+                onClick={() => handleSubmit()}
+              >
+                {uiLabel("assessmentSubmit", locale)}
+              </Button>
+              {!realWritesEnabled ? (
+                <p className="text-xs text-muted-foreground">
+                  {uiLabel("demoDisabledHint", locale)}
+                </p>
+              ) : null}
+            </div>
+          ) : isSummaryView ? (
             <p className="text-xs text-muted-foreground">
               {uiLabel("assessmentBoardHint", locale)}
             </p>
-          )}
+          ) : null}
+
+          {actionError ? (
+            <p className="text-sm text-readiness-gap" role="alert">
+              {actionError}
+            </p>
+          ) : null}
         </SideSheetBody>
       </SideSheetContent>
     </SideSheet>

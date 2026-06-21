@@ -10,6 +10,7 @@ import {
   ROLE_LABELS,
   SEERA_DEMO_PACK_ID,
   SEERA_DEMO_PACK_VERSION,
+  SEERA_DEMO_ASSESSMENT_ID,
   SEERA_DEMO_QUESTIONS,
   UX_STATUS_LABELS,
   type AssessmentResponse,
@@ -66,6 +67,7 @@ export interface PresentedAssessmentStandard {
 }
 
 export interface AssessmentPresentation {
+  readonly assessmentId: string;
   readonly assessmentName: string;
   readonly locale: Locale;
   readonly role: DashboardRole;
@@ -259,6 +261,7 @@ export function buildAssessmentPresentationFromLoad(
   ).length;
 
   return {
+    assessmentId: data.assessmentId,
     assessmentName: data.assessmentName[data.locale],
     locale: data.locale,
     role: data.role,
@@ -335,6 +338,7 @@ export function buildAssessmentPresentation(
   ).length;
 
   return {
+    assessmentId: SEERA_DEMO_ASSESSMENT_ID,
     assessmentName: createSeeraDemoAssessmentName()[locale],
     locale,
     role,

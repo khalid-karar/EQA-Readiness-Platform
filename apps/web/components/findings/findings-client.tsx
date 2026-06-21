@@ -15,6 +15,7 @@ import { uiLabel } from "@/lib/ui-labels";
 
 interface FindingsClientProps {
   presentation: FindingsPresentation;
+  realWritesEnabled: boolean;
 }
 
 function statusPillVariant(
@@ -27,6 +28,7 @@ function statusPillVariant(
 
 function FindingsClientInner({
   presentation,
+  realWritesEnabled,
 }: FindingsClientProps): ReactNode {
   const searchParams = useSearchParams();
   const { locale, canReview, isSummaryView } = presentation;
@@ -235,6 +237,7 @@ function FindingsClientInner({
         onOpenChange={setSheetOpen}
         locale={locale}
         canReview={canReview}
+        realWritesEnabled={realWritesEnabled}
         onResolved={handleResolved}
       />
     </div>

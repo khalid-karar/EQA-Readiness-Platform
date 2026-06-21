@@ -8,7 +8,6 @@ import {
   type ItemStatus,
   type RemediationPendingAction,
 } from "@eqa/workflows";
-import { parseLocale, parseRole } from "./dashboard-params";
 import { remediationScheduleLabel } from "./remediation-display";
 
 export interface PresentedRemediationRow {
@@ -65,7 +64,7 @@ function isClosedStatus(status: ItemStatus): boolean {
 
 export function buildRemediationPresentation(
   locale: Locale,
-  role: ReturnType<typeof parseRole>,
+  role: DashboardRole,
 ): RemediationPresentation {
   const view = createSyntheticRemediationView(locale, role);
   const itemsById = new Map(
@@ -128,13 +127,3 @@ export function buildRemediationPresentation(
   };
 }
 
-export function parseRemediationParams(
-  params: Record<string, string | string[] | undefined>,
-): { locale: Locale; role: ReturnType<typeof parseRole> } {
-  return {
-    locale: parseLocale(
-      typeof params.locale === "string" ? params.locale : undefined,
-    ),
-    role: parseRole(typeof params.role === "string" ? params.role : undefined),
-  };
-}

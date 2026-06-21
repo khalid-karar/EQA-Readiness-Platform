@@ -84,6 +84,8 @@ export default tseslint.config(
                 "src/remediation-pure.ts",
                 "src/remediation.ts",
                 "src/types.ts",
+                "src/testing/tokens.ts",
+                "src/testing/static-jwk.ts",
               ],
             },
           ],

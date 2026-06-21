@@ -1,21 +1,7 @@
 import { describe, expect, it } from "vitest";
-import {
-  buildRemediationPresentation,
-  parseRemediationParams,
-} from "./present-remediation";
+import { buildRemediationPresentation } from "./present-remediation";
 
 describe("remediation presentation", () => {
-  it("parseRemediationParams defaults locale and role", () => {
-    expect(parseRemediationParams({})).toEqual({
-      locale: "en",
-      role: "cae",
-    });
-    expect(parseRemediationParams({ locale: "ar", role: "board" })).toEqual({
-      locale: "ar",
-      role: "board",
-    });
-  });
-
   it("buildRemediationPresentation includes retest-loop and lifecycle demo rows", () => {
     const presentation = buildRemediationPresentation("en", "cae");
     expect(presentation.rows.length).toBeGreaterThanOrEqual(3);

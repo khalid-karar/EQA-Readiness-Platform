@@ -58,9 +58,9 @@ describe("evaluateRequestGate — central tenant rejection (standing rule 7)", (
       directory,
     );
     expect(outcome).toEqual({ allowed: true, kind: "public" });
-    expect(await handlerWouldRun("/dashboard", {}, provider)).toBe(true);
+    expect(await handlerWouldRun("/dashboard", {}, provider)).toBe(false);
     expect(await handlerWouldRun("/api/evidence-pack/sample", {}, provider)).toBe(
-      true,
+      false,
     );
   });
 

@@ -41,7 +41,7 @@ function createMiddlewareIdentityProvider(): IdentityProvider {
 let cachedDirectory: TenantDirectory | undefined;
 let cachedProvider: IdentityProvider | undefined;
 
-function getTenantDirectory(): TenantDirectory {
+export function getTenantDirectory(): TenantDirectory {
   if (!cachedDirectory) {
     cachedDirectory = createAllowlistTenantDirectoryFromSlugs(
       parseTenantAllowlist(process.env.TENANT_ALLOWLIST),
@@ -50,7 +50,7 @@ function getTenantDirectory(): TenantDirectory {
   return cachedDirectory;
 }
 
-function getMiddlewareIdentityProvider(): IdentityProvider {
+export function getMiddlewareIdentityProvider(): IdentityProvider {
   if (!cachedProvider) {
     cachedProvider = createMiddlewareIdentityProvider();
   }
@@ -66,6 +66,18 @@ export function getTenantGateDependencies(): TenantGateDependencies {
     provider: getMiddlewareIdentityProvider(),
     directory: getTenantDirectory(),
   };
+}
+
+/** Async resolver — supports E2E test JWKS provider when `EQA_E2E_TEST_AUTH=true`. */
+export async function resolveTenantGateDependencies(): Promise<TenantGateDependencies> {
+  if (process.env.EQA_E2E_TEST_AUTH === "true") {
+    const { resolveIdentityProvider } = await import("./auth/resolve-provider");
+    return {
+      provider: await resolveIdentityProvider(),
+      directory: getTenantDirectory(),
+    };
+  }
+  return getTenantGateDependencies();
 }
 
 /** Test hook — inject gate dependencies without touching process env caches. */

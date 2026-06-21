@@ -1,7 +1,7 @@
 import { RemediationClient } from "@/components/remediation/remediation-client";
+import { resolvePageLocaleAndRole } from "@/lib/auth/page-context";
 import {
   buildRemediationPresentation,
-  parseRemediationParams,
 } from "@/lib/present-remediation";
 import { metadataForShellPage } from "@/lib/page-metadata";
 import type { Metadata } from "next";
@@ -20,7 +20,7 @@ export default async function RemediationPage({
   searchParams,
 }: RemediationPageProps): Promise<React.ReactNode> {
   const params = await searchParams;
-  const { locale, role } = parseRemediationParams(params);
+  const { locale, role } = await resolvePageLocaleAndRole(params);
   const presentation = buildRemediationPresentation(locale, role);
 
   return <RemediationClient presentation={presentation} />;

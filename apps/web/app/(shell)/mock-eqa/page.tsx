@@ -1,5 +1,5 @@
 import { buildMockEqaPresentation } from "@/lib/present-mock-eqa";
-import { parseLocale, parseRole } from "@/lib/dashboard-params";
+import { resolvePageLocaleAndRole } from "@/lib/auth/page-context";
 import { MockEqaClient } from "@/components/mock-eqa/mock-eqa-client";
 import { metadataForShellPage } from "@/lib/page-metadata";
 import type { Metadata } from "next";
@@ -18,12 +18,7 @@ export default async function MockEqaPage({
   searchParams,
 }: MockEqaPageProps): Promise<React.ReactNode> {
   const params = await searchParams;
-  const locale = parseLocale(
-    typeof params.locale === "string" ? params.locale : undefined,
-  );
-  const role = parseRole(
-    typeof params.role === "string" ? params.role : undefined,
-  );
+  const { locale, role } = await resolvePageLocaleAndRole(params);
 
   const presentation = buildMockEqaPresentation(locale, role);
 

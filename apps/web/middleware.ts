@@ -2,8 +2,10 @@ import { evaluateRequestGate } from "@eqa/auth";
 import { isPublicRoute } from "@eqa/tenant";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { readAccessTokenFromRequest } from "./lib/auth/read-request-session";
+import { SESSION_COOKIE } from "./lib/auth/session-cookie";
 import { LOCALE_COOKIE, LOCALE_HEADER } from "./lib/request-locale";
-import { getTenantGateDependencies } from "./lib/tenant-gate";
+import { resolveTenantGateDependencies } from "./lib/tenant-gate";
 
 // Headers a client might use to try to assert/override its tenant. They are
 // stripped on every tenant-scoped request so they can never influence tenant
@@ -13,6 +15,8 @@ const SPOOFABLE_TENANT_HEADERS = [
   "x-tenant-id",
   "x-resolved-tenant-slug",
 ];
+
+const LOGIN_PATH = "/auth/login";
 
 function resolveLocale(request: NextRequest): "en" | "ar" {
   const localeParam = request.nextUrl.searchParams.get("locale");
@@ -38,15 +42,34 @@ function applyLocale(
   return response;
 }
 
+function isApiRoute(pathname: string): boolean {
+  return pathname.startsWith("/api/");
+}
+
+function loginRedirect(request: NextRequest): NextResponse {
+  const loginUrl = new URL(LOGIN_PATH, request.url);
+  loginUrl.searchParams.set("returnTo", request.nextUrl.pathname);
+  return NextResponse.redirect(loginUrl);
+}
+
+function clearSessionCookie(response: NextResponse): void {
+  response.cookies.set(SESSION_COOKIE, "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 0,
+  });
+}
+
 /**
  * Request gate.
  *
  * - Public (allowlisted) routes pass through with no auth and no tenant
- *   resolution (Step 2 behaviour preserved).
- * - Tenant-scoped routes verify the bearer token, resolve tenant from the token
- *   claim against the allowlist directory, and reject centrally when context is
- *   missing or invalid — before any handler runs (standing rule 7 at the edge).
- * - Data-layer tenant guards remain as defense-in-depth.
+ *   resolution.
+ * - Tenant-scoped routes verify the session access token, resolve tenant from
+ *   the token claim, and reject centrally when context is missing or invalid.
+ * - HTML navigations redirect to login; API routes return 401 JSON.
  */
 export async function middleware(request: NextRequest): Promise<NextResponse> {
   const { pathname } = request.nextUrl;
@@ -65,7 +88,12 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
   if (isPublicRoute(pathname)) {
     response = NextResponse.next(nextOpts);
   } else {
-    const { provider, directory } = getTenantGateDependencies();
+    const accessToken = await readAccessTokenFromRequest(request);
+    if (accessToken) {
+      requestHeaders.set("authorization", `Bearer ${accessToken}`);
+    }
+
+    const { provider, directory } = await resolveTenantGateDependencies();
     const outcome = await evaluateRequestGate(
       pathname,
       requestHeaders,
@@ -74,6 +102,18 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
     );
 
     if (!outcome.allowed) {
+      if (outcome.status === 401) {
+        if (isApiRoute(pathname)) {
+          response = NextResponse.json(
+            { error: outcome.error, path: pathname },
+            { status: 401 },
+          );
+        } else {
+          response = loginRedirect(request);
+        }
+        clearSessionCookie(response);
+        return applyLocale(request, response);
+      }
       return NextResponse.json(
         { error: outcome.error, path: pathname },
         { status: outcome.status },

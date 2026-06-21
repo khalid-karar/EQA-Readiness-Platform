@@ -1,7 +1,9 @@
 "use client";
 
+import type { Role } from "@eqa/auth";
+import type { Locale } from "@eqa/content";
 import { Suspense, useState, type ReactNode } from "react";
-import { parseLocale, parseRole } from "@/lib/dashboard-params";
+import { parseLocale } from "@/lib/dashboard-params";
 import { Toaster } from "@/components/ui/toaster";
 import { AppSidebar } from "./app-sidebar";
 import { ShellPageProvider } from "./shell-page-context";
@@ -13,12 +15,21 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 
 interface AppShellProps {
   children: ReactNode;
+  role: Role;
+  locale: Locale;
+  devViewControls: boolean;
 }
 
-function AppShellInner({ children }: AppShellProps): ReactNode {
+function AppShellInner({
+  children,
+  role,
+  locale: serverLocale,
+  devViewControls,
+}: AppShellProps): ReactNode {
   const searchParams = useSearchParams();
-  const locale = parseLocale(searchParams.get("locale") ?? undefined);
-  const role = parseRole(searchParams.get("role") ?? undefined);
+  const locale = devViewControls
+    ? parseLocale(searchParams.get("locale") ?? serverLocale)
+    : serverLocale;
   const [collapsed, setCollapsed] = useState(false);
   const dir = locale === "ar" ? "rtl" : "ltr";
 
@@ -45,7 +56,11 @@ function AppShellInner({ children }: AppShellProps): ReactNode {
       />
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <TopContextBar locale={locale} role={role} />
+        <TopContextBar
+          locale={locale}
+          role={role}
+          devViewControls={devViewControls}
+        />
         <main
           id="main-content"
           className="flex-1 overflow-auto bg-surface-muted p-4 md:p-6"
@@ -58,12 +73,23 @@ function AppShellInner({ children }: AppShellProps): ReactNode {
   );
 }
 
-export function AppShell({ children }: AppShellProps): ReactNode {
+export function AppShell({
+  children,
+  role,
+  locale,
+  devViewControls,
+}: AppShellProps): ReactNode {
   return (
     <ShellPageProvider>
       <TooltipProvider delayDuration={200}>
         <Suspense fallback={<ShellFallback />}>
-          <AppShellInner>{children}</AppShellInner>
+          <AppShellInner
+            role={role}
+            locale={locale}
+            devViewControls={devViewControls}
+          >
+            {children}
+          </AppShellInner>
         </Suspense>
       </TooltipProvider>
     </ShellPageProvider>

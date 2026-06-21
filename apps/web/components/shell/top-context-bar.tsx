@@ -1,7 +1,7 @@
 "use client";
 
+import type { Role } from "@eqa/auth";
 import type { Locale } from "@eqa/content";
-import type { DashboardRole } from "@eqa/workflows";
 import { MapPin, UserCircle } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { StatusPill } from "@/components/ui/status-pill";
@@ -11,16 +11,18 @@ import { uiLabel, roleDisplayLabel } from "@/lib/ui-labels";
 import { cn } from "@/lib/utils";
 import { useShellPage } from "./shell-page-context";
 
-const ROLE_OPTIONS: DashboardRole[] = ["cae", "audit_staff", "board"];
+const ROLE_OPTIONS: Role[] = ["cae", "audit_staff", "board"];
 
 interface TopContextBarProps {
   locale: Locale;
-  role: DashboardRole;
+  role: Role;
+  devViewControls: boolean;
 }
 
 export function TopContextBar({
   locale,
   role,
+  devViewControls,
 }: TopContextBarProps): React.ReactNode {
   const { meta } = useShellPage();
   const pathname = usePathname();
@@ -33,7 +35,7 @@ export function TopContextBar({
   const roleLabel = meta.roleLabel;
   const isSummaryView = meta.isSummaryView ?? true;
 
-  function navigate(next: { locale?: Locale; role?: DashboardRole }): void {
+  function navigate(next: { locale?: Locale; role?: Role }): void {
     const params = new URLSearchParams(searchParams.toString());
     if (next.locale) params.set("locale", next.locale);
     if (next.role) params.set("role", next.role);
@@ -85,54 +87,63 @@ export function TopContextBar({
             aria-hidden
           />
 
-          <div className="flex items-center gap-1">
-            <span className="text-topbar-foreground/60 pe-1">
-              {uiLabel("locale", locale)}:
-            </span>
-            <LocaleToggle
-              locale={locale}
-              target="en"
-              label="EN"
-              ariaLabel={uiLabel("localeEnglish", locale)}
-              onSelect={() => navigate({ locale: "en" })}
-            />
-            <LocaleToggle
-              locale={locale}
-              target="ar"
-              label="AR"
-              ariaLabel={uiLabel("localeArabic", locale)}
-              onSelect={() => navigate({ locale: "ar" })}
-            />
-          </div>
+          {devViewControls ? (
+            <>
+              <div
+                className="hidden h-5 w-px bg-topbar-foreground/20 md:block"
+                aria-hidden
+              />
 
-          <div
-            className="hidden h-5 w-px bg-topbar-foreground/20 md:block"
-            aria-hidden
-          />
+              <div className="flex items-center gap-1">
+                <span className="text-topbar-foreground/60 pe-1">
+                  {uiLabel("locale", locale)}:
+                </span>
+                <LocaleToggle
+                  locale={locale}
+                  target="en"
+                  label="EN"
+                  ariaLabel={uiLabel("localeEnglish", locale)}
+                  onSelect={() => navigate({ locale: "en" })}
+                />
+                <LocaleToggle
+                  locale={locale}
+                  target="ar"
+                  label="AR"
+                  ariaLabel={uiLabel("localeArabic", locale)}
+                  onSelect={() => navigate({ locale: "ar" })}
+                />
+              </div>
 
-          <div className="flex flex-wrap items-center gap-1">
-            <span className="text-topbar-foreground/60 pe-1">
-              {uiLabel("viewAs", locale)}:
-            </span>
-            {ROLE_OPTIONS.map((opt) => (
-              <Button
-                key={opt}
-                type="button"
-                size="sm"
-                variant="ghost"
-                onClick={() => navigate({ role: opt })}
-                className={cn(
-                  "h-7 px-2 text-xs text-topbar-foreground/80 hover:bg-topbar-foreground/10 hover:text-topbar-foreground",
-                  role === opt &&
-                    "bg-brand-gold text-brand-navy hover:bg-brand-gold/90 hover:text-brand-navy",
-                )}
-                aria-pressed={role === opt}
-                aria-label={roleDisplayLabel(opt, locale)}
-              >
-                {roleDisplayLabel(opt, locale)}
-              </Button>
-            ))}
-          </div>
+              <div
+                className="hidden h-5 w-px bg-topbar-foreground/20 md:block"
+                aria-hidden
+              />
+
+              <div className="flex flex-wrap items-center gap-1">
+                <span className="text-topbar-foreground/60 pe-1">
+                  {uiLabel("viewAs", locale)}:
+                </span>
+                {ROLE_OPTIONS.map((opt) => (
+                  <Button
+                    key={opt}
+                    type="button"
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => navigate({ role: opt })}
+                    className={cn(
+                      "h-7 px-2 text-xs text-topbar-foreground/80 hover:bg-topbar-foreground/10 hover:text-topbar-foreground",
+                      role === opt &&
+                        "bg-brand-gold text-brand-navy hover:bg-brand-gold/90 hover:text-brand-navy",
+                    )}
+                    aria-pressed={role === opt}
+                    aria-label={roleDisplayLabel(opt, locale)}
+                  >
+                    {roleDisplayLabel(opt, locale)}
+                  </Button>
+                ))}
+              </div>
+            </>
+          ) : null}
         </div>
       </div>
     </header>

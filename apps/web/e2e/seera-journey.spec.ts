@@ -1,6 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import type { Locale } from "@eqa/content";
 import { MOCK_EQA_DISCLAIMER } from "@eqa/workflows";
+import { buildE2eSessionCookie } from "./helpers/auth-session";
 import {
   expectedJourneyCheckpoints,
   journeyQuery,
@@ -46,9 +47,7 @@ async function runSeeraJourney(locale: Locale, page: Page): Promise<void> {
   const evidenceMarkers = evidenceScreenMarkers(locale);
   const wpMarkers = workingPapersScreenMarkers(locale);
 
-  await test.step("Landing / redirects to dashboard", async () => {
-    await page.goto("/");
-    await expect(page).toHaveURL(/\/dashboard$/);
+  await test.step("Landing / dashboard", async () => {
     await page.goto(`/dashboard${q}`);
     await expect(page).toHaveURL(`/dashboard${q}`);
     await assertNoRawBlanks(page, locale);
@@ -339,6 +338,10 @@ async function runSeeraJourney(locale: Locale, page: Page): Promise<void> {
 }
 
 test.describe("Seera pilot synthetic journey", () => {
+  test.beforeEach(async ({ context }) => {
+    await context.addCookies([await buildE2eSessionCookie("cae")]);
+  });
+
   test("English (EN)", async ({ page }) => {
     await runSeeraJourney("en", page);
   });

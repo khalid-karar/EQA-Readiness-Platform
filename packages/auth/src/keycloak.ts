@@ -41,14 +41,10 @@ export class KeycloakIdentityProvider implements IdentityProvider {
   ) {}
 
   async verify(credential: string): Promise<VerifiedIdentity> {
-    const options = {
-      issuer: this.config.issuer,
-      audience: this.config.audience,
-    };
+    const options = { issuer: this.config.issuer };
     let payload: JWTPayload;
     try {
-      // jose exposes separate overloads for a static key vs a getKey resolver
-      // (e.g. a remote JWKS function); branch so the union resolves cleanly.
+      // Audience checked after verify — Keycloak often uses `azp` on access tokens.
       const result =
         typeof this.key === "function"
           ? await jwtVerify(credential, this.key, options)
@@ -56,6 +52,10 @@ export class KeycloakIdentityProvider implements IdentityProvider {
       payload = result.payload;
     } catch {
       // Opaque on purpose — never leak token/verification details.
+      throw new AuthenticationError("Token verification failed.");
+    }
+
+    if (!audienceMatches(payload, this.config.audience)) {
       throw new AuthenticationError("Token verification failed.");
     }
 
@@ -98,6 +98,17 @@ export function createKeycloakIdentityProvider(
     new URL(`${issuer}/protocol/openid-connect/certs`),
   );
   return new KeycloakIdentityProvider(jwks, config);
+}
+
+function audienceMatches(payload: JWTPayload, expected: string): boolean {
+  const aud = payload.aud;
+  if (typeof aud === "string" && aud === expected) {
+    return true;
+  }
+  if (Array.isArray(aud) && aud.includes(expected)) {
+    return true;
+  }
+  return payload.azp === expected;
 }
 
 function isMfaSatisfied(payload: JWTPayload, config: KeycloakConfig): boolean {

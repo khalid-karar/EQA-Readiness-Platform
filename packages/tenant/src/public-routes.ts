@@ -8,23 +8,13 @@
  * Entries:
  * - `/health`            — liveness/readiness probe (Step 1).
  * - `/`                  — skeleton landing page (no data access).
- * - `/auth/*`            — pre-auth endpoints (sign-in, etc.) added ahead of the
- *                          auth step; a user has no tenant until authenticated.
+ * - `/auth/*`            — pre-auth endpoints (sign-in, callback, logout).
  * - `/api/health`        — alias if a future API health probe is added.
  */
 export const PUBLIC_ROUTE_PATTERNS: readonly RegExp[] = [
   /^\/$/,
   /^\/health$/,
   /^\/api\/health$/,
-  /^\/dashboard(?:\/.*)?$/,
-  /^\/assessment(?:\/.*)?$/,
-  /^\/evidence(?:\/.*)?$/,
-  /^\/findings(?:\/.*)?$/,
-  /^\/working-papers(?:\/.*)?$/,
-  /^\/remediation(?:\/.*)?$/,
-  /^\/mock-eqa(?:\/.*)?$/,
-  /^\/evidence-pack(?:\/.*)?$/,
-  /^\/api\/evidence-pack(?:\/.*)?$/,
   /^\/auth(?:\/.*)?$/,
 ];
 

@@ -26,6 +26,7 @@ tools/.poppler/
 .env.*
 !.env.example
 !.env.railway
+!.env.local.example
 
 # Logs
 *.log

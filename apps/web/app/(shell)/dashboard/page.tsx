@@ -1,5 +1,5 @@
 import { buildDashboardPresentation } from "@/lib/present-dashboard";
-import { parseLocale, parseRole } from "@/lib/dashboard-params";
+import { resolvePageLocaleAndRole } from "@/lib/auth/page-context";
 import { DashboardClient } from "@/components/dashboard/dashboard-client";
 import { metadataForShellPage } from "@/lib/page-metadata";
 import type { Metadata } from "next";
@@ -18,12 +18,7 @@ export default async function DashboardPage({
   searchParams,
 }: DashboardPageProps): Promise<React.ReactNode> {
   const params = await searchParams;
-  const locale = parseLocale(
-    typeof params.locale === "string" ? params.locale : undefined,
-  );
-  const role = parseRole(
-    typeof params.role === "string" ? params.role : undefined,
-  );
+  const { locale, role } = await resolvePageLocaleAndRole(params);
 
   const presentation = buildDashboardPresentation(locale, role);
 

@@ -11,13 +11,21 @@ vi.mock("@eqa/auth", async (importOriginal) => {
   };
 });
 
-vi.mock("./lib/tenant-gate", () => ({
-  getTenantGateDependencies: () => ({
-    provider: { verify: vi.fn() },
-    directory: { findBySlug: vi.fn() },
-  }),
-  setTenantGateDependenciesForTests: vi.fn(),
-}));
+vi.mock("./lib/tenant-gate", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("./lib/tenant-gate")>();
+  return {
+    ...actual,
+    getTenantGateDependencies: () => ({
+      provider: { verify: vi.fn() },
+      directory: { findBySlug: vi.fn() },
+    }),
+    resolveTenantGateDependencies: async () => ({
+      provider: { verify: vi.fn() },
+      directory: { findBySlug: vi.fn() },
+    }),
+    setTenantGateDependenciesForTests: vi.fn(),
+  };
+});
 
 const gate = vi.mocked(evaluateRequestGate);
 
@@ -66,12 +74,9 @@ describe("middleware — tenant gate at the edge", () => {
     const response = await middleware(
       new NextRequest(new URL("http://localhost/assessments")),
     );
-    expect(response.status).toBe(401);
-    const body = await response.json();
-    expect(body).toMatchObject({
-      error: "authentication_required",
-      path: "/assessments",
-    });
+    expect(response.status).toBe(307);
+    const location = response.headers.get("location");
+    expect(location).toContain("/auth/login");
   });
 
   it("does not call NextResponse.next when the gate rejects an invalid tenant", async () => {

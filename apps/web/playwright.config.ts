@@ -33,6 +33,9 @@ export default defineConfig({
     env: {
       KEYCLOAK_ISSUER: "https://keycloak.test/realms/eqa",
       KEYCLOAK_AUDIENCE: "eqa-web",
+      KEYCLOAK_CLIENT_SECRET: "e2e-test-client-secret",
+      AUTH_SESSION_SECRET: "e2e-test-session-secret-32-bytes-min",
+      EQA_E2E_TEST_AUTH: "true",
       PORT: String(PORT),
       NODE_ENV: "production",
     },

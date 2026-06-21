@@ -27,26 +27,21 @@ describe("public-route allowlist", () => {
     "/health",
     "/api/health",
     "/auth",
-    "/auth/sign-in",
-    "/dashboard",
-    "/assessment",
-    "/evidence",
-    "/findings",
-    "/working-papers",
-    "/remediation",
-    "/mock-eqa",
-    "/evidence-pack",
-    "/api/evidence-pack/sample",
+    "/auth/login",
+    "/auth/callback",
+    "/auth/logout",
   ])("treats %s as public", (path) => {
     expect(isPublicRoute(path)).toBe(true);
   });
 
-  it.each(["/assessments", "/api/tenants/x"])(
-    "treats %s as tenant-scoped",
-    (path) => {
-      expect(isPublicRoute(path)).toBe(false);
-    },
-  );
+  it.each([
+    "/dashboard",
+    "/assessment",
+    "/assessments",
+    "/api/tenants/x",
+  ])("treats %s as tenant-scoped", (path) => {
+    expect(isPublicRoute(path)).toBe(false);
+  });
 });
 
 describe("schema naming", () => {

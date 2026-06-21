@@ -62,6 +62,22 @@ describe("KeycloakIdentityProvider", () => {
     expect(identity.mfa).toBe(true);
   });
 
+  it("accepts client id in azp when aud is absent (Keycloak access tokens)", async () => {
+    const { provider, privateKey } = await createTestProvider();
+    const token = await issueToken(
+      privateKey,
+      {
+        tenant: "seera-pilot",
+        role: "cae",
+        amr: ["otp"],
+        azp: TEST_AUDIENCE,
+      },
+      { skipAudience: true },
+    );
+    const identity = await provider.verify(token);
+    expect(identity.tenantSlug).toBe("seera-pilot");
+  });
+
   it("rejects a wrong audience", async () => {
     const { provider, privateKey } = await createTestProvider();
     const token = await issueToken(

@@ -51,12 +51,12 @@ const PAGE_META: Record<AppPageId, PageMetaEntry> = {
       "قيّم المعايير ذاتياً مقابل حزمة محتوى أسس EQA المثبتة.",
   },
   evidence: {
-    titleEn: "Evidence repository",
-    titleAr: "مستودع الأدلة",
+    titleEn: "Evidence library",
+    titleAr: "مكتبة الأدلة",
     descriptionEn:
-      "Uploaded evidence with malware scan gate — quarantined until cleared.",
+      "Tenant evidence overview — scan status, standard mappings, and cross-standard reuse.",
     descriptionAr:
-      "الأدلة المرفوعة مع بوابة فحص البرمجيات الخبيثة — في الحجر حتى الإزالة.",
+      "نظرة عامة على أدلة المستأجر — حالة الفحص وربط المعايير وإعادة الاستخدام.",
   },
   findings: {
     titleEn: "Findings & human review",

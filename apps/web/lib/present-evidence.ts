@@ -12,8 +12,19 @@ import {
   type DashboardRole,
   type EvidenceMetadataForPack,
 } from "@eqa/workflows";
+import {
+  parseEvidenceLinks,
+  standardNumbersFromLinks,
+} from "./evidence-links";
 
 export type PresentedScanStatus = "quarantined" | "clean" | "infected";
+
+export interface PresentedStandardMapping {
+  readonly standardNumber: string;
+  readonly standardTitleEn: string;
+  readonly standardTitleAr: string;
+  readonly questionIds: readonly string[];
+}
 
 export interface PresentedEvidenceItem {
   readonly id: string;
@@ -22,9 +33,12 @@ export interface PresentedEvidenceItem {
   readonly fileName: string;
   readonly typeLabelEn: string;
   readonly typeLabelAr: string;
+  /** Primary standard — first entry in `linkedStandards`. */
   readonly standardNumber: string;
   readonly standardTitleEn: string;
   readonly standardTitleAr: string;
+  readonly linkedStandards: readonly PresentedStandardMapping[];
+  readonly reusedAcrossStandards: boolean;
   readonly evidenceRefEn: string;
   readonly evidenceRefAr: string;
   readonly scanStatus: PresentedScanStatus;
@@ -97,12 +111,45 @@ function contentTypeLabel(contentType: string, locale: Locale): string {
 }
 
 function linkedStandard(links: readonly string[]): string {
+  const numbers = standardNumbersFromLinks(links);
+  if (numbers[0]) return numbers[0];
   for (const link of links) {
     if (link in STANDARD_TITLE) return link;
-    const match = /^\d+\.\d+$/.exec(link);
-    if (match) return match[0];
   }
   return links[0] ?? "—";
+}
+
+function buildLinkedStandards(
+  links: readonly string[],
+  questionnaireEn: ReturnType<typeof renderQuestionnaire>,
+  questionnaireAr: ReturnType<typeof renderQuestionnaire>,
+): PresentedStandardMapping[] {
+  const parsed = parseEvidenceLinks(links);
+  if (parsed.length === 0 && links.length > 0) {
+    const fallback = linkedStandard(links);
+    const titles = standardTitle(fallback, questionnaireEn, questionnaireAr);
+    return [
+      {
+        standardNumber: fallback,
+        standardTitleEn: titles.en,
+        standardTitleAr: titles.ar,
+        questionIds: links.filter((l) => l !== fallback),
+      },
+    ];
+  }
+  return parsed.map((group) => {
+    const titles = standardTitle(
+      group.standardNumber,
+      questionnaireEn,
+      questionnaireAr,
+    );
+    return {
+      standardNumber: group.standardNumber,
+      standardTitleEn: titles.en,
+      standardTitleAr: titles.ar,
+      questionIds: group.questionIds,
+    };
+  });
 }
 
 function normalizeScanStatus(raw: string): PresentedScanStatus {
@@ -177,12 +224,19 @@ function presentItem(
   questionnaireEn: ReturnType<typeof renderQuestionnaire>,
   questionnaireAr: ReturnType<typeof renderQuestionnaire>,
 ): PresentedEvidenceItem {
-  const standardNumber = linkedStandard(meta.links);
-  const titles = standardTitle(
-    standardNumber,
+  const linkedStandards = buildLinkedStandards(
+    meta.links,
     questionnaireEn,
     questionnaireAr,
   );
+  const primary = linkedStandards[0];
+  const standardNumber = primary?.standardNumber ?? linkedStandard(meta.links);
+  const standardTitleEn =
+    primary?.standardTitleEn ??
+    standardTitle(standardNumber, questionnaireEn, questionnaireAr).en;
+  const standardTitleAr =
+    primary?.standardTitleAr ??
+    standardTitle(standardNumber, questionnaireEn, questionnaireAr).ar;
   const scanStatus = normalizeScanStatus(meta.scanStatus);
   const scan = scanLabels(scanStatus);
 
@@ -194,8 +248,10 @@ function presentItem(
     typeLabelEn: contentTypeLabel(meta.contentType, "en"),
     typeLabelAr: contentTypeLabel(meta.contentType, "ar"),
     standardNumber,
-    standardTitleEn: titles.en,
-    standardTitleAr: titles.ar,
+    standardTitleEn,
+    standardTitleAr,
+    linkedStandards,
+    reusedAcrossStandards: linkedStandards.length > 1,
     evidenceRefEn: `${meta.evidenceId} v${meta.version}`,
     evidenceRefAr: `${meta.evidenceId} (إصدار ${meta.version})`,
     scanStatus,

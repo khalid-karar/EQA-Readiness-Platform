@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type { Database } from "./database";
 import { migrateShared } from "./migrate";
 import { createTenantRepositories } from "./repositories";
-import { SEERA_PILOT, seedSeeraPilot } from "./seed";
+import { seedSeeraPilot } from "./seed";
 import { seedSeeraPilotDemoData } from "./seed-demo-data";
 import {
   assessmentContentPinKey,

@@ -11,6 +11,7 @@ export default defineConfig({
     globals: true,
     environment: "node",
     hookTimeout: 30_000,
+    setupFiles: ["./vitest.setup.ts"],
     env: {
       EQA_PDF_REUSE_BROWSER: process.env.EQA_PDF_REUSE_BROWSER ?? "true",
     },

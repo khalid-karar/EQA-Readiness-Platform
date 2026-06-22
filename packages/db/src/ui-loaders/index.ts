@@ -46,3 +46,10 @@ export {
   type EvidencePackLoader,
   type EvidencePackLoadResult,
 } from "./evidence-pack-loader";
+export {
+  createStandardDetailLoader,
+  type StandardDetailLoader,
+  type StandardDetailLoadResult,
+  type StandardRequirementLoad,
+  type StandardWpConformanceLoad,
+} from "./standard-detail-loader";

@@ -648,6 +648,70 @@ export const UI_LABELS: LabelSet = {
     en: "Board view — working-paper conformance is read-only.",
     ar: "عرض المجلس — مطابقة أوراق العمل للقراءة فقط.",
   },
+  contentPin: { en: "Content pin", ar: "تثبيت المحتوى" },
+  standardDetailLocation: {
+    en: "Standard detail — read-only",
+    ar: "تفاصيل المعيار — للقراءة فقط",
+  },
+  standardDetailReadOnlyTitle: {
+    en: "Read-only view",
+    ar: "عرض للقراءة فقط",
+  },
+  standardDetailReadOnlyBody: {
+    en: "This screen shows the current state of one standard. No edits or actions are available on this step.",
+    ar: "يعرض هذا الشاشة الحالة الحالية لمعيار واحد. لا تتوفر تعديلات أو إجراءات في هذه الخطوة.",
+  },
+  standardDetailDerivedStatus: {
+    en: "Derived status",
+    ar: "الحالة المشتقة",
+  },
+  standardDetailRequirements: {
+    en: "Requirements",
+    ar: "المتطلبات",
+  },
+  standardDetailRequirementsHint: {
+    en: "Each assessment question is the grain — evidence and AI drafts are shown inline per requirement.",
+    ar: "كل سؤال تقييم هو وحدة العرض — تُعرض الأدلة ومسودات الذكاء الاصطناعي ضمن كل متطلب.",
+  },
+  standardDetailAnswer: { en: "Self-assessment answer", ar: "إجابة التقييم الذاتي" },
+  standardDetailNote: { en: "Note", ar: "ملاحظة" },
+  standardDetailEvidence: { en: "Attached evidence", ar: "الأدلة المرفقة" },
+  standardDetailNoEvidence: {
+    en: "No evidence linked to this requirement.",
+    ar: "لا أدلة مرتبطة بهذا المتطلب.",
+  },
+  standardDetailAiDraftTitle: {
+    en: "AI draft finding",
+    ar: "مسودة نتيجة من الذكاء الاصطناعي",
+  },
+  standardDetailAiDraftDisclaimer: {
+    en: "Draft work product — not a final conclusion. A human reviewer must disposition this before it affects readiness.",
+    ar: "منتج عمل مسودة — وليس استنتاجاً نهائياً. يجب على مراجع بشري البت فيها قبل أن تؤثر على الجاهزية.",
+  },
+  standardDetailFinalConclusion: {
+    en: "Human final conclusion",
+    ar: "الاستنتاج النهائي البشري",
+  },
+  standardDetailWpHint: {
+    en: "Working-paper checklist conformance recorded against the pinned Step 5 content.",
+    ar: "مطابقة قائمة فحص أوراق العمل المسجَّلة مقابل محتوى الخطوة 5 المثبت.",
+  },
+  standardDetailDecisionTrail: {
+    en: "Decision trail",
+    ar: "مسار القرار",
+  },
+  standardDetailDecisionTrailHint: {
+    en: "Who did what and when — from the tenant audit log for this standard's items.",
+    ar: "من فعل ماذا ومتى — من سجل تدقيق المستأجر لعناصر هذا المعيار.",
+  },
+  standardDetailDecisionTrailEmpty: {
+    en: "No decision trail entries yet",
+    ar: "لا إدخالات في مسار القرار بعد",
+  },
+  standardDetailBoardHint: {
+    en: "Board view — standard detail is read-only; switch to an operational role for review tasks.",
+    ar: "عرض المجلس — تفاصيل المعيار للقراءة فقط؛ انتقل إلى دور تشغيلي لمهام المراجعة.",
+  },
   closePanel: { en: "Close panel", ar: "إغلاق اللوحة" },
 };
 

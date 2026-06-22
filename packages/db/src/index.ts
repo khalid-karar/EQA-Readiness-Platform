@@ -79,6 +79,7 @@ export {
   createWorkingPapersLoader,
   createMockEqaLoader,
   createEvidencePackLoader,
+  createStandardDetailLoader,
   type DashboardLoader,
   type AssessmentLoader,
   type AssessmentLoadResult,
@@ -94,6 +95,8 @@ export {
   type MockEqaLoadResult,
   type EvidencePackLoader,
   type EvidencePackLoadResult,
+  type StandardDetailLoader,
+  type StandardDetailLoadResult,
 } from "./ui-loaders";
 
 export { createUiActionHandlers } from "./ui-action-system";

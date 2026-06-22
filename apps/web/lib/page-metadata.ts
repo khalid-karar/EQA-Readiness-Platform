@@ -27,12 +27,12 @@ interface PageMetaEntry {
 
 const PAGE_META: Record<AppPageId, PageMetaEntry> = {
   dashboard: {
-    titleEn: "Readiness dashboard",
-    titleAr: "لوحة الجاهزية",
+    titleEn: "Readiness cockpit",
+    titleAr: "قمرة الجاهزية",
     descriptionEn:
-      "Seera-pilot readiness dashboard — journey map, heat map, and pending actions toward EQA.",
+      "Lean home — indicative readiness, assessment completion, domain heat map, and what's next.",
     descriptionAr:
-      "لوحة جاهزية سيرة التجريبية — خريطة الرحلة، خريطة الحرارة، والإجراءات المعلقة نحو EQA.",
+      "الصفحة الرئيسية — جاهزية إرشادية، اكتمال التقييم، خريطة حرارية للمجالات، والخطوة التالية.",
   },
   standards: {
     titleEn: "Standards workspace",

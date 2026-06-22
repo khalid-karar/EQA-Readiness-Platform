@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { buildDashboardPresentation } from "./present-dashboard";
+import { buildJourneyMapPresentation } from "./present-journey-map";
 
 describe("present-journey-map", () => {
   it("binds seven checkpoints to real readiness metrics", () => {
     const presentation = buildDashboardPresentation("en", "cae");
-    const { journeyMap, view } = presentation;
+    const journeyMap = buildJourneyMapPresentation(presentation.view, "cae");
+    const { view } = presentation;
 
     expect(journeyMap.checkpoints).toHaveLength(7);
     expect(journeyMap.pathFillPercent).toBe(view.overallReadiness.score);
@@ -42,8 +44,9 @@ describe("present-journey-map", () => {
   });
 
   it("provides bilingual labels for every checkpoint", () => {
-    const presentation = buildDashboardPresentation("ar", "cae");
-    for (const checkpoint of presentation.journeyMap.checkpoints) {
+    const view = buildDashboardPresentation("ar", "cae").view;
+    const journeyMap = buildJourneyMapPresentation(view, "cae");
+    for (const checkpoint of journeyMap.checkpoints) {
       expect(checkpoint.labelEn.length).toBeGreaterThan(0);
       expect(checkpoint.labelAr.length).toBeGreaterThan(0);
       expect(checkpoint.metricAr.length).toBeGreaterThan(0);
@@ -51,7 +54,10 @@ describe("present-journey-map", () => {
   });
 
   it("shows a realistic mix of checkpoint states for the Seera demo story", () => {
-    const { journeyMap } = buildDashboardPresentation("en", "cae");
+    const journeyMap = buildJourneyMapPresentation(
+      buildDashboardPresentation("en", "cae").view,
+      "cae",
+    );
     const states = journeyMap.checkpoints.map((c) => c.state);
 
     expect(states.filter((s) => s === "cleared").length).toBeGreaterThanOrEqual(2);

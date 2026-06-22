@@ -3,7 +3,6 @@ import { resolvePageLocaleAndRole } from "@/lib/auth/page-context";
 import { DashboardClient } from "@/components/dashboard/dashboard-client";
 import { metadataForShellPage } from "@/lib/page-metadata";
 import { loadDashboardInput } from "@/lib/load-screen-data";
-import { loadJourneyMapOptionsOrDemo } from "@/lib/load-journey-options";
 import { buildDashboardPresentationFromInput } from "@/lib/present-dashboard";
 import type { Metadata } from "next";
 
@@ -23,13 +22,8 @@ export default async function DashboardPage({
   const params = await searchParams;
   const { locale, role } = await resolvePageLocaleAndRole(params);
   const session = await requireServerSession();
-  const journeyOptions = await loadJourneyMapOptionsOrDemo(
-    session,
-    locale,
-    role,
-  );
   const input = await loadDashboardInput(session, locale, role);
-  const presentation = buildDashboardPresentationFromInput(input, journeyOptions);
+  const presentation = buildDashboardPresentationFromInput(input);
 
   return <DashboardClient presentation={presentation} />;
 }

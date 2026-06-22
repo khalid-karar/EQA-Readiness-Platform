@@ -61,6 +61,7 @@ export {
 export { HumanReviewEngine, resolveHumanReview } from "./human-review";
 export {
   buildRemediationTrackerView,
+  countRemediationOverdue,
   daysOverdue,
   isRemediationOverdue,
   RemediationEngine,

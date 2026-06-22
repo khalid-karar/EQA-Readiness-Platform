@@ -96,26 +96,26 @@ describe("readiness dashboard (Step 13 UI data)", () => {
     expect(summaryCell?.statusBreakdown).toBeUndefined();
   });
 
-  it("board summary omits low-priority not-started action", () => {
+  it("board summary omits the operational cockpit queue", () => {
     const board = buildDashboardView(inputBoard);
     const cae = buildDashboardView(inputEn);
 
-    expect(board.pendingActions.some((a) => a.id === "not-started")).toBe(
-      false,
-    );
-    expect(cae.pendingActions.some((a) => a.id === "not-started")).toBe(false);
-    expect(cae.pendingActions.some((a) => a.id === "draft-findings")).toBe(
+    expect(board.pendingActions).toEqual([]);
+    expect(cae.pendingActions.some((a) => a.id === "ai-gaps-review")).toBe(
       true,
     );
   });
 
-  it("pending actions surface review, evidence, and working-paper gaps", () => {
+  it("cockpit queue surfaces overdue, AI gaps, evidence, and working papers", () => {
     const view = buildDashboardView(inputEn);
     const ids = view.pendingActions.map((a) => a.id);
-    expect(ids).toContain("findings-review");
-    expect(ids).toContain("gaps-remediation");
-    expect(ids).toContain("wp-unreviewed");
-    expect(ids).toContain("draft-findings");
+    expect(ids).toContain("ai-gaps-review");
+    expect(ids).toContain("working-papers-test");
+    if (view.pendingActions.some((a) => a.id === "remediation-overdue")) {
+      expect(ids.indexOf("remediation-overdue")).toBeLessThan(
+        ids.indexOf("working-papers-test"),
+      );
+    }
   });
 
   it("uxStatusLabel returns plain-language bilingual labels", () => {

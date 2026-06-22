@@ -134,6 +134,23 @@ export interface BuildRemediationTrackerInput {
   readonly referenceDate?: string;
 }
 
+/** Open remediation plans past target date — shared by tracker and cockpit queue. */
+export function countRemediationOverdue(
+  items: readonly RemediationItem[],
+  statusesByQuestion: ReadonlyMap<string, ItemStatus>,
+  referenceDate?: string,
+): number {
+  const ref = referenceDate ?? new Date().toISOString();
+  return items.filter((item) => {
+    const itemStatus =
+      statusesByQuestion.get(item.questionId) ?? INITIAL_ITEM_STATUS;
+    return (
+      !isRemediationClosed(itemStatus) &&
+      isRemediationOverdue(item.targetDate, itemStatus, ref)
+    );
+  }).length;
+}
+
 /** Assembles the remediation tracker view for presentation (UI layer). */
 export function buildRemediationTrackerView(
   input: BuildRemediationTrackerInput,

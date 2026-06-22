@@ -27,6 +27,42 @@ export const UI_LABELS: LabelSet = {
     en: "Readiness — weighted conformance",
     ar: "الجاهزية — مطابقة مرجّحة",
   },
+  cockpitTitle: {
+    en: "Readiness cockpit",
+    ar: "قمرة الجاهزية",
+  },
+  cockpitSubtitle: {
+    en: "Indicative readiness and completion at a glance — domain heat map and operational queue.",
+    ar: "جاهزية إرشادية واكتمال في لمحة — خريطة حرارية للمجالات وقائمة تشغيلية.",
+  },
+  cockpitLocation: {
+    en: "Cockpit overview",
+    ar: "نظرة قمرة الجاهزية",
+  },
+  cockpitIndicativeReadiness: {
+    en: "Indicative readiness",
+    ar: "جاهزية إرشادية",
+  },
+  cockpitCompletion: {
+    en: "Assessment completion",
+    ar: "اكتمال التقييم",
+  },
+  cockpitReadinessDisclaimer: {
+    en: "Indicative readiness only — not an assessment verdict. The independent external assessor decides conformance during EQA.",
+    ar: "جاهزية إرشادية فقط — وليست حكماً بالتقييم. المقيّم الخارجي المستقل يقرر المطابقة أثناء EQA.",
+  },
+  cockpitHeatMapTitle: {
+    en: "Domain heat map",
+    ar: "خريطة حرارية للمجالات",
+  },
+  cockpitHeatMapSubtitle: {
+    en: "Readiness by domain, principle, and standard. Domain % is the average indicative score.",
+    ar: "الجاهزية حسب المجال والمبدأ والمعيار. نسبة المجال هي متوسط الدرجة الإرشادية.",
+  },
+  cockpitDomainStandards: {
+    en: "standards",
+    ar: "معيار",
+  },
   readinessHint: {
     en: "Weighted blend of item statuses, human-reviewed findings, and working-paper conformance (including unreviewed items).",
     ar: "مزيج مرجّح من حالات العناصر والنتائج المراجَعة ومطابقة أوراق العمل (بما فيها غير المراجَع).",

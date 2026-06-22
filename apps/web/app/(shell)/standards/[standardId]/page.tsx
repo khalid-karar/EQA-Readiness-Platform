@@ -6,6 +6,7 @@ import {
   buildStandardDetailPresentation,
   buildStandardDetailPresentationFromLoad,
 } from "@/lib/present-standard-detail";
+import { isRealWritesEnabled } from "@/lib/real-writes";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -45,5 +46,10 @@ export default async function StandardDetailPage({
     notFound();
   }
 
-  return <StandardDetailClient presentation={presentation} />;
+  return (
+    <StandardDetailClient
+      presentation={presentation}
+      realWritesEnabled={isRealWritesEnabled()}
+    />
+  );
 }

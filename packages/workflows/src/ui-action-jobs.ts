@@ -12,6 +12,7 @@ export const SUBMIT_RESPONSE_JOB = "workflow:submit-response";
 export const HUMAN_REVIEW_JOB = "workflow:human-review";
 export const RECORD_CONFORMANCE_JOB = "workflow:record-conformance";
 export const REMEDIATION_TRANSITION_JOB = "workflow:remediation-transition";
+export const ASSIGN_REMEDIATION_JOB = "workflow:assign-remediation";
 
 export interface ActingUserRef {
   readonly userId: string;
@@ -45,6 +46,15 @@ export interface RemediationTransitionJobPayload extends ActingUserRef {
   readonly remediationId: string;
   readonly transition: RemediationTransitionKind;
   readonly retestNote?: string;
+}
+
+export interface AssignRemediationJobPayload extends ActingUserRef {
+  readonly assessmentId: string;
+  readonly questionId: string;
+  readonly standardNumber: string;
+  readonly action: string;
+  readonly owner: string;
+  readonly targetDate: string;
 }
 
 export interface SubmitResponseExecutor {

@@ -2,6 +2,7 @@ import type { AuthSession } from "@eqa/auth";
 import { createTenantJobAuditPort, createUiActionHandlers } from "@eqa/db";
 import { createJobQueueFromEnv, type JobQueue } from "@eqa/jobs";
 import { getEvidenceJobHandlers } from "./evidence-runtime";
+import { getGapFlagJobHandlers } from "./gap-flag-runtime";
 import { getReportJobHandlers } from "./report-runtime";
 import { getAppDatabase } from "./db";
 
@@ -14,6 +15,7 @@ export function getAppJobQueue(): JobQueue {
       handlers: {
         ...createUiActionHandlers(db),
         ...getEvidenceJobHandlers(),
+        ...getGapFlagJobHandlers(db),
         ...getReportJobHandlers(),
       },
       auditPort: createTenantJobAuditPort(db),

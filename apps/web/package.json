@@ -13,6 +13,7 @@
     "test:e2e:install": "playwright install chromium"
   },
   "dependencies": {
+    "@eqa/ai": "workspace:*",
     "@eqa/auth": "workspace:*",
     "@eqa/content": "workspace:*",
     "@eqa/crypto": "workspace:*",

@@ -64,6 +64,23 @@ const uiActionRoutes = [
     importPath: "@/app/api/actions/remediation/route",
     body: { remediationId: "r1", transition: "start" },
   },
+  {
+    name: "assign-remediation",
+    importPath: "@/app/api/actions/assign-remediation/route",
+    body: {
+      assessmentId: "a1",
+      questionId: "q1",
+      standardNumber: "1.2",
+      action: "Fix",
+      owner: "Owner",
+      targetDate: "2026-12-31",
+    },
+  },
+  {
+    name: "run-gap-flag",
+    importPath: "@/app/api/actions/run-gap-flag/route",
+    body: { questionId: "Q-1-2-1", standardNumber: "1.2", locale: "en" },
+  },
 ] as const;
 
 describe("UI action routes auth", () => {

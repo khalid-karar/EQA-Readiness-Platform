@@ -650,8 +650,8 @@ export const UI_LABELS: LabelSet = {
   },
   contentPin: { en: "Content pin", ar: "تثبيت المحتوى" },
   standardDetailLocation: {
-    en: "Standard detail — read-only",
-    ar: "تفاصيل المعيار — للقراءة فقط",
+    en: "Standard detail",
+    ar: "تفاصيل المعيار",
   },
   standardDetailReadOnlyTitle: {
     en: "Read-only view",
@@ -660,6 +660,42 @@ export const UI_LABELS: LabelSet = {
   standardDetailReadOnlyBody: {
     en: "This screen shows the current state of one standard. No edits or actions are available on this step.",
     ar: "يعرض هذا الشاشة الحالة الحالية لمعيار واحد. لا تتوفر تعديلات أو إجراءات في هذه الخطوة.",
+  },
+  standardDetailRunGapFlag: {
+    en: "Run AI gap-flag",
+    ar: "تشغيل علامة الفجوة بالذكاء الاصطناعي",
+  },
+  standardDetailGapFlagHint: {
+    en: "Requires cleared evidence. Produces a draft finding only — not a final conclusion.",
+    ar: "يتطلب أدلة مُزال حجرها. ينتج مسودة فقط — وليس استنتاجاً نهائياً.",
+  },
+  standardDetailGapFlagSuccess: {
+    en: "AI draft finding queued",
+    ar: "تم إنشاء مسودة نتيجة من الذكاء الاصطناعي",
+  },
+  standardDetailGapFlagError: {
+    en: "Gap-flag failed",
+    ar: "فشل وضع علامة الفجوة",
+  },
+  standardDetailDismissHint: {
+    en: "Rejecting a draft records reviewed_no_gap — the item is dismissed, not closed.",
+    ar: "رفض المسودة يسجّل reviewed_no_gap — يُستبعد العنصر ولا يُغلق.",
+  },
+  standardDetailAssignRemediation: {
+    en: "Assign remediation",
+    ar: "تعيين المعالجة",
+  },
+  standardDetailRemediationSuccess: {
+    en: "Remediation plan assigned",
+    ar: "تم تعيين خطة المعالجة",
+  },
+  standardDetailRemediationError: {
+    en: "Remediation assignment failed",
+    ar: "فشل تعيين المعالجة",
+  },
+  standardDetailRemediationLinked: {
+    en: "Remediation owner",
+    ar: "مسؤول المعالجة",
   },
   standardDetailDerivedStatus: {
     en: "Derived status",

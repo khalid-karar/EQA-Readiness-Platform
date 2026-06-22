@@ -8,8 +8,13 @@
   "exports": {
     ".": "./src/index.ts",
     "./human-review": "./src/human-review.ts",
+    "./readiness-dashboard": "./src/readiness-dashboard.ts",
+    "./render": "./src/render.ts",
     "./remediation": "./src/remediation.ts",
     "./remediation-pure": "./src/remediation-pure.ts",
+    "./state-machine": "./src/state-machine.ts",
+    "./synthetic-seera-demo": "./src/synthetic-seera-demo.ts",
+    "./ux-status": "./src/ux-status.ts",
     "./types": "./src/types.ts"
   },
   "scripts": {

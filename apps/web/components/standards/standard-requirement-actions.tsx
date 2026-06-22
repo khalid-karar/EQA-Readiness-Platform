@@ -3,8 +3,8 @@
 import { useCallback, useRef, useState, type ReactNode } from "react";
 import type { ReviewAction } from "@eqa/workflows/types";
 import { resolveHumanReview } from "@eqa/workflows/human-review";
-import type { ItemStatus } from "@eqa/workflows";
-import { uxStatusLabel } from "@eqa/workflows";
+import type { ItemStatus } from "@eqa/workflows/state-machine";
+import { uxStatusLabel } from "@eqa/workflows/ux-status";
 import { Button } from "@/components/ui/button";
 import { uploadEvidence } from "@/lib/evidence-api-client";
 import { mapUploadedEvidenceItem } from "@/lib/map-uploaded-evidence";
@@ -12,7 +12,7 @@ import { postUiAction } from "@/lib/ui-action-client";
 import type {
   PresentedStandardEvidence,
   PresentedStandardRequirement,
-} from "@/lib/present-standard-detail";
+} from "@/lib/standard-detail-shared";
 import { uiLabel } from "@/lib/ui-labels";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";

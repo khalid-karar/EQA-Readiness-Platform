@@ -7,7 +7,7 @@ import {
   type PresentedStandardRequirement,
   type PresentedWpConformanceItem,
   type StandardDetailPresentation,
-} from "@/lib/present-standard-detail";
+} from "@/lib/standard-detail-shared";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusPill, readinessVariantFromLevel } from "@/components/ui/status-pill";
 import { ScreenAlertBanner } from "@/components/ui/screen-alert-banner";
@@ -19,7 +19,7 @@ import { DEFAULT_TENANT_NAME } from "@/lib/nav-config";
 import { uxStatusLevel } from "@/lib/status-level";
 import { uiLabel } from "@/lib/ui-labels";
 import { postUiAction } from "@/lib/ui-action-client";
-import { uxStatusLabel } from "@eqa/workflows";
+import { uxStatusLabel } from "@eqa/workflows/ux-status";
 import { useToast } from "@/hooks/use-toast";
 
 interface StandardDetailClientProps {

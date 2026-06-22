@@ -45,6 +45,12 @@ export async function assertSideSheetOnTrailingEdge(page: Page): Promise<void> {
   );
 }
 
+export async function closeMainTableRowSideSheet(page: Page): Promise<void> {
+  const dialog = page.getByRole("dialog");
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+}
+
 export async function assertRtlShellMirrors(page: Page): Promise<void> {
   await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
   const aside = page.locator("aside").first();

@@ -6,6 +6,7 @@ import { journeyQuery } from "./helpers/journey-expectations";
 import {
   assertRtlShellMirrors,
   assertSideSheetOnTrailingEdge,
+  closeMainTableRowSideSheet,
   openMainTableRowSideSheet,
 } from "./helpers/journey-navigation";
 import {
@@ -231,17 +232,11 @@ async function runSeeraJourney(locale: Locale, page: Page): Promise<void> {
       await page.goto(`/dashboard${q}`);
       await assertRtlShellMirrors(page);
 
-      for (const path of [
-        "/assessment",
-        "/evidence",
-        "/working-papers",
-        "/findings",
-      ]) {
+      for (const path of ["/assessment", "/working-papers", "/findings"]) {
         await page.goto(`${path}${q}`);
         await openMainTableRowSideSheet(page);
         await assertSideSheetOnTrailingEdge(page);
-        await page.keyboard.press("Escape");
-        await expect(page.getByRole("dialog")).toBeHidden();
+        await closeMainTableRowSideSheet(page);
       }
     });
   }

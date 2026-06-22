@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev",
+    "dev": "cross-env NODE_ENV=development next dev",
     "build": "next build",
-    "start": "next start -p ${PORT:-3000}",
+    "start": "cross-env NODE_ENV=production next start -p ${PORT:-3000}",
     "type-check": "tsc --noEmit",
     "test:e2e": "playwright test",
     "test:e2e:realdb": "playwright test --config=playwright.realdb.config.ts",
@@ -39,6 +39,7 @@
     "jose": "^5.9.6"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "@playwright/test": "^1.61.0",
     "@types/node": "^22.19.21",
     "@types/react": "^19.0.2",

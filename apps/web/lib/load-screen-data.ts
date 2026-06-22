@@ -10,7 +10,9 @@ import {
   createRemediationLoader,
   createStandardDetailLoader,
   createWorkingPapersLoader,
+  createStandardsWorkspaceLoader,
   type AssessmentLoadResult,
+  type StandardsWorkspaceLoadResult,
   type EvidenceLoadResult,
   type EvidencePackLoadResult,
   type FindingsLoadResult,
@@ -133,5 +135,20 @@ export async function loadStandardDetailData(
     locale,
     role,
     standardNumber,
+  );
+}
+
+export async function loadStandardsWorkspaceData(
+  session: AuthSession,
+  locale: Locale,
+  role: DashboardRole,
+): Promise<StandardsWorkspaceLoadResult | "demo"> {
+  if (!useDatabaseReads()) {
+    return "demo";
+  }
+  return createStandardsWorkspaceLoader(getAppDatabase()).load(
+    session,
+    locale,
+    role,
   );
 }

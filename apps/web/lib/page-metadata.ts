@@ -8,6 +8,7 @@ export const SITE_NAME_AR = "Maya AI — جاهزية EQA";
 
 export type AppPageId =
   | "dashboard"
+  | "standards"
   | "assessment"
   | "evidence"
   | "findings"
@@ -32,6 +33,14 @@ const PAGE_META: Record<AppPageId, PageMetaEntry> = {
       "Seera-pilot readiness dashboard — journey map, heat map, and pending actions toward EQA.",
     descriptionAr:
       "لوحة جاهزية سيرة التجريبية — خريطة الرحلة، خريطة الحرارة، والإجراءات المعلقة نحو EQA.",
+  },
+  standards: {
+    titleEn: "Standards workspace",
+    titleAr: "مساحة المعايير",
+    descriptionEn:
+      "Navigate domains, principles, and standards with readiness status and filters.",
+    descriptionAr:
+      "تصفّح المجالات والمبادئ والمعايير مع حالة الجاهزية والمرشحات.",
   },
   assessment: {
     titleEn: "Scope & self-assessment",

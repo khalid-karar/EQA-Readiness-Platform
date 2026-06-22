@@ -53,3 +53,8 @@ export {
   type StandardRequirementLoad,
   type StandardWpConformanceLoad,
 } from "./standard-detail-loader";
+export {
+  createStandardsWorkspaceLoader,
+  type StandardsWorkspaceLoader,
+  type StandardsWorkspaceLoadResult,
+} from "./standards-workspace-loader";

@@ -7,12 +7,14 @@ import {
   FileStack,
   FolderOpen,
   LayoutDashboard,
+  ListTree,
   ShieldCheck,
   Wrench,
 } from "lucide-react";
 
 export type AppRoute =
   | "/dashboard"
+  | "/standards"
   | "/assessment"
   | "/evidence"
   | "/findings"
@@ -44,6 +46,13 @@ export const APP_NAV_ITEMS: readonly NavItem[] = [
     labelAr: "التقييم",
     icon: ClipboardCheck,
     href: "/assessment",
+  },
+  {
+    id: "standards",
+    labelEn: "Standards",
+    labelAr: "المعايير",
+    icon: ListTree,
+    href: "/standards",
   },
   {
     id: "evidence",

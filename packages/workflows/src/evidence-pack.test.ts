@@ -32,13 +32,23 @@ describe("EQA evidence pack export (Step 16)", () => {
     const std12 = manifestEn.standards.find((s) => s.standardNumber === "1.2");
     const std21 = manifestEn.standards.find((s) => s.standardNumber === "2.1");
 
-    expect(std11?.evidenceIndex).toHaveLength(1);
-    expect(std11?.evidenceIndex[0]?.fileName).toBe(
-      "ethics-charter-acknowledgements.pdf",
+    expect(std11?.evidenceIndex).toHaveLength(2);
+    expect(std11?.evidenceIndex.map((e) => e.fileName)).toEqual(
+      expect.arrayContaining([
+        "ethics-charter-acknowledgements.pdf",
+        "conflicts-policy-master.pdf",
+      ]),
     );
     expect(std12?.gapStatusSummary).toMatch(/confirmed|remediation|1/);
     expect(std12?.remediationSummary).toBeDefined();
-    expect(std12?.evidenceIndex).toHaveLength(2);
+    expect(std12?.evidenceIndex).toHaveLength(3);
+    expect(std12?.evidenceIndex.map((e) => e.fileName)).toEqual(
+      expect.arrayContaining([
+        "coi-declaration-process.pdf",
+        "coi-declarations-register.xlsx",
+        "conflicts-policy-master.pdf",
+      ]),
+    );
     expect(
       std12?.questions.find((q) => q.questionId === "Q-1-2-1")?.gapFinding,
     ).toBeDefined();

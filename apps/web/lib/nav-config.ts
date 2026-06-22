@@ -2,6 +2,7 @@ import type { Locale } from "@eqa/content";
 import type { LucideIcon } from "lucide-react";
 import {
   BarChart3,
+  Briefcase,
   ClipboardCheck,
   FileSearch,
   FileStack,
@@ -18,6 +19,7 @@ export type AppRoute =
   | "/assessment"
   | "/evidence"
   | "/findings"
+  | "/engagements"
   | "/working-papers"
   | "/remediation"
   | "/mock-eqa"
@@ -67,6 +69,13 @@ export const APP_NAV_ITEMS: readonly NavItem[] = [
     labelAr: "النتائج",
     icon: FileSearch,
     href: "/findings",
+  },
+  {
+    id: "engagements",
+    labelEn: "Engagements",
+    labelAr: "المهام",
+    icon: Briefcase,
+    href: "/engagements",
   },
   {
     id: "working-papers",

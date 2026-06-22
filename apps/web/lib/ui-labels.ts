@@ -765,6 +765,106 @@ export const UI_LABELS: LabelSet = {
     en: "Board view — evidence metadata is read-only; downloads require an operational role.",
     ar: "عرض المجلس — بيانات الأدلة للقراءة فقط؛ التنزيل يتطلب دور تشغيلي.",
   },
+  engagementsTitle: {
+    en: "Sampled engagement",
+    ar: "المهمة المختارة",
+  },
+  engagementsLocation: {
+    en: "Engagements — working-paper entry",
+    ar: "المهام — مدخل أوراق العمل",
+  },
+  engagementsEmptyDescription: {
+    en: "No completed engagements are available for working-paper review in this tenant.",
+    ar: "لا مهام مكتملة متاحة لمراجعة أوراق العمل في هذا المستأجر.",
+  },
+  engagementsSampleRationale: {
+    en: "Sample rationale",
+    ar: "مبرر العينة",
+  },
+  engagementsItemsReviewed: {
+    en: "reviewed",
+    ar: "مُراجَع",
+  },
+  engagementsTestPaper: {
+    en: "Test checklist items",
+    ar: "اختبار عناصر القائمة",
+  },
+  engagementsOpenQuestionsTitle: {
+    en: "Open questions (not forced in this slice)",
+    ar: "أسئلة مفتوحة (غير مُلزمة في هذه الشريحة)",
+  },
+  engagementsOpenQuestionGrain: {
+    en: "Working-paper review page still loads the first completed engagement only — multi-engagement drill-down is not wired yet.",
+    ar: "صفحة مراجعة أوراق العمل ما زالت تحمّل أول مهمة مكتملة فقط — التعمق متعدد المهام غير موصول بعد.",
+  },
+  engagementsOpenQuestionStandardDetail: {
+    en: "Standard-detail working-paper tests (P3 workspace) are not on main — standard pills link to Assessment until that ships.",
+    ar: "اختبارات أوراق العمل في تفاصيل المعيار (مساحة P3) غير موجودة على main — حبوب المعيار ترتبط بالتقييم حتى ذلك.",
+  },
+  engagementsOpenQuestionNav: {
+    en: "Engagements is a new nav entry alongside Working Papers — merge vs replace is undecided.",
+    ar: "المهام عنصر تنقل جديد بجانب أوراق العمل — الدمج مقابل الاستبدال غير محسوم.",
+  },
+  adminActionsTitle: {
+    en: "Admin actions",
+    ar: "إجراءات إدارية",
+  },
+  adminActionsSubtitle: {
+    en: "Run tenant-scoped jobs — results appear on existing Mock-EQA and Evidence Pack screens.",
+    ar: "تشغيل مهام المستأجر — تظهر النتائج في شاشات محاكاة EQA وحزمة الأدلة الحالية.",
+  },
+  adminRunMockEqa: {
+    en: "Run Mock-EQA simulation",
+    ar: "تشغيل محاكاة EQA",
+  },
+  adminRunMockEqaHint: {
+    en: "Queues the existing mock-EQA job. View results on",
+    ar: "يضع مهمة محاكاة EQA الحالية في الطابور. اعرض النتائج في",
+  },
+  adminViewMockEqa: {
+    en: "Mock-EQA screen",
+    ar: "شاشة محاكاة EQA",
+  },
+  adminGeneratePack: {
+    en: "Generate evidence pack",
+    ar: "إنشاء حزمة الأدلة",
+  },
+  adminGeneratePackHint: {
+    en: "Queues the existing evidence-pack export job. Preview on",
+    ar: "يضع مهمة تصدير حزمة الأدلة في الطابور. المعاينة في",
+  },
+  adminViewPack: {
+    en: "Evidence Pack screen",
+    ar: "شاشة حزمة الأدلة",
+  },
+  adminDownloadPack: {
+    en: "Download generated pack",
+    ar: "تنزيل الحزمة المُنشأة",
+  },
+  adminMockEqaSuccess: {
+    en: "Mock-EQA simulation queued",
+    ar: "تم وضع محاكاة EQA في الطابور",
+  },
+  adminMockEqaError: {
+    en: "Mock-EQA simulation failed",
+    ar: "فشلت محاكاة EQA",
+  },
+  adminPackSuccess: {
+    en: "Evidence pack export queued",
+    ar: "تم وضع تصدير حزمة الأدلة في الطابور",
+  },
+  adminPackError: {
+    en: "Evidence pack export failed",
+    ar: "فشل تصدير حزمة الأدلة",
+  },
+  adminBoardHint: {
+    en: "Board view — admin actions require an operational role.",
+    ar: "عرض المجلس — الإجراءات الإدارية تتطلب دوراً تشغيلياً.",
+  },
+  adminOpenQuestionNote: {
+    en: "These buttons reuse POST /api/actions/run-mock-eqa and generate-evidence-pack — no new job types.",
+    ar: "هذه الأزرار تعيد استخدام run-mock-eqa و generate-evidence-pack — لا أنواع مهام جديدة.",
+  },
   wpTitle: {
     en: "Working-paper review",
     ar: "مراجعة أوراق العمل",

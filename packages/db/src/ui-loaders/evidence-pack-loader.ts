@@ -10,14 +10,10 @@ import type {
   ItemStatus,
   RemediationItem,
 } from "@eqa/workflows";
+import { loadAssessmentContext } from "../active-assessment";
 import type { Database } from "../database";
 import { assertUiSession, uiRepositories } from "./assert-session";
-import {
-  PILOT_ASSESSMENT_ID,
-  PILOT_ASSESSMENT_NAME,
-  PILOT_PACK_ID,
-  PILOT_PACK_VERSION,
-} from "./pilot-assessment";
+import { PILOT_PACK_ID, PILOT_PACK_VERSION } from "./pilot-assessment";
 import { loadMockEqaScoringInput } from "./scoring-input";
 
 export interface EvidencePackLoadResult {
@@ -39,24 +35,25 @@ export function createEvidencePackLoader(db: Database): EvidencePackLoader {
   return {
     async load(session, locale, role) {
       const repos = uiRepositories(db, assertUiSession(session));
+      const { assessmentId, assessmentName } = await loadAssessmentContext(repos);
       const catalog = loadBundledCatalog();
       const pack = catalog.get(PILOT_PACK_ID, PILOT_PACK_VERSION);
       const questionnaire = renderQuestionnaire(pack, locale);
 
       const statusRecords = await repos.itemStatus.getForAssessment(
-        PILOT_ASSESSMENT_ID,
+        assessmentId,
       );
       const statusesByQuestion = new Map<string, ItemStatus>(
         statusRecords.map((r) => [r.questionId, r.status]),
       );
 
       const responses = await repos.responses.getForAssessment(
-        PILOT_ASSESSMENT_ID,
+        assessmentId,
       );
       const conclusions: FinalConclusion[] =
-        await repos.humanReview.getForAssessment(PILOT_ASSESSMENT_ID);
+        await repos.humanReview.getForAssessment(assessmentId);
       const remediationItems: RemediationItem[] =
-        await repos.remediation.listForAssessment(PILOT_ASSESSMENT_ID);
+        await repos.remediation.listForAssessment(assessmentId);
 
       const evidenceRows = await repos.evidence.list();
       const evidenceMetadata = evidenceRows.map((row) => ({
@@ -76,12 +73,12 @@ export function createEvidencePackLoader(db: Database): EvidencePackLoader {
         catalog,
       );
       const exportRecord = await repos.evidencePack.getLatest(
-        PILOT_ASSESSMENT_ID,
+        assessmentId,
       );
 
       const assemblyInput: EvidencePackAssemblyInput = {
-        assessmentId: PILOT_ASSESSMENT_ID,
-        assessmentName: PILOT_ASSESSMENT_NAME,
+        assessmentId,
+        assessmentName,
         locale,
         questionnaire,
         statusesByQuestion,

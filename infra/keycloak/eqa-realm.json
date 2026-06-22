@@ -138,6 +138,19 @@
         "role": ["board"]
       },
       "realmRoles": ["board"]
+    },
+    {
+      "username": "fresh.demo",
+      "email": "fresh.demo@demo-fresh.local",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Fresh",
+      "lastName": "Demo",
+      "attributes": {
+        "tenant": ["demo-fresh"],
+        "role": ["cae"]
+      },
+      "realmRoles": ["cae"]
     }
   ]
 }

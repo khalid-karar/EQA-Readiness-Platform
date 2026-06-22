@@ -12,14 +12,14 @@ import {
   type FinalConclusion,
   type ItemStatus,
 } from "@eqa/workflows";
+import type { AssessmentDisplayName } from "../active-assessment";
+import {
+  loadAssessmentContext,
+  pinForActiveAssessment,
+} from "../active-assessment";
 import type { Database } from "../database";
 import { assertUiSession, uiRepositories } from "./assert-session";
-import {
-  PILOT_ASSESSMENT_ID,
-  PILOT_ASSESSMENT_NAME,
-  PILOT_PACK_ID,
-  PILOT_PACK_VERSION,
-} from "./pilot-assessment";
+import { PILOT_PACK_ID, PILOT_PACK_VERSION } from "./pilot-assessment";
 
 export interface StandardRequirementRubricLevel {
   readonly level: number;
@@ -64,7 +64,7 @@ export interface StandardWpConformanceLoad {
 
 export interface StandardDetailLoadResult {
   readonly assessmentId: string;
-  readonly assessmentName: typeof PILOT_ASSESSMENT_NAME;
+  readonly assessmentName: AssessmentDisplayName;
   readonly locale: Locale;
   readonly role: DashboardRole;
   readonly standardNumber: string;
@@ -147,6 +147,7 @@ export function createStandardDetailLoader(db: Database): StandardDetailLoader {
   return {
     async load(session, locale, role, standardNumber) {
       const repos = uiRepositories(db, assertUiSession(session));
+      const { assessmentId, assessmentName } = await loadAssessmentContext(repos);
       const catalog = loadBundledCatalog();
       const pack = catalog.get(PILOT_PACK_ID, PILOT_PACK_VERSION);
       const questionnaireEn = renderQuestionnaire(pack, "en");
@@ -219,14 +220,14 @@ export function createStandardDetailLoader(db: Database): StandardDetailLoader {
         engagements,
         remediationItems,
       ] = await Promise.all([
-        repos.itemStatus.getForAssessment(PILOT_ASSESSMENT_ID),
-        repos.responses.getForAssessment(PILOT_ASSESSMENT_ID),
-        repos.draftFindings.getForAssessment(PILOT_ASSESSMENT_ID),
-        repos.humanReview.getForAssessment(PILOT_ASSESSMENT_ID),
+        repos.itemStatus.getForAssessment(assessmentId),
+        repos.responses.getForAssessment(assessmentId),
+        repos.draftFindings.getForAssessment(assessmentId),
+        repos.humanReview.getForAssessment(assessmentId),
         repos.evidence.list(),
         repos.audit.list(),
         repos.workingPaperReview.listCompletedEngagements(),
-        repos.remediation.listForAssessment(PILOT_ASSESSMENT_ID),
+        repos.remediation.listForAssessment(assessmentId),
       ]);
 
       const statusesByQuestion = new Map(
@@ -244,11 +245,7 @@ export function createStandardDetailLoader(db: Database): StandardDetailLoader {
       const remediationByQuestion = new Map(
         remediationItems.map((item) => [item.questionId, item]),
       );
-      const contentPin = catalog.pinForAssessment(
-        PILOT_ASSESSMENT_ID,
-        PILOT_PACK_ID,
-        PILOT_PACK_VERSION,
-      );
+      const contentPin = pinForActiveAssessment(catalog, assessmentId);
       const evidenceForPack = evidenceRows.map((meta) => ({
         evidenceId: meta.evidenceId,
         version: meta.version,
@@ -346,7 +343,7 @@ export function createStandardDetailLoader(db: Database): StandardDetailLoader {
         .filter((entry) =>
           auditRelatesToStandard(
             entry,
-            PILOT_ASSESSMENT_ID,
+            assessmentId,
             questionIdSet,
             standardNumber,
           ),
@@ -354,8 +351,8 @@ export function createStandardDetailLoader(db: Database): StandardDetailLoader {
         .sort((a, b) => a.seq - b.seq);
 
       return {
-        assessmentId: PILOT_ASSESSMENT_ID,
-        assessmentName: PILOT_ASSESSMENT_NAME,
+        assessmentId,
+        assessmentName,
         locale,
         role,
         standardNumber,

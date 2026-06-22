@@ -4,13 +4,12 @@ import { renderQuestionnaire } from "@eqa/workflows";
 import type { FinalConclusion, ItemStatus, MockEqaScoringInput } from "@eqa/workflows";
 import type { StandardConformanceSummary } from "@eqa/workflows";
 import { WorkingPaperReviewEngine } from "@eqa/workflows";
-import type { TenantRepositories } from "../repositories";
 import {
-  PILOT_ASSESSMENT_ID,
-  PILOT_ASSESSMENT_NAME,
-  PILOT_PACK_ID,
-  PILOT_PACK_VERSION,
-} from "./pilot-assessment";
+  loadAssessmentContext,
+  resolveActiveAssessmentId,
+} from "../active-assessment";
+import type { TenantRepositories } from "../repositories";
+import { PILOT_PACK_ID, PILOT_PACK_VERSION } from "./pilot-assessment";
 
 function statusesMap(
   records: readonly { questionId: string; status: ItemStatus }[],
@@ -26,7 +25,7 @@ export async function loadMockEqaScoringInput(
   locale: Locale,
   catalog: ContentCatalog = loadBundledCatalog(),
 ): Promise<MockEqaScoringInput> {
-  const assessmentId = PILOT_ASSESSMENT_ID;
+  const { assessmentId, assessmentName } = await loadAssessmentContext(repos);
   const pack = catalog.get(PILOT_PACK_ID, PILOT_PACK_VERSION);
   const questionnaire = renderQuestionnaire(pack, locale);
 
@@ -51,7 +50,7 @@ export async function loadMockEqaScoringInput(
 
   return {
     assessmentId,
-    assessmentName: PILOT_ASSESSMENT_NAME,
+    assessmentName,
     locale,
     questionnaire,
     statusesByQuestion,
@@ -63,5 +62,6 @@ export async function loadMockEqaScoringInput(
 export async function loadFinalConclusions(
   repos: TenantRepositories,
 ): Promise<readonly FinalConclusion[]> {
-  return repos.humanReview.getForAssessment(PILOT_ASSESSMENT_ID);
+  const assessmentId = await resolveActiveAssessmentId(repos.kv);
+  return repos.humanReview.getForAssessment(assessmentId);
 }

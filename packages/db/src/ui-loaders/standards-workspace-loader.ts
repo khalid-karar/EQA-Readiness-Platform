@@ -9,7 +9,6 @@ import type {
 import type { Database } from "../database";
 import { assertUiSession, uiRepositories } from "./assert-session";
 import { createDashboardLoader } from "./dashboard-loader";
-import { PILOT_ASSESSMENT_ID } from "./pilot-assessment";
 
 export interface StandardsWorkspaceLoadResult {
   readonly userId: string;
@@ -60,8 +59,8 @@ export function createStandardsWorkspaceLoader(
       );
 
       const [responses, remediationItems] = await Promise.all([
-        repos.responses.getForAssessment(PILOT_ASSESSMENT_ID),
-        repos.remediation.listForAssessment(PILOT_ASSESSMENT_ID),
+        repos.responses.getForAssessment(dashboardInput.assessmentId),
+        repos.remediation.listForAssessment(dashboardInput.assessmentId),
       ]);
 
       return {

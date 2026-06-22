@@ -61,6 +61,7 @@ services:
       KEYCLOAK_DEMO_USER_PASSWORD: demo
     volumes:
       - ./infra/keycloak/bootstrap-dev-realm.sh:/bootstrap-dev-realm.sh:ro
+      - ./infra/keycloak/fresh-demo-partial-import.json:/fresh-demo-partial-import.json:ro
     entrypoint: ["/bin/bash", "-c"]
     command:
       - |

@@ -2,9 +2,7 @@ import { authorize, ForbiddenError, PERMISSIONS } from "@eqa/auth";
 import { loadBundledCatalog } from "@eqa/content";
 import {
   createTenantRepositories,
-  PILOT_ASSESSMENT_ID,
-  PILOT_PACK_ID,
-  PILOT_PACK_VERSION,
+  resolveActiveAssessmentPin,
 } from "@eqa/db";
 import { AI_GAP_FLAG_JOB } from "@eqa/workflows";
 import { getServerSessionFromRequest } from "@/lib/auth/get-server-session";
@@ -48,12 +46,8 @@ export async function POST(request: Request): Promise<Response> {
     }
 
     const catalog = loadBundledCatalog();
-    const pin = catalog.pinForAssessment(
-      PILOT_ASSESSMENT_ID,
-      PILOT_PACK_ID,
-      PILOT_PACK_VERSION,
-    );
     const repos = createTenantRepositories(getAppDatabase(), session);
+    const pin = await resolveActiveAssessmentPin(repos.kv, catalog);
     const evidenceRows = await repos.evidence.list();
     const linked = evidenceRows.filter(
       (row) =>

@@ -14,7 +14,7 @@ fi
   --user "${KEYCLOAK_ADMIN:-admin}" \
   --password "${KEYCLOAK_ADMIN_PASSWORD}"
 
-for username in cae.demo audit.demo board.demo; do
+for username in cae.demo audit.demo board.demo fresh.demo; do
   /opt/keycloak/bin/kcadm.sh set-password -r eqa --username "$username" \
     --new-password "$KEYCLOAK_DEMO_USER_PASSWORD"
   echo "Password set for $username"

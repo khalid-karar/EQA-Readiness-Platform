@@ -1,8 +1,9 @@
 import { createLocalKmsFromEnv } from "@eqa/crypto";
 import type { Database } from "../database";
 import { createPgDatabase } from "../pg-backend";
-import { seedBetaCo, seedSeeraPilot } from "../seed";
+import { seedBetaCo, seedDemoFresh, seedSeeraPilot } from "../seed";
 import { seedBetaCoDemoData, seedSeeraPilotDemoData } from "../seed-demo-data";
+import { seedDemoFreshData } from "../seed-demo-fresh";
 
 /**
  * Runnable seed for local/dev environments.
@@ -33,8 +34,10 @@ async function main(): Promise<void> {
     await seedSeeraPilotDemoData(db, kms, seera);
     const beta = await seedBetaCo(db, kms);
     await seedBetaCoDemoData(db, beta);
+    const fresh = await seedDemoFresh(db, kms);
+    await seedDemoFreshData(db, fresh);
     console.log(
-      `[seed] Tenants ready: ${seera.name} (slug=${seera.slug}, schema=${seera.schemaName}, id=${seera.id}); ${beta.name} (slug=${beta.slug}, schema=${beta.schemaName}, id=${beta.id})`,
+      `[seed] Tenants ready: ${seera.name} (slug=${seera.slug}, schema=${seera.schemaName}, id=${seera.id}); ${beta.name} (slug=${beta.slug}, schema=${beta.schemaName}, id=${beta.id}); ${fresh.name} (slug=${fresh.slug}, schema=${fresh.schemaName}, id=${fresh.id})`,
     );
   } finally {
     await db.close();

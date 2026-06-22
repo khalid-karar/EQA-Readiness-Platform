@@ -1,9 +1,7 @@
 import { authorize, ForbiddenError, PERMISSIONS } from "@eqa/auth";
 import {
   createTenantRepositories,
-  PILOT_ASSESSMENT_ID,
-  PILOT_PACK_ID,
-  PILOT_PACK_VERSION,
+  resolvePilotReportIds,
 } from "@eqa/db";
 import { getServerSession } from "@/lib/auth/get-server-session";
 import { awaitJob } from "@/lib/await-job";
@@ -56,19 +54,14 @@ export async function handleReportJobRoute(
   }
 }
 
-export function pilotReportIds(body: Record<string, unknown>): {
+export async function pilotReportIds(
+  repos: Pick<ReturnType<typeof createTenantRepositories>, "kv">,
+  body: Record<string, unknown>,
+): Promise<{
   assessmentId: string;
   contentPackId: string;
   contentVersion: string;
   locale?: "en" | "ar";
-} {
-  const localeRaw = body.locale;
-  const locale =
-    localeRaw === "en" || localeRaw === "ar" ? localeRaw : undefined;
-  return {
-    assessmentId: String(body.assessmentId ?? PILOT_ASSESSMENT_ID),
-    contentPackId: String(body.contentPackId ?? PILOT_PACK_ID),
-    contentVersion: String(body.contentVersion ?? PILOT_PACK_VERSION),
-    ...(locale ? { locale } : {}),
-  };
+}> {
+  return resolvePilotReportIds(repos.kv, body);
 }

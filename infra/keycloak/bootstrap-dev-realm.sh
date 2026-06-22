@@ -8,7 +8,13 @@ set -euo pipefail
   --user "${KEYCLOAK_ADMIN:-admin}" \
   --password "${KEYCLOAK_ADMIN_PASSWORD}"
 
-for username in cae.demo audit.demo board.demo; do
+# Realm import is skipped when the eqa realm already exists; ensure fresh.demo via partial import
+# (declarative user profile blocks tenant/role attrs on plain kcadm create).
+/opt/keycloak/bin/kcadm.sh create partialImport -r eqa -o \
+  -s ifResourceExists=OVERWRITE \
+  -f /fresh-demo-partial-import.json
+
+for username in cae.demo audit.demo board.demo fresh.demo; do
   /opt/keycloak/bin/kcadm.sh set-password -r eqa --username "$username" \
     --new-password "${KEYCLOAK_DEMO_USER_PASSWORD}"
   echo "Password set for $username"

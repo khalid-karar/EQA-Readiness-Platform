@@ -9,6 +9,7 @@ ENV KC_HTTP_ENABLED=true
 ENV KC_PROXY_HEADERS=xforwarded
 
 COPY eqa-realm.json /opt/keycloak/realm-templates/eqa-realm.json
+COPY fresh-demo-partial-import.json /opt/keycloak/realm-templates/fresh-demo-partial-import.json
 COPY docker-entrypoint.sh /opt/keycloak/docker-entrypoint.sh
 COPY set-demo-passwords.sh /opt/keycloak/set-demo-passwords.sh
 

@@ -1,13 +1,14 @@
 import type { AuthSession } from "@eqa/auth";
 import type { Locale } from "@eqa/content";
 import type { DashboardRole, DraftFinding, FinalConclusion } from "@eqa/workflows";
+import type { AssessmentDisplayName } from "../active-assessment";
+import { loadAssessmentContext } from "../active-assessment";
 import type { Database } from "../database";
 import { assertUiSession, uiRepositories } from "./assert-session";
-import { PILOT_ASSESSMENT_ID, PILOT_ASSESSMENT_NAME } from "./pilot-assessment";
 
 export interface FindingsLoadResult {
   readonly assessmentId: string;
-  readonly assessmentName: typeof PILOT_ASSESSMENT_NAME;
+  readonly assessmentName: AssessmentDisplayName;
   readonly locale: Locale;
   readonly role: DashboardRole;
   readonly drafts: readonly DraftFinding[];
@@ -26,15 +27,14 @@ export function createFindingsLoader(db: Database): FindingsLoader {
   return {
     async load(session, locale, role) {
       const repos = uiRepositories(db, assertUiSession(session));
+      const { assessmentId, assessmentName } = await loadAssessmentContext(repos);
       return {
-        assessmentId: PILOT_ASSESSMENT_ID,
-        assessmentName: PILOT_ASSESSMENT_NAME,
+        assessmentId,
+        assessmentName,
         locale,
         role,
-        drafts: await repos.draftFindings.getForAssessment(PILOT_ASSESSMENT_ID),
-        conclusions: await repos.humanReview.getForAssessment(
-          PILOT_ASSESSMENT_ID,
-        ),
+        drafts: await repos.draftFindings.getForAssessment(assessmentId),
+        conclusions: await repos.humanReview.getForAssessment(assessmentId),
       };
     },
   };

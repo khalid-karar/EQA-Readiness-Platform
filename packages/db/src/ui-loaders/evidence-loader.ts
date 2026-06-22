@@ -1,12 +1,13 @@
 import type { AuthSession } from "@eqa/auth";
 import type { Locale } from "@eqa/content";
 import type { DashboardRole, EvidenceMetadataForPack } from "@eqa/workflows";
+import type { AssessmentDisplayName } from "../active-assessment";
+import { loadAssessmentContext } from "../active-assessment";
 import type { Database } from "../database";
 import { assertUiSession, uiRepositories } from "./assert-session";
-import { PILOT_ASSESSMENT_NAME } from "./pilot-assessment";
 
 export interface EvidenceLoadResult {
-  readonly assessmentName: typeof PILOT_ASSESSMENT_NAME;
+  readonly assessmentName: AssessmentDisplayName;
   readonly locale: Locale;
   readonly role: DashboardRole;
   readonly items: readonly EvidenceMetadataForPack[];
@@ -43,9 +44,10 @@ export function createEvidenceLoader(db: Database): EvidenceLoader {
   return {
     async load(session, locale, role) {
       const repos = uiRepositories(db, assertUiSession(session));
+      const { assessmentName } = await loadAssessmentContext(repos);
       const rows = await repos.evidence.list();
       return {
-        assessmentName: PILOT_ASSESSMENT_NAME,
+        assessmentName,
         locale,
         role,
         items: rows.map(toPackMetadata),

@@ -7,6 +7,6 @@ export const runtime = "nodejs";
 
 export async function POST(request: Request): Promise<Response> {
   return handleReportJobRoute(async (repos, body) => {
-    return repos.mockEqa.requestSimulation(pilotReportIds(body));
+    return repos.mockEqa.requestSimulation(await pilotReportIds(repos, body));
   }, request);
 }

@@ -1,5 +1,5 @@
 import { authorize, ForbiddenError, PERMISSIONS } from "@eqa/auth";
-import { createTenantRepositories, PILOT_ASSESSMENT_ID } from "@eqa/db";
+import { createTenantRepositories, resolveActiveAssessmentId } from "@eqa/db";
 import { getServerSession } from "@/lib/auth/get-server-session";
 import { getReportRuntime } from "@/lib/report-runtime";
 import { isRealWritesEnabled } from "@/lib/real-writes";
@@ -25,15 +25,15 @@ export async function GET(request: Request): Promise<Response> {
     return Response.json({ error: "Real writes are not enabled." }, { status: 503 });
   }
 
-  const assessmentId =
-    new URL(request.url).searchParams.get("assessmentId") ??
-    PILOT_ASSESSMENT_ID;
+  const urlParam = new URL(request.url).searchParams.get("assessmentId");
 
   try {
     const runtime = getReportRuntime();
     const repos = createTenantRepositories(runtime.db, session, {
       objectStore: runtime.objectStore,
     });
+    const assessmentId =
+      urlParam ?? (await resolveActiveAssessmentId(repos.kv));
     const latest = await repos.evidencePack.getLatest(assessmentId);
     if (!latest) {
       return Response.json({ error: "No evidence pack export found." }, { status: 404 });

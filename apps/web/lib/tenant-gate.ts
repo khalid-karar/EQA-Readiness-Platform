@@ -7,7 +7,7 @@ import {
   type TenantDirectory,
 } from "@eqa/tenant";
 
-const DEFAULT_TENANT_ALLOWLIST = ["seera-pilot", "beta-co"];
+const DEFAULT_TENANT_ALLOWLIST = ["seera-pilot", "beta-co", "demo-fresh"];
 
 export interface TenantGateDependencies {
   readonly provider: IdentityProvider;

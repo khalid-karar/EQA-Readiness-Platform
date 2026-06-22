@@ -7,7 +7,10 @@ export default defineConfig({
   testDir: "./e2e",
   // The tenant-isolation spec requires real Postgres (no demo fixtures) and runs
   // ONLY under playwright.realdb.config.ts. Keep it out of the fixture suite.
-  testIgnore: ["**/tenant-isolation.spec.ts"],
+  testIgnore: [
+    "**/tenant-isolation.spec.ts",
+    "**/fresh-demo-live-walkthrough.spec.ts",
+  ],
   fullyParallel: false,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,

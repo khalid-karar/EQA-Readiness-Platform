@@ -3,14 +3,11 @@ import type { Locale } from "@eqa/content";
 import { loadBundledCatalog } from "@eqa/content";
 import type { DashboardRole } from "@eqa/workflows";
 import { WorkingPaperReviewEngine } from "@eqa/workflows";
+import type { AssessmentDisplayName } from "../active-assessment";
+import { loadAssessmentContext } from "../active-assessment";
 import type { Database } from "../database";
 import { assertUiSession, uiRepositories } from "./assert-session";
-import {
-  PILOT_ASSESSMENT_ID,
-  PILOT_ASSESSMENT_NAME,
-  PILOT_PACK_ID,
-  PILOT_PACK_VERSION,
-} from "./pilot-assessment";
+import { PILOT_PACK_ID, PILOT_PACK_VERSION } from "./pilot-assessment";
 
 export interface EngagementWorkingPaperSummary {
   readonly workingPaperId: string;
@@ -31,8 +28,8 @@ export interface EngagementOverviewLoad {
 }
 
 export interface EngagementsLoadResult {
-  readonly assessmentId: typeof PILOT_ASSESSMENT_ID;
-  readonly assessmentName: typeof PILOT_ASSESSMENT_NAME;
+  readonly assessmentId: string;
+  readonly assessmentName: AssessmentDisplayName;
   readonly contentPackId: typeof PILOT_PACK_ID;
   readonly contentVersion: typeof PILOT_PACK_VERSION;
   readonly locale: Locale;
@@ -53,6 +50,7 @@ export function createEngagementsLoader(db: Database): EngagementsLoader {
   return {
     async load(session, locale, role) {
       const repos = uiRepositories(db, assertUiSession(session));
+      const { assessmentId, assessmentName } = await loadAssessmentContext(repos);
       const catalog = loadBundledCatalog();
       const wpEngine = new WorkingPaperReviewEngine(
         repos.workingPaperReview,
@@ -62,7 +60,7 @@ export function createEngagementsLoader(db: Database): EngagementsLoader {
       const completed =
         await repos.workingPaperReview.listCompletedEngagements();
       const persistedManifest = await repos.evidencePack.getLatest(
-        PILOT_ASSESSMENT_ID,
+        assessmentId,
       );
 
       const engagements: EngagementOverviewLoad[] = [];
@@ -142,8 +140,8 @@ export function createEngagementsLoader(db: Database): EngagementsLoader {
       }
 
       return {
-        assessmentId: PILOT_ASSESSMENT_ID,
-        assessmentName: PILOT_ASSESSMENT_NAME,
+        assessmentId,
+        assessmentName,
         contentPackId: PILOT_PACK_ID,
         contentVersion: PILOT_PACK_VERSION,
         locale,

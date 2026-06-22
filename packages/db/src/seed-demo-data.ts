@@ -37,6 +37,7 @@ import {
   WorkingPaperReviewEngine,
   type GapFlaggingPayload,
 } from "@eqa/workflows";
+import { setActiveAssessmentPointer } from "./active-assessment";
 import type { Database } from "./database";
 import {
   createEvidenceScanStatusWriter,
@@ -346,6 +347,7 @@ export async function seedSeeraPilotDemoData(
     });
   }
 
+  await setActiveAssessmentPointer(cae.kv, SEERA_DEMO_ASSESSMENT_ID);
   await cae.kv.set(SEED_MARKER, "done");
   void createSeeraDemoAssessmentName();
 }

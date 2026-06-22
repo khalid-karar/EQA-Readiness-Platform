@@ -16,6 +16,12 @@ export const BETA_CO = {
   name: "Beta Co",
 } as const;
 
+/** Synthetic fresh-start demo tenant — empty assessment only. */
+export const DEMO_FRESH = {
+  slug: "demo-fresh",
+  name: "Demo Fresh",
+} as const;
+
 /**
  * Idempotently seeds the synthetic "Seera-pilot" tenant: runs shared
  * migrations, then creates the tenant (registry row + tenant schema + wrapped
@@ -57,5 +63,27 @@ export async function seedBetaCo(
   return registry.createTenant({
     slug: BETA_CO.slug,
     name: BETA_CO.name,
+  });
+}
+
+/**
+ * Idempotently seeds the synthetic "Demo Fresh" tenant: runs shared migrations,
+ * then creates the tenant (registry row + tenant schema + wrapped data key) if
+ * it does not already exist.
+ */
+export async function seedDemoFresh(
+  db: Database,
+  kms: Kms,
+): Promise<TenantDescriptor> {
+  await migrateShared(db);
+  const registry = new TenantRegistry(db, kms);
+
+  const existing = await registry.findBySlug(DEMO_FRESH.slug);
+  if (existing) {
+    return existing;
+  }
+  return registry.createTenant({
+    slug: DEMO_FRESH.slug,
+    name: DEMO_FRESH.name,
   });
 }

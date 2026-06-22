@@ -3,9 +3,10 @@ import type { Locale } from "@eqa/content";
 import { loadBundledCatalog } from "@eqa/content";
 import type { DashboardRole, SeeraDemoWorkingPaperItem } from "@eqa/workflows";
 import { WorkingPaperReviewEngine } from "@eqa/workflows";
+import type { AssessmentDisplayName } from "../active-assessment";
+import { loadAssessmentContext } from "../active-assessment";
 import type { Database } from "../database";
 import { assertUiSession, uiRepositories } from "./assert-session";
-import { PILOT_ASSESSMENT_NAME } from "./pilot-assessment";
 
 export interface WorkingPapersEngagementLoad {
   readonly engagementId: string;
@@ -19,7 +20,7 @@ export interface WorkingPapersEngagementLoad {
 }
 
 export interface WorkingPapersLoadResult {
-  readonly assessmentName: typeof PILOT_ASSESSMENT_NAME;
+  readonly assessmentName: AssessmentDisplayName;
   readonly locale: Locale;
   readonly role: DashboardRole;
   readonly engagement: WorkingPapersEngagementLoad | null;
@@ -37,13 +38,14 @@ export function createWorkingPapersLoader(db: Database): WorkingPapersLoader {
   return {
     async load(session, locale, role) {
       const repos = uiRepositories(db, assertUiSession(session));
+      const { assessmentName } = await loadAssessmentContext(repos);
       const catalog = loadBundledCatalog();
       const engagements =
         await repos.workingPaperReview.listCompletedEngagements();
 
       if (engagements.length === 0) {
         return {
-          assessmentName: PILOT_ASSESSMENT_NAME,
+          assessmentName,
           locale,
           role,
           engagement: null,
@@ -56,7 +58,7 @@ export function createWorkingPapersLoader(db: Database): WorkingPapersLoader {
       );
       if (!hierarchy) {
         return {
-          assessmentName: PILOT_ASSESSMENT_NAME,
+          assessmentName,
           locale,
           role,
           engagement: null,
@@ -100,7 +102,7 @@ export function createWorkingPapersLoader(db: Database): WorkingPapersLoader {
       }
 
       return {
-        assessmentName: PILOT_ASSESSMENT_NAME,
+        assessmentName,
         locale,
         role,
         engagement: {

@@ -6,9 +6,9 @@ import type {
   MockEqaScoringInput,
   MockEqaSimulationResult,
 } from "@eqa/workflows";
+import { loadAssessmentContext } from "../active-assessment";
 import type { Database } from "../database";
 import { assertUiSession, uiRepositories } from "./assert-session";
-import { PILOT_ASSESSMENT_ID } from "./pilot-assessment";
 import { loadMockEqaScoringInput } from "./scoring-input";
 
 export interface MockEqaLoadResult {
@@ -30,10 +30,11 @@ export function createMockEqaLoader(db: Database): MockEqaLoader {
   return {
     async load(session, locale, role) {
       const repos = uiRepositories(db, assertUiSession(session));
+      const { assessmentId } = await loadAssessmentContext(repos);
       const catalog = loadBundledCatalog();
       const scoringInput = await loadMockEqaScoringInput(repos, locale, catalog);
       const persistedSimulation = await repos.mockEqa.getLatest(
-        PILOT_ASSESSMENT_ID,
+        assessmentId,
       );
       return {
         locale,

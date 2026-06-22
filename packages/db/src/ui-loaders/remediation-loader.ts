@@ -11,14 +11,10 @@ import {
   type RemediationItem,
   type RemediationTrackerView,
 } from "@eqa/workflows";
+import { loadAssessmentContext } from "../active-assessment";
 import type { Database } from "../database";
 import { assertUiSession, uiRepositories } from "./assert-session";
-import {
-  PILOT_ASSESSMENT_ID,
-  PILOT_ASSESSMENT_NAME,
-  PILOT_PACK_ID,
-  PILOT_PACK_VERSION,
-} from "./pilot-assessment";
+import { PILOT_PACK_ID, PILOT_PACK_VERSION } from "./pilot-assessment";
 
 export interface RemediationWorkspaceLoadResult {
   readonly view: RemediationTrackerView;
@@ -48,6 +44,7 @@ export function createRemediationLoader(db: Database): RemediationLoader {
   return {
     async loadTrackerInput(session, locale, role) {
       const repos = uiRepositories(db, assertUiSession(session));
+      const { assessmentId, assessmentName } = await loadAssessmentContext(repos);
       const catalog = loadBundledCatalog();
       const pack = catalog.get(PILOT_PACK_ID, PILOT_PACK_VERSION);
       const questionnaire = renderQuestionnaire(pack, locale);
@@ -62,18 +59,18 @@ export function createRemediationLoader(db: Database): RemediationLoader {
       }
 
       const items: RemediationItem[] = await repos.remediation.listForAssessment(
-        PILOT_ASSESSMENT_ID,
+        assessmentId,
       );
       const statusRecords = await repos.itemStatus.getForAssessment(
-        PILOT_ASSESSMENT_ID,
+        assessmentId,
       );
       const statusesByQuestion = new Map<string, ItemStatus>(
         statusRecords.map((r) => [r.questionId, r.status]),
       );
 
       return {
-        assessmentId: PILOT_ASSESSMENT_ID,
-        assessmentName: PILOT_ASSESSMENT_NAME,
+        assessmentId,
+        assessmentName,
         locale,
         role,
         items,

@@ -7,6 +7,6 @@ export const runtime = "nodejs";
 
 export async function POST(request: Request): Promise<Response> {
   return handleReportJobRoute(async (repos, body) => {
-    return repos.evidencePack.requestExport(pilotReportIds(body));
+    return repos.evidencePack.requestExport(await pilotReportIds(repos, body));
   }, request);
 }

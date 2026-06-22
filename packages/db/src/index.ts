@@ -51,8 +51,20 @@ export { createGapFlagSink } from "./gap-flag-system";
 // Re-exported for ergonomics: the audit reader returns these types.
 export type { AuditEntry, VerifyResult } from "@eqa/audit-log";
 
-export { seedBetaCo, seedSeeraPilot, BETA_CO, SEERA_PILOT } from "./seed";
+export { seedBetaCo, seedDemoFresh, seedSeeraPilot, BETA_CO, DEMO_FRESH, SEERA_PILOT } from "./seed";
 export { seedBetaCoDemoData, seedSeeraPilotDemoData } from "./seed-demo-data";
+export { seedDemoFreshData } from "./seed-demo-fresh";
+export {
+  ACTIVE_ASSESSMENT_KV_KEY,
+  loadAssessmentContext,
+  pinForActiveAssessment,
+  resolveActiveAssessmentId,
+  resolveActiveAssessmentPin,
+  resolveAssessmentName,
+  resolvePilotReportIds,
+  setActiveAssessmentPointer,
+  type AssessmentDisplayName,
+} from "./active-assessment";
 export {
   assessmentContentPinKey,
   assessmentNameKey,

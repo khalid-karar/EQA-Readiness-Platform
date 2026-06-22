@@ -73,7 +73,7 @@ describe("present-journey-map", () => {
 
     expect(scope?.state).toBe("cleared");
     expect(evidence?.state).toBe("cleared");
-    expect(gaps?.state).toBe("blocked");
+    expect(gaps?.state).toBe("in-progress");
     expect(mockEqa?.state).toBe("not-started");
     expect(pack?.state).toBe("not-started");
   });

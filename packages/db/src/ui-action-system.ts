@@ -7,11 +7,13 @@ import {
   REMEDIATION_TRANSITION_JOB,
   ASSIGN_REMEDIATION_JOB,
   SUBMIT_RESPONSE_JOB,
+  UPDATE_REMEDIATION_PLAN_JOB,
   type ActingUserRef,
   type HumanReviewJobPayload,
   type RecordConformanceJobPayload,
   type AssignRemediationJobPayload,
   type RemediationTransitionJobPayload,
+  type UpdateRemediationPlanJobPayload,
   type SubmitResponseJobPayload,
   WorkingPaperReviewEngine,
   resolveAssignRemediation,
@@ -204,6 +206,33 @@ export function createUiActionHandlers(db: Database): JobHandlerMap {
         remediationId: payload.remediationId,
         transition: payload.transition,
         itemStatus,
+      };
+    },
+
+    [UPDATE_REMEDIATION_PLAN_JOB]: async (ctx) => {
+      const payload = ctx.payload as UpdateRemediationPlanJobPayload;
+      const repos = createTenantRepositories(
+        db,
+        sessionFromUser(ctx.tenant, payload),
+      );
+      const item = await repos.remediation.updatePlan({
+        remediationId: payload.remediationId,
+        ...(payload.owner === undefined ? {} : { owner: payload.owner }),
+        ...(payload.action === undefined ? {} : { action: payload.action }),
+        ...(payload.targetDate === undefined
+          ? {}
+          : { targetDate: payload.targetDate }),
+      });
+      const current = await repos.itemStatus.getStatus(
+        item.assessmentId,
+        item.questionId,
+      );
+      return {
+        remediationId: item.remediationId,
+        owner: item.owner,
+        action: item.action,
+        targetDate: item.targetDate,
+        itemStatus: current?.status ?? "not_assessed",
       };
     },
   };

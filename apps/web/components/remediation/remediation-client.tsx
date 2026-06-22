@@ -5,13 +5,14 @@ import { useSearchParams } from "next/navigation";
 import type { ItemStatus } from "@eqa/workflows";
 import { AlertTriangle } from "lucide-react";
 import type {
+  PresentedLinkedEvidence,
   PresentedRemediationRow,
   RemediationPresentation,
 } from "@/lib/present-remediation";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { StatusPill, readinessVariantFromLevel } from "@/components/ui/status-pill";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { RemediationDetailSheet } from "@/components/remediation/remediation-detail-sheet";
+import { RemediationWorkspacePanel } from "@/components/remediation/remediation-workspace-panel";
 import { WhatsNextPanel } from "@/components/orientation/whats-next-panel";
 import { useDemoTableState } from "@/components/shell/use-demo-table-state";
 import { useSyncShellMeta } from "@/components/shell/use-sync-shell-meta";
@@ -25,7 +26,6 @@ import {
 import { remediationScheduleLabel } from "@/lib/remediation-display";
 import { cn } from "@/lib/utils";
 
-/** Matches Seera demo reference date — client-safe constant (no @eqa/workflows main import). */
 const DEMO_REFERENCE_DATE = "2026-06-19T12:00:00.000Z";
 
 interface RemediationClientProps {
@@ -56,8 +56,9 @@ function RemediationClientInner({
     presentation.rows,
     uiLabel("remediationErrorDemo", locale),
   );
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [sheetOpen, setSheetOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(
+    presentation.rows[0]?.id ?? null,
+  );
 
   const selected = rows.find((r) => r.id === selectedId) ?? null;
 
@@ -76,13 +77,10 @@ function RemediationClientInner({
     const openId = searchParams.get("remediation");
     if (openId && rows.some((r) => r.id === openId)) {
       setSelectedId(openId);
-      setSheetOpen(true);
     }
   }, [searchParams, rows]);
 
-  const openCount = rows.filter(
-    (r) => !isClosedStatus(r.itemStatus),
-  ).length;
+  const openCount = rows.filter((r) => !isClosedStatus(r.itemStatus)).length;
   const overdueCount = rows.filter(
     (r) => r.isOverdue && !isClosedStatus(r.itemStatus),
   ).length;
@@ -122,11 +120,44 @@ function RemediationClientInner({
               overdueDays,
             ),
             closedAt: closed ? DEMO_REFERENCE_DATE : null,
+            hadRetestFailure:
+              status === "under_human_review" ? true : row.hadRetestFailure,
+            retestNote:
+              status === "under_human_review" && row.retestNote == null
+                ? "Retest failed — returned to human review"
+                : row.retestNote,
           };
         }),
       );
     },
-    [statusLabels],
+    [locale, statusLabels, setRows],
+  );
+
+  const handleRowUpdate = useCallback(
+    (remediationId: string, patch: Partial<PresentedRemediationRow>) => {
+      setRows((prev) =>
+        prev.map((row) =>
+          row.remediationId === remediationId ? { ...row, ...patch } : row,
+        ),
+      );
+    },
+    [setRows],
+  );
+
+  const handleEvidenceAdded = useCallback(
+    (remediationId: string, evidence: PresentedLinkedEvidence) => {
+      setRows((prev) =>
+        prev.map((row) =>
+          row.remediationId === remediationId
+            ? {
+                ...row,
+                linkedEvidence: [...row.linkedEvidence, evidence],
+              }
+            : row,
+        ),
+      );
+    },
+    [setRows],
   );
 
   const columns: DataTableColumn<PresentedRemediationRow>[] = useMemo(() => {
@@ -159,25 +190,6 @@ function RemediationClientInner({
           sortValue: (row) => row.itemStatus,
           filterValue: (row) => row.statusLabel,
         },
-        {
-          id: "schedule",
-          header: uiLabel("schedule", locale),
-          accessor: (row) => {
-            const closed = isClosedStatus(row.itemStatus);
-            const label =
-              locale === "ar" ? row.scheduleLabelAr : row.scheduleLabelEn;
-            const variant = closed
-              ? "conformant"
-              : row.isOverdue
-                ? "gap"
-                : "partial";
-            return <StatusPill variant={variant} size="sm">{label}</StatusPill>;
-          },
-          sortValue: (row) =>
-            locale === "ar" ? row.scheduleLabelAr : row.scheduleLabelEn,
-          filterValue: (row) =>
-            `${row.scheduleLabelEn} ${row.scheduleLabelAr}`,
-        },
       ];
     }
 
@@ -204,23 +216,6 @@ function RemediationClientInner({
         filterValue: (row) => row.owner,
       },
       {
-        id: "due",
-        header: uiLabel("remediationDue", locale),
-        accessor: (row) => (
-          <span
-            className={cn(
-              "tabular-nums",
-              row.isOverdue && !isClosedStatus(row.itemStatus) &&
-                "font-medium text-readiness-gap",
-            )}
-          >
-            {row.targetDate}
-          </span>
-        ),
-        sortValue: (row) => row.targetDate,
-        filterValue: (row) => row.targetDate,
-      },
-      {
         id: "status",
         header: uiLabel("status", locale),
         accessor: (row) => (
@@ -238,11 +233,19 @@ function RemediationClientInner({
 
   const handleSelect = useCallback((row: PresentedRemediationRow) => {
     setSelectedId(row.id);
-    setSheetOpen(true);
   }, []);
 
   return (
     <div className="space-y-6">
+      <header className="space-y-1">
+        <h1 className="text-2xl font-semibold tracking-tight">
+          {uiLabel("remediationTitle", locale)}
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          {uiLabel("remediationSubtitle", locale)}
+        </p>
+      </header>
+
       <div className="grid gap-4 sm:grid-cols-2">
         <Card>
           <CardHeader className="pb-2">
@@ -254,9 +257,7 @@ function RemediationClientInner({
             <p className="text-3xl font-bold tabular-nums">{openCount}</p>
           </CardContent>
         </Card>
-        <Card
-          className={overdueCount > 0 ? "ring-2 ring-readiness-gap/40" : ""}
-        >
+        <Card className={overdueCount > 0 ? "ring-2 ring-readiness-gap/40" : ""}>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-base">
               {overdueCount > 0 ? (
@@ -281,41 +282,46 @@ function RemediationClientInner({
         </Card>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle>{uiLabel("remediationTitle", locale)}</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                {uiLabel("remediationSubtitle", locale)}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {isSummaryView
-                  ? uiLabel("boardRemediationTableHint", locale)
-                  : uiLabel("selectRowHint", locale)}
-              </p>
-            </CardHeader>
-            <CardContent>
-              <DataTable
-                columns={columns}
-                data={rows}
-                getRowId={(row) => row.id}
-                getRowAriaLabel={(row) =>
-                  `${row.standardNumber} — ${row.standardTitle}, ${row.statusLabel}`
-                }
-                selectedId={selectedId}
-                onSelectRow={handleSelect}
-                searchable
-                searchPlaceholder={uiLabel("remediationSearch", locale)}
-                caption={uiLabel("remediationTitle", locale)}
-                loading={loading}
-                error={error}
-                emptyTitle={uiLabel("remediationEmptyTitle", locale)}
-                emptyDescription={uiLabel("remediationEmptyDescription", locale)}
-              />
-            </CardContent>
-          </Card>
-        </div>
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_minmax(16rem,20rem)]">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">{uiLabel("openGaps", locale)}</CardTitle>
+            <p className="text-xs text-muted-foreground">
+              {uiLabel("remediationWorkspaceSelectHint", locale)}
+            </p>
+          </CardHeader>
+          <CardContent>
+            <DataTable
+              columns={columns}
+              data={rows}
+              getRowId={(row) => row.id}
+              getRowAriaLabel={(row) =>
+                `${row.standardNumber} — ${row.standardTitle}, ${row.statusLabel}`
+              }
+              selectedId={selectedId}
+              onSelectRow={handleSelect}
+              searchable
+              searchPlaceholder={uiLabel("remediationSearch", locale)}
+              caption={uiLabel("remediationTitle", locale)}
+              loading={loading}
+              error={error}
+              emptyTitle={uiLabel("remediationEmptyTitle", locale)}
+              emptyDescription={uiLabel("remediationEmptyDescription", locale)}
+            />
+          </CardContent>
+        </Card>
+
+        <RemediationWorkspacePanel
+          row={selected}
+          locale={locale}
+          isSummaryView={isSummaryView}
+          canOperate={canOperate}
+          realWritesEnabled={realWritesEnabled}
+          statusLabel={selected ? statusLabels[selected.itemStatus] : ""}
+          onRowUpdate={handleRowUpdate}
+          onStatusChange={handleStatusChange}
+          onEvidenceAdded={handleEvidenceAdded}
+        />
 
         <aside>
           <WhatsNextPanel
@@ -326,20 +332,6 @@ function RemediationClientInner({
           />
         </aside>
       </div>
-
-      <RemediationDetailSheet
-        row={selected}
-        open={sheetOpen}
-        onOpenChange={setSheetOpen}
-        locale={locale}
-        isSummaryView={isSummaryView}
-        canOperate={canOperate}
-        realWritesEnabled={realWritesEnabled}
-        statusLabel={
-          selected ? statusLabels[selected.itemStatus] : ""
-        }
-        onStatusChange={handleStatusChange}
-      />
     </div>
   );
 }

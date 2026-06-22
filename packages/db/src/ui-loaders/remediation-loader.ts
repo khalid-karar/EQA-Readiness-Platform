@@ -6,6 +6,7 @@ import {
   buildRemediationTrackerView,
   type BuildRemediationTrackerInput,
   type DashboardRole,
+  type EvidenceMetadataForPack,
   type ItemStatus,
   type RemediationItem,
   type RemediationTrackerView,
@@ -19,6 +20,12 @@ import {
   PILOT_PACK_VERSION,
 } from "./pilot-assessment";
 
+export interface RemediationWorkspaceLoadResult {
+  readonly view: RemediationTrackerView;
+  readonly items: readonly RemediationItem[];
+  readonly evidenceItems: readonly EvidenceMetadataForPack[];
+}
+
 export interface RemediationLoader {
   loadTrackerInput(
     session: AuthSession | null | undefined,
@@ -30,6 +37,11 @@ export interface RemediationLoader {
     locale: Locale,
     role: DashboardRole,
   ): Promise<RemediationTrackerView>;
+  loadWorkspace(
+    session: AuthSession | null | undefined,
+    locale: Locale,
+    role: DashboardRole,
+  ): Promise<RemediationWorkspaceLoadResult>;
 }
 
 export function createRemediationLoader(db: Database): RemediationLoader {
@@ -73,6 +85,26 @@ export function createRemediationLoader(db: Database): RemediationLoader {
     async loadTrackerView(session, locale, role) {
       const input = await this.loadTrackerInput(session, locale, role);
       return buildRemediationTrackerView(input);
+    },
+
+    async loadWorkspace(session, locale, role) {
+      const input = await this.loadTrackerInput(session, locale, role);
+      const repos = uiRepositories(db, assertUiSession(session));
+      const evidenceRows = await repos.evidence.list();
+      return {
+        view: buildRemediationTrackerView(input),
+        items: input.items,
+        evidenceItems: evidenceRows.map((row) => ({
+          evidenceId: row.evidenceId,
+          version: row.version,
+          fileName: row.fileName,
+          contentType: row.contentType,
+          sizeBytes: row.sizeBytes,
+          links: row.links,
+          scanStatus: row.scanStatus,
+          uploadedAt: row.uploadedAt,
+        })),
+      };
     },
   };
 }

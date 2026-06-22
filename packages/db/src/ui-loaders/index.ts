@@ -29,6 +29,7 @@ export {
 export {
   createRemediationLoader,
   type RemediationLoader,
+  type RemediationWorkspaceLoadResult,
 } from "./remediation-loader";
 export {
   createWorkingPapersLoader,

@@ -2,11 +2,11 @@ import { RemediationClient } from "@/components/remediation/remediation-client";
 import { requireServerSession } from "@/lib/auth/get-server-session";
 import { resolvePageLocaleAndRole } from "@/lib/auth/page-context";
 import { metadataForShellPage } from "@/lib/page-metadata";
-import { loadRemediationTrackerView } from "@/lib/load-screen-data";
+import { loadRemediationWorkspaceData } from "@/lib/load-screen-data";
 import { isRealWritesEnabled } from "@/lib/real-writes";
 import {
   buildRemediationPresentation,
-  buildRemediationPresentationFromView,
+  buildRemediationPresentationFromWorkspace,
 } from "@/lib/present-remediation";
 import type { Metadata } from "next";
 
@@ -26,11 +26,11 @@ export default async function RemediationPage({
   const params = await searchParams;
   const { locale, role } = await resolvePageLocaleAndRole(params);
   const session = await requireServerSession();
-  const view = await loadRemediationTrackerView(session, locale, role);
+  const data = await loadRemediationWorkspaceData(session, locale, role);
   const presentation =
-    view === "demo"
+    data === "demo"
       ? buildRemediationPresentation(locale, role)
-      : buildRemediationPresentationFromView(view);
+      : buildRemediationPresentationFromWorkspace(data);
 
   return (
     <RemediationClient

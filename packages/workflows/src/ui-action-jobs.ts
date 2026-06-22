@@ -13,6 +13,7 @@ export const HUMAN_REVIEW_JOB = "workflow:human-review";
 export const RECORD_CONFORMANCE_JOB = "workflow:record-conformance";
 export const REMEDIATION_TRANSITION_JOB = "workflow:remediation-transition";
 export const ASSIGN_REMEDIATION_JOB = "workflow:assign-remediation";
+export const UPDATE_REMEDIATION_PLAN_JOB = "workflow:update-remediation-plan";
 
 export interface ActingUserRef {
   readonly userId: string;
@@ -55,6 +56,13 @@ export interface AssignRemediationJobPayload extends ActingUserRef {
   readonly action: string;
   readonly owner: string;
   readonly targetDate: string;
+}
+
+export interface UpdateRemediationPlanJobPayload extends ActingUserRef {
+  readonly remediationId: string;
+  readonly owner?: string;
+  readonly action?: string;
+  readonly targetDate?: string;
 }
 
 export interface SubmitResponseExecutor {

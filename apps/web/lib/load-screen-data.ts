@@ -9,6 +9,7 @@ import {
   createMockEqaLoader,
   createRemediationLoader,
   createStandardDetailLoader,
+  type RemediationWorkspaceLoadResult,
   createWorkingPapersLoader,
   createStandardsWorkspaceLoader,
   type AssessmentLoadResult,
@@ -82,6 +83,21 @@ export async function loadRemediationTrackerView(
     return "demo";
   }
   return createRemediationLoader(getAppDatabase()).loadTrackerView(
+    session,
+    locale,
+    role,
+  );
+}
+
+export async function loadRemediationWorkspaceData(
+  session: AuthSession,
+  locale: Locale,
+  role: DashboardRole,
+): Promise<RemediationWorkspaceLoadResult | "demo"> {
+  if (!useDatabaseReads()) {
+    return "demo";
+  }
+  return createRemediationLoader(getAppDatabase()).loadWorkspace(
     session,
     locale,
     role,
